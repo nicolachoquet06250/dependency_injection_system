@@ -15,6 +15,10 @@ class Base {
 	protected $inject;
 	private $dependencies_injection_enabled = false;
 
+	public function __construct() {
+		$this->after_construct();
+	}
+
 	protected function after_construct() {
 		$this->inject = WrapperFactory::create()->get_dependency_wrapper();
 		$this->enable_dependencies_injection();
@@ -24,10 +28,18 @@ class Base {
 		$this->dependencies_injection_enabled = true;
 	}
 
+	/**
+	 * @return bool
+	 */
 	protected function is_dependencies_injection_enabled() {
 		return $this->dependencies_injection_enabled;
 	}
 
+	/**
+	 * @param callable $callback
+	 * @param array    $methods
+	 * @return array
+	 */
 	private function clean_methods(callable $callback, array $methods) {
 		$_methods = [];
 		foreach ($methods as $method) {

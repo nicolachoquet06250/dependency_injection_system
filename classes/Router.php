@@ -23,10 +23,6 @@ class Router extends Base implements Singleton {
 
 	private static $CURRENT_ROUTE = null;
 
-	private function __construct() {
-		$this->after_construct();
-	}
-
 	public static function create() {
 		if(is_null(self::$instance)) {
 			self::$instance = new Router();

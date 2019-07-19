@@ -4,11 +4,11 @@
 namespace mvc_router\dependencies;
 
 
-
 use Exception;
 use mvc_router\Base;
 use mvc_router\WrapperFactory;
 use ReflectionClass;
+use ReflectionException;
 
 class Dependency {
 	const SINGLETON = true;
@@ -50,6 +50,9 @@ class Dependency {
 		}
 	}
 
+	/**
+	 * @return WrapperFactory|null
+	 */
 	public static function get_wrapper_factory() {
 		return WrapperFactory::create();
 	}
@@ -86,6 +89,10 @@ class Dependency {
 		else throw new Exception($classname.' is not a dependency');
 	}
 
+	/**
+	 * @param $classname
+	 * @return mixed|null
+	 */
 	public static function get_name_from_class($classname) {
 		if(isset(self::$dependencies[$classname])) {
 			return self::$dependencies[$classname]['name'];
@@ -117,6 +124,9 @@ class Dependency {
 		file_put_contents(__DIR__.'/DependencyWrapper.php', $final_class);
 	}
 
+	/**
+	 * @return bool
+	 */
 	private static function dependency_wrapper_exists() {
 		return file_exists(__DIR__.'/DependencyWrapper.php');
 	}
@@ -132,6 +142,13 @@ class Dependency {
 		require_once __DIR__.'/DependencyWrapper.php';
 	}
 
+	/**
+	 * @param      $class
+	 * @param      $name
+	 * @param      $file
+	 * @param mixed $parent
+	 * @param mixed $type
+	 */
 	public static function add_custom_dependency($class, $name, $file, $parent = null, $type = self::NONE) {
 		if(substr($class, 0, 1) === '\\') {
 			$class = substr($class, 1, strlen($class) - 1);
@@ -179,6 +196,9 @@ class Dependency {
 		return null;
 	}
 
+	/**
+	 * @return array
+	 */
 	public static function controllers() {
 		$controllers = [];
 		foreach (self::$dependencies as $class => $dependency) {
@@ -189,6 +209,11 @@ class Dependency {
 		return $controllers;
 	}
 
+	/**
+	 * @param $method
+	 * @return bool
+	 * @throws ReflectionException
+	 */
 	private static function method_exists($method) {
 		$rc = new ReflectionClass(DependencyWrapper::class);
 		$doc = $rc->getDocComment();
@@ -209,6 +234,10 @@ class Dependency {
 		return in_array($method, $doc);
 	}
 
+	/**
+	 * @param $elem
+	 * @return bool
+	 */
 	public static function exists($elem) {
 		foreach (self::$dependencies as $dependency) {
 			if($dependency['name'] === $elem) return true;
@@ -216,6 +245,10 @@ class Dependency {
 		return false;
 	}
 
+	/**
+	 * @param $elem
+	 * @return bool
+	 */
 	public static function is_controller($elem) {
 		foreach (self::$dependencies as $class => $dependency) {
 			if($dependency['name'] === $elem) {
@@ -230,6 +263,11 @@ class Dependency {
 		return false;
 	}
 
+	/**
+	 * @param $method
+	 * @return string|null
+	 * @throws ReflectionException
+	 */
 	private static function get_class_from_method($method) {
 		$rc = new ReflectionClass(DependencyWrapper::class);
 		$doc = $rc->getDocComment();
@@ -250,6 +288,10 @@ class Dependency {
 		return null;
 	}
 
+	/**
+	 * @param $class
+	 * @throws Exception
+	 */
 	public static function autoload($class) {
 		Dependency::get_from_classname($class);
 	}

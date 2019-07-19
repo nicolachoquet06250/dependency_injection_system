@@ -10,10 +10,6 @@ use mvc_router\interfaces\Singleton;
 class RouteFlag extends Base implements Singleton {
 	private $flag;
 
-	private function __construct() {
-		$this->after_construct();
-	}
-
 	public static function create() {
 		return new RouteFlag();
 	}
