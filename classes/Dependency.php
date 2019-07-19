@@ -25,17 +25,22 @@ class Dependency {
 		'mvc_router\mvc\Controller' => [
 			'name' => 'controller',
 			'file' => __DIR__.'/Controller.php',
-			'is_singleton' => false
+			'is_singleton' => false,
+		],
+		'my_app\services\Service' => [
+			'name' => 'service',
+			'file' => __DIR__.'/Service.php',
+			'is_singleton' => false,
 		],
 		'mvc_router\router\RouteFlag' => [
 			'name' => 'route_flag',
 			'file' => __DIR__.'/RouteFlag.php',
-			'is_factory' => true
+			'is_factory' => true,
 		],
 		'mvc_router\router\Router' => [
 			'name' => 'router',
 			'file' => __DIR__.'/Router.php',
-			'is_singleton' => true
+			'is_singleton' => true,
 		]
 	];
 

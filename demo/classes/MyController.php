@@ -6,7 +6,6 @@ use mvc_router\router\Router;
 use my_app\services\Service;
 
 class MyController extends Controller {
-
 	public function index() {
 		var_dump('index');
 	}
