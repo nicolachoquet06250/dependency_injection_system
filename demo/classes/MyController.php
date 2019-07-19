@@ -21,4 +21,23 @@ class MyController extends Controller {
 		var_dump($param1, $param2);
 		echo '</pre>';
 	}
+
+	/**
+	 * @route /test/lol/var
+	 */
+	public function toto() {
+		var_dump('hello 1');
+	}
+
+	/**
+	 * @route \/([a-zA-Z0-9]+)\/hello-toi
+	 * @param Service $service
+	 * @param         $param1
+	 */
+	public function hello_toi(Service $service, $param1) {
+		echo '<pre>';
+		$service->hello();
+		var_dump($param1);
+		echo '</pre>';
+	}
 }

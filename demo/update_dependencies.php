@@ -8,4 +8,7 @@
 									  __DIR__.'/classes/MyController.php', '\mvc_router\mvc\Controller');
 	Dependency::add_custom_dependency('\my_app\services\Service', 'my_service', __DIR__.'/classes/Service.php');
 	Dependency::require_dependency_wrapper();
-	Dependency::autoload();
+
+	function __autoload($class) {
+		Dependency::autoload($class);
+	}

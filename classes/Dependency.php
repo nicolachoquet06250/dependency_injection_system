@@ -81,6 +81,13 @@ class Dependency {
 		else throw new Exception($classname.' is not a dependency');
 	}
 
+	public static function get_name_from_class($classname) {
+		if(isset(self::$dependencies[$classname])) {
+			return self::$dependencies[$classname]['name'];
+		}
+		return null;
+	}
+
 	private static function generate_dependency_wrapper() {
 		$class_start = "<?php
 		
@@ -167,6 +174,16 @@ class Dependency {
 		return null;
 	}
 
+	public static function controllers() {
+		$controllers = [];
+		foreach (self::$dependencies as $class => $dependency) {
+			if(self::is_controller($dependency['name'])) {
+				$controllers[$class] = $dependency;
+			}
+		}
+		return $controllers;
+	}
+
 	private static function method_exists($method) {
 		$rc = new ReflectionClass(DependencyWrapper::class);
 		$doc = $rc->getDocComment();
@@ -197,7 +214,12 @@ class Dependency {
 	public static function is_controller($elem) {
 		foreach (self::$dependencies as $class => $dependency) {
 			if($dependency['name'] === $elem) {
-				if($dependency['parent'] === 'mvc_router\mvc\Controller' || $dependency['parent'] === '\mvc_router\mvc\Controller' || $class === 'mvc_router\mvc\Controller' || $class === '\mvc_router\mvc\Controller') return true;
+				if(isset($dependency['parent']) && ($dependency['parent'] === 'mvc_router\mvc\Controller' || $dependency['parent'] === '\mvc_router\mvc\Controller')) {
+					return true;
+				}
+				if(!isset($dependency['parent']) && ($class === 'mvc_router\mvc\Controller' || $class === '\mvc_router\mvc\Controller')) {
+					return true;
+				}
 			}
 		}
 		return false;
@@ -223,9 +245,7 @@ class Dependency {
 		return null;
 	}
 
-	public static function autoload() {
-		function __autoload($class) {
-			Dependency::get_from_classname($class);
-		}
+	public static function autoload($class) {
+		Dependency::get_from_classname($class);
 	}
 }

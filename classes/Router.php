@@ -8,6 +8,9 @@ use Exception;
 use mvc_router\Base;
 use mvc_router\dependencies\Dependency;
 use mvc_router\interfaces\Singleton;
+use ReflectionClass;
+use ReflectionException;
+use ReflectionMethod;
 
 class Router extends Base implements Singleton {
 	private static $instance = null;
@@ -48,6 +51,50 @@ class Router extends Base implements Singleton {
 				'flags' => $flags
 			];
 		else throw new Exception('controller '.$ctrl.' not found !');
+	}
+
+	/**
+	 * @throws ReflectionException
+	 */
+	public function inspect_controllers() {
+		echo '<pre>';
+		foreach (Dependency::controllers() as $class => $controller) {
+			Dependency::get_from_classname($class);
+			$ref_class = new ReflectionClass($class);
+			foreach ($ref_class->getMethods(ReflectionMethod::IS_PUBLIC) as $method) {
+				if($method->getDeclaringClass()->getName() === $class
+				   && $method->getName() !== '__construct' && $method->getName() !== '__call'
+				   && $method->getName() !== 'run') {
+					$method_name = $method->getName();
+					$route = '/'.basename(str_replace('\\', '/', $class)).'/'.$method_name;
+					$doc = $method->getDocComment();
+					if($doc) {
+						$doc = str_replace(['/**', ' */', "\t", ' * '], '', $doc);
+						$doc = explode("\n", $doc);
+						$_doc = [];
+						foreach ($doc as $line) {
+							if(strlen($line) > 0) {
+								$_doc[] = $line;
+							}
+						}
+						$doc = $_doc;
+						foreach ($doc as $item) {
+							if(substr($item, 0, strlen('@route ')) === '@route ') {
+								$route = str_replace('@route ', '', $doc)[0];
+								break;
+							}
+						}
+					}
+					if(strstr($route, '[') || strstr($route, '(') || strstr($route, ']') || strstr($route, ')')) {
+						self::route($route, Dependency::get_name_from_class($class), $method_name, self::REGEX);
+					}
+					else {
+						self::route($route, Dependency::get_name_from_class($class), $method_name);
+					}
+				}
+			}
+		}
+		echo '</pre>';
 	}
 
 	public function execute($route) {
