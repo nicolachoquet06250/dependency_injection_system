@@ -50,7 +50,7 @@ class Router extends Base implements Singleton {
 	}
 
 	/**
-	 * @throws ReflectionException
+	 * @throws Exception
 	 */
 	public function inspect_controllers() {
 		foreach (Dependency::controllers() as $class => $controller) {
@@ -119,6 +119,13 @@ class Router extends Base implements Singleton {
 
 	public function routes() {
 		return self::$routes;
+	}
+
+	/**
+	 * @return bool|array
+	 */
+	public function get_root_route() {
+		return isset(self::$routes['/']) ? self::$routes['/'] : false;
 	}
 
 	public function get_current_route() {

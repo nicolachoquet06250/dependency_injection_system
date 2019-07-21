@@ -26,3 +26,10 @@
 
 	Dependency::load_base_dependencies();
 	Dependency::require_dependency_wrapper();
+
+	\mvc_router\dependencies\Dependency::get_wrapper_factory()
+	                                   ->get_dependency_wrapper()
+	                                   ->get_router()
+	                                   ->route('/routes', 'routes_controller', \mvc_router\router\Router::DEFAULT_ROUTE_METHOD);
+
+

@@ -27,6 +27,12 @@ class Dependency {
 			'file' => __DIR__.'/Controller.php',
 			'is_singleton' => false,
 		],
+		'mvc_router\mvc\Routes' => [
+			'name' => 'routes_controller',
+			'file' => __DIR__.'/controllers/Routes.php',
+			'is_singleton' => false,
+			'parent' => 'mvc_router\mvc\Controller'
+		],
 		'my_app\services\Service' => [
 			'name' => 'service',
 			'file' => __DIR__.'/Service.php',
