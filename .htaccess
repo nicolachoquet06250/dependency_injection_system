@@ -1,0 +1,5 @@
+Options +FollowSymlinks
+RewriteEngine on
+
+RewriteRule ^\/([^\?]+)$ 			demo/index.php/$1 [L]
+RewriteRule ^\/([^\?]+)\?([^\µ]+)$ 	demo/index.php/$1?$2 [L]
