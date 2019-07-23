@@ -14,6 +14,8 @@ class Routes extends Controller {
 	 * @param Route  $service_route
 	 */
 	public function index(Router $router, Route $service_route) {
+		echo '<meta charset="utf-8" />';
+		echo '<title>Liste des routes</title>';
 		echo '<table style="width: 100%;">';
 		$service_route->write_array_header('Type', 'Controlleur', 'Méthode', 'Route');
 		$service_route->write_array_lines($router);
