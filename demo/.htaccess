@@ -1,6 +1,5 @@
 Options +FollowSymlinks
 RewriteEngine on
 
-RewriteBase /
-RewriteRule ^([^\?]+)$ /index.php?q=/$1 [L]
-RewriteRule ^([^\?]+)?([^µ]+)$ /index.php?q=/$1&$2 [L]
+RewriteRule ^/([^\?]+)$ /index.php?q=/$1 [L]
+RewriteRule ^/([^\?]+)?([^µ]+)$ /index.php?q=/$1&$2 [L]
