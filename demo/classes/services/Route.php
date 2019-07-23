@@ -5,7 +5,6 @@ namespace mvc_router\services;
 
 
 use mvc_router\router\Router;
-use my_app\services\Service;
 
 class Route extends Service {
 	protected $count_types = [];

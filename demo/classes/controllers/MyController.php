@@ -3,7 +3,7 @@
 
 use mvc_router\mvc\Controller;
 use mvc_router\router\Router;
-use my_app\services\Service;
+use mvc_router\services\Service;
 
 class MyController extends Controller {
 	/**

@@ -33,9 +33,14 @@ class Dependency {
 			'is_singleton' => false,
 			'parent' => 'mvc_router\mvc\Controller'
 		],
-		'my_app\services\Service' => [
+		'mvc_router\services\Service' => [
 			'name' => 'service',
 			'file' => __DIR__.'/Service.php',
+			'is_singleton' => false,
+		],
+		'mvc_router\services\Toto' => [
+			'name' => 'service_toto',
+			'file' => __DIR__.'/services/Toto.php',
 			'is_singleton' => false,
 		],
 		'mvc_router\router\RouteFlag' => [
@@ -189,6 +194,17 @@ class Dependency {
 		}
 	}
 
+	public static function extend_dependency($old_class, $new_class, $details) {
+		self::$dependencies[$old_class]['name'] = '_'.self::$dependencies[$old_class]['name'];
+		self::add_custom_dependency($new_class, $details['name'], $details['file'], $old_class, $details['type']);
+	}
+
+	/**
+	 * @param string 		$class
+	 * @param string 		$name
+	 * @param string 		$file
+	 * @param string|null	$type
+	 */
 	public static function add_custom_controller($class, $name, $file, $type = self::NONE) {
 		self::add_custom_dependency($class, $name, $file, '\mvc_router\mvc\Controller', $type);
 	}

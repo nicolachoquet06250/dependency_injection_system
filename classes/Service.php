@@ -1,7 +1,7 @@
 <?php
 
 
-namespace my_app\services;
+namespace mvc_router\services;
 
 
 use mvc_router\Base;
