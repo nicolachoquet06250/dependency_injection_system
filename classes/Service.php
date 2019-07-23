@@ -4,7 +4,9 @@
 namespace my_app\services;
 
 
-class Service {
+use mvc_router\Base;
+
+class Service extends Base {
 	public function hello() {
 		var_dump('hello');
 	}

@@ -7,14 +7,14 @@ use my_app\services\Service;
 
 class MyController extends Controller {
 	/**
-	 * @route_disabled
+	 * @route /mon/example/
 	 */
 	public function index() {
 		var_dump('index');
 	}
 
 	/**
-	 * @route_disabled
+	 * @route /mon/example/2
 	 * @param Service $my_service
 	 */
 	public function test(Service $my_service) {
@@ -22,7 +22,7 @@ class MyController extends Controller {
 	}
 
 	/**
-	 * @route_disabled
+	 * @route \/([a-zA-Z]+)\/([0-9]+)
 	 * @param Router $router
 	 * @param        $param1
 	 * @param        $param2

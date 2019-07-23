@@ -4,51 +4,24 @@ namespace mvc_router\mvc;
 
 
 use mvc_router\router\Router;
+use mvc_router\services\Route;
 
 class Routes extends Controller {
-
-	private function write_array_line($route, $route_detail) {
-		echo '<tr>
-			<td>
-				' . ( $route_detail['type'] === Router::STRING ? 'Chaine de carctère' : 'Expression régulière' ) . '
-			</td>
-			<td>
-				' . $route_detail['controller'] . '
-			</td>
-			<td>
-				' . $route_detail['method'] . '
-			</td>
-			<td>
-				'.str_replace('\\', '', $route).'
-			</td>
-		</tr>';
-	}
 
 	/**
 	 * @route_disabled
 	 * @param Router $router
+	 * @param Route  $service_route
 	 */
-	public function index(Router $router) {
-		echo '<table>';
-		echo '<thead><tr>
-	<th>
-		Type
-	</th>
-	<th>
-		Nom du controlleur
-	</th>
-	<th>
-		Nom de la méthode
-	</th>
-	<th>
-		Route
-	</th>
-</tr></thead><tbody>';
-		$details = $router->get_root_route();
-		if($details) $this->write_array_line('/', $details);
-		foreach ( $router->routes() as $route => $details ) {
-			if($route !== '/') $this->write_array_line($route, $details);
+	public function index(Router $router, Route $service_route) {
+		echo '<table style="width: 100%;">';
+		$service_route->write_array_header('Type', 'Controlleur', 'Méthode', 'Route');
+		$service_route->write_array_lines($router);
+		if($router->get('stats') === true || $router->get('stats') === 1) {
+			$service_route->write_array_header('Stats', '', '', '');
+			$service_route->write_stats_controllers();
+			$service_route->write_stats_types();
 		}
-		echo '</tbody></table>';
+		echo '</table>';
 	}
 }

@@ -39,15 +39,18 @@ class Router extends Base implements Singleton {
 	 * @param mixed  ...$flags
 	 * @throws Exception
 	 */
-	public function route($route, $ctrl, $method = self::DEFAULT_ROUTE_METHOD, $type = self::STRING, ...$flags) {
+	public function route($route, $ctrl, $method = self::DEFAULT_ROUTE_METHOD, $type = self::STRING) {
 		if(Dependency::exists($ctrl) && Dependency::is_controller($ctrl))
 			self::$routes[$route] = [
 				'type' => $type,
 				'controller' => $ctrl,
-				'method' => $method,
-				'flags' => $flags
+				'method' => $method
 			];
 		else throw new Exception('controller '.$ctrl.' not found !');
+	}
+
+	public function root_route($ctrl, $method = self::DEFAULT_ROUTE_METHOD) {
+		$this->route('/', $ctrl, $method);
 	}
 
 	/**
@@ -63,7 +66,17 @@ class Router extends Base implements Singleton {
 		}
 	}
 
+	/**
+	 * @param $route
+	 * @return mixed|string
+	 * @throws ReflectionException
+	 */
 	public function execute($route) {
+		if(strstr($route, '?')) {
+			$route = explode('?', $route);
+			$this->set_gets_from_string($route[1]);
+			$route = $route[0];
+		}
 		foreach (self::$routes as $route_str => $_route) {
 			if($_route['type'] === self::STRING) {
 				if($route === $route_str) {
@@ -119,5 +132,36 @@ class Router extends Base implements Singleton {
 
 	public function get_current_route() {
 		return self::$CURRENT_ROUTE;
+	}
+
+	public function set_gets_from_string(string $gets) {
+		$gets = explode('&', $gets);
+		foreach ($gets as $get) {
+			if(strstr($get, '=')) {
+				$get = explode('=', $get);
+				if(ctype_digit($get[1])) {
+					$get[1] = intval($get[1]);
+				}
+			}
+			else {
+				$get = [
+					$get,
+					true
+				];
+			}
+			$this->set_get(...$get);
+		}
+	}
+
+	public function set_get($key, $value) {
+		$_GET[$key] = $value;
+	}
+
+	public function get($key) {
+		return $_GET[$key] ?? false;
+	}
+
+	public function post($key) {
+		return $_GET[$key] ?? false;
 	}
 }
