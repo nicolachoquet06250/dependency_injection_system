@@ -184,6 +184,10 @@ class Dependency {
 		}
 	}
 
+	public static function add_custom_controller($class, $name, $file, $type = self::NONE) {
+		self::add_custom_dependency($class, $name, $file, '\mvc_router\mvc\Controller', $type);
+	}
+
 	/**
 	 * @param $name
 	 * @param $arguments
