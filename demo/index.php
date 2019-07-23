@@ -7,7 +7,7 @@ try {
 	require_once __DIR__.'/update_dependencies.php';
 	require_once __DIR__.'/htaccess.php';
 
-	$request_uri = $_SERVER['REQUEST_URI'];
+	$request_uri = isset($_GET['q']) ? $_GET['q'] : $_SERVER['REQUEST_URI'];
 	if(substr($request_uri, 0, 10) === '/index.php') {
 		$request_uri = str_replace('/index.php', '', $request_uri);
 	}
