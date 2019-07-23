@@ -6,14 +6,27 @@ use mvc_router\router\Router;
 use my_app\services\Service;
 
 class MyController extends Controller {
+	/**
+	 * @route_disabled
+	 */
 	public function index() {
 		var_dump('index');
 	}
 
+	/**
+	 * @route_disabled
+	 * @param Service $my_service
+	 */
 	public function test(Service $my_service) {
 		$my_service->hello();
 	}
 
+	/**
+	 * @route_disabled
+	 * @param Router $router
+	 * @param        $param1
+	 * @param        $param2
+	 */
 	public function test2(Router $router, $param1, $param2) {
 		echo '<pre>';
 		var_dump($router->get_current_route());

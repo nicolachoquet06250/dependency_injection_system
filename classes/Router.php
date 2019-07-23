@@ -8,6 +8,7 @@ use Exception;
 use mvc_router\Base;
 use mvc_router\dependencies\Dependency;
 use mvc_router\interfaces\Singleton;
+use mvc_router\mvc\Controller;
 use ReflectionClass;
 use ReflectionException;
 use ReflectionMethod;
@@ -57,33 +58,7 @@ class Router extends Base implements Singleton {
 			Dependency::get_from_classname($class);
 			$ref_class = new ReflectionClass($class);
 			foreach ($ref_class->getMethods(ReflectionMethod::IS_PUBLIC) as $method) {
-				if($method->getDeclaringClass()->getName() === $class
-				   && $method->getName() !== '__construct' && $method->getName() !== '__call'
-				   && $method->getName() !== 'run') {
-					$method_name = $method->getName();
-					$route = '/'.basename(str_replace('\\', '/', $class)).'/'.$method_name;
-					$doc = $method->getDocComment();
-					if($doc) {
-						$doc = str_replace(['/**', ' */', "\t", ' * '], '', $doc);
-						$doc = explode("\n", $doc);
-						$_doc = [];
-						foreach ($doc as $line) {
-							if(strlen($line) > 0) {
-								$_doc[] = $line;
-							}
-						}
-						$doc = $_doc;
-						foreach ($doc as $item) {
-							if(substr($item, 0, strlen('@route ')) === '@route ') {
-								$route = str_replace('@route ', '', $doc)[0];
-								break;
-							}
-						}
-					}
-					$type = strstr($route, '[') || strstr($route, '(')
-							|| strstr($route, ']') || strstr($route, ')') ? self::REGEX : self::STRING;
-					self::route($route, Dependency::get_name_from_class($class), $method_name, $type);
-				}
+				$this->inject->get_phpdoc_parser()->get_method_route($this, $class, $method);
 			}
 		}
 	}
@@ -93,7 +68,7 @@ class Router extends Base implements Singleton {
 			if($_route['type'] === self::STRING) {
 				if($route === $route_str) {
 					self::$CURRENT_ROUTE = [$route => $_route];
-					return $this->run_controller($_route['controller'], $_route['method']);
+					return $this->run_controller(self::STRING, $_route['controller'], $_route['method']);
 				}
 			}
 		}
@@ -104,16 +79,30 @@ class Router extends Base implements Singleton {
 				if(!empty($matches)) {
 					array_shift($matches);
 					self::$CURRENT_ROUTE = [$route => $_route];
-					return $this->run_controller($_route['controller'], $_route['method'], ...$matches);
+					return $this->run_controller(self::REGEX, $_route['controller'], $_route['method'], ...$matches);
 				}
 			}
 		}
 		return '';
 	}
 
-	public function run_controller($ctrl, $method, ...$regex_parameter) {
+	/**
+	 * @param        $type
+	 * @param string $ctrl
+	 * @param string $method
+	 * @param array  ...$regex_parameter
+	 * @return mixed
+	 * @throws ReflectionException
+	 */
+	public function run_controller($type, $ctrl, $method, ...$regex_parameter) {
 		$get_ctrl_method = 'get_'.$ctrl;
+		/** @var Controller $controller */
 		$controller = $this->inject->$get_ctrl_method();
+		$method_ref = new ReflectionMethod(get_class($controller), $method);
+		$nb_parameters = count($method_ref->getParameters());
+		if($regex_parameter !== $nb_parameters && $type === self::REGEX) {
+			$controller->error404();
+		}
 		return $controller->$method(...$controller->get_parameters_table($method), ...$regex_parameter);
 	}
 

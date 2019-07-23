@@ -24,6 +24,10 @@ class Routes extends Controller {
 		</tr>';
 	}
 
+	/**
+	 * @route_disabled
+	 * @param Router $router
+	 */
 	public function index(Router $router) {
 		echo '<table>';
 		echo '<thead><tr>

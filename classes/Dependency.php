@@ -43,6 +43,11 @@ class Dependency {
 			'file' => __DIR__.'/RouteFlag.php',
 			'is_factory' => true,
 		],
+		'mvc_router\parser\PHPDocParser' => [
+			'name' => 'phpdoc_parser',
+			'file' => __DIR__.'/PHPDocParser.php',
+			'is_singleton' => true
+		],
 		'mvc_router\router\Router' => [
 			'name' => 'router',
 			'file' => __DIR__.'/Router.php',
