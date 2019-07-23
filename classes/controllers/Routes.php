@@ -19,7 +19,7 @@ class Routes extends Controller {
 				' . $route_detail['method'] . '
 			</td>
 			<td>
-				'.$route.'
+				'.str_replace('\\', '', $route).'
 			</td>
 		</tr>';
 	}
