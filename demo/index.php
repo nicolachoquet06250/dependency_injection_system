@@ -8,7 +8,6 @@ try {
 	require_once __DIR__.'/htaccess.php';
 
 	$request_uri = isset($_GET['q']) ? $_GET['q'] : $_SERVER['REQUEST_URI'];
-	var_dump($request_uri);
 	if(substr($request_uri, 0, 10) === '/index.php') {
 		$request_uri = str_replace('/index.php', '', $request_uri);
 	}
