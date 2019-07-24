@@ -24,6 +24,24 @@ class Routes extends Controller {
 			$service_route->write_array_header('Stats', '', '', '');
 			$service_route->write_stats_controllers();
 			$service_route->write_stats_types();
+			echo '<tr>
+	<td colspan="4" style="height: 15px;"></td>
+</tr>
+<tr>
+	<th colspan="4">
+		<button onclick="window.location.href = \'/routes\';">Cacher les stats</button>
+	</th>
+</tr>';
+		}
+		else {
+			echo '<tr>
+	<td colspan="4" style="height: 15px;"></td>
+</tr>
+<tr>
+	<th colspan="4">
+		<button onclick="window.location.href = \'/routes/stats\';">Voir les stats</button>
+	</th>
+</tr>';
 		}
 		echo '</table>';
 	}

@@ -36,7 +36,7 @@ class Router extends Base implements Singleton {
 	 * @param        $ctrl
 	 * @param string $method
 	 * @param int    $type
-	 * @param mixed  ...$flags
+	 * @return Router
 	 * @throws Exception
 	 */
 	public function route($route, $ctrl, $method = self::DEFAULT_ROUTE_METHOD, $type = self::STRING) {
@@ -47,10 +47,11 @@ class Router extends Base implements Singleton {
 				'method' => $method
 			];
 		else throw new Exception('controller '.$ctrl.' not found !');
+		return $this;
 	}
 
 	public function root_route($ctrl, $method = self::DEFAULT_ROUTE_METHOD) {
-		$this->route('/', $ctrl, $method);
+		return $this->route('/', $ctrl, $method);
 	}
 
 	/**
@@ -184,6 +185,6 @@ class Router extends Base implements Singleton {
 	}
 
 	public function post($key) {
-		return $_GET[$key] ?? false;
+		return $_POST[$key] ?? false;
 	}
 }
