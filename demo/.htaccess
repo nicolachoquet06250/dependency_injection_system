@@ -1,4 +1,4 @@
 RewriteEngine on
 
-RewriteRule ^([^\?]+)(\?([^\?]+))? /index.php?q=$1&$3 [L]
-#RewriteRule ^([^\.]+)$ /index.php?q=$0 [L]
+#RewriteRule ^([^\?]+)(\?([^\?]+))? /index.php?q=$1&$3 [L]
+RewriteRule ^([^\.]+)$ /index.php?q=$0 [QSA,L]
