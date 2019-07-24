@@ -4,19 +4,6 @@
 
 	require_once __DIR__.'/classes/Dependency.php';
 
-	function array_flatten($array, $preserve_keys = 1, &$newArray = []) {
-		foreach ($array as $key => $child) {
-			if (is_array($child)) {
-				$newArray = array_flatten($child, $preserve_keys, $newArray);
-			} elseif ($preserve_keys + is_string($key) > 1) {
-				$newArray[$key] = $child;
-			} else {
-				$newArray[] = $child;
-			}
-		}
-		return $newArray;
-	}
-
 	register_shutdown_function( "fatal_handler" );
 
 	function format_error( $errno, $errstr, $errfile, $errline ) {

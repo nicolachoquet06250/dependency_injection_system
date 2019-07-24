@@ -62,7 +62,22 @@ class Dependency {
 			'name' => 'router',
 			'file' => __DIR__.'/Router.php',
 			'is_singleton' => true,
-		]
+		],
+		'mvc_router\helpers\Helpers' => [
+			'name' => 'helpers',
+			'file' => __DIR__.'/Helpers.php',
+			'is_singleton' => true,
+		],
+		'mvc_router\commands\Commands' => [
+			'name' => 'commands',
+			'file' => __DIR__.'/Commands.php',
+			'is_singleton' => false,
+		],
+		'mvc_router\commands\Command' => [
+			'name' => 'command',
+			'file' => __DIR__.'/Command.php',
+			'is_singleton' => false,
+		],
 	];
 
 	public static function load_base_dependencies() {
@@ -215,6 +230,16 @@ class Dependency {
 	}
 
 	/**
+	 * @param      $class
+	 * @param      $name
+	 * @param      $file
+	 * @param null $type
+	 */
+	public static function add_custom_command($class, $name, $file, $type = self::NONE) {
+		self::add_custom_dependency($class, $name, $file, '\mvc_router\commands\Command', $type);
+	}
+
+	/**
 	 * @param $name
 	 * @param $arguments
 	 * @return null
@@ -243,6 +268,19 @@ class Dependency {
 			}
 		}
 		return $controllers;
+	}
+
+	/**
+	 * @return array
+	 */
+	public static function commands() {
+		$commands = [];
+		foreach (self::$dependencies as $class => $dependency) {
+			if(self::is_command($dependency['name'])) {
+				$commands[$class] = $dependency;
+			}
+		}
+		return $commands;
 	}
 
 	/**
@@ -292,6 +330,20 @@ class Dependency {
 					return true;
 				}
 				if(!isset($dependency['parent']) && ($class === 'mvc_router\mvc\Controller' || $class === '\mvc_router\mvc\Controller')) {
+					return true;
+				}
+			}
+		}
+		return false;
+	}
+
+	public static function is_command($elem) {
+		foreach (self::$dependencies as $class => $dependency) {
+			if($dependency['name'] === $elem) {
+				if(isset($dependency['parent']) && ($dependency['parent'] === 'mvc_router\commands\Command' || $dependency['parent'] === '\mvc_router\commands\Command')) {
+					return true;
+				}
+				if(!isset($dependency['parent']) && ($class === 'mvc_router\commands\Command' || $class === '\mvc_router\commands\Command')) {
 					return true;
 				}
 			}

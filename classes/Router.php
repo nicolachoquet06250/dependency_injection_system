@@ -108,6 +108,7 @@ class Router extends Base implements Singleton {
 	 * @param array  ...$regex_parameter
 	 * @return mixed
 	 * @throws ReflectionException
+	 * @throws Exception
 	 */
 	public function run_controller($type, $ctrl, $method, ...$regex_parameter) {
 		$get_ctrl_method = 'get_'.$ctrl;
@@ -131,7 +132,7 @@ class Router extends Base implements Singleton {
 				}
 			}
 			$regex_parameter = $tmp;
-			$regex_parameter = array_flatten($regex_parameter);
+			$regex_parameter = $this->inject->get_helpers()->array_flatten($regex_parameter);
 		}
 		return $controller->$method(...$controller->get_parameters_table($method), ...$regex_parameter);
 	}
