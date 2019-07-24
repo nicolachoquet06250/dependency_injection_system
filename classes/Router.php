@@ -88,7 +88,8 @@ class Router extends Base implements Singleton {
 
 		foreach (self::$routes as $route_str => $_route) {
 			if($_route['type'] === self::REGEX) {
-				preg_match('/'.$route_str.'$/AD', $route, $matches);
+				$regex = '/'.$route_str.'$/AD';
+				preg_match($regex, $route, $matches, PREG_OFFSET_CAPTURE, 0);
 				if(!empty($matches)) {
 					array_shift($matches);
 					self::$CURRENT_ROUTE = [$route => $_route];
@@ -113,8 +114,23 @@ class Router extends Base implements Singleton {
 		$controller = $this->inject->$get_ctrl_method();
 		$method_ref = new ReflectionMethod(get_class($controller), $method);
 		$nb_parameters = count($method_ref->getParameters());
-		if($regex_parameter !== $nb_parameters && $type === self::REGEX) {
-			$controller->error404();
+		if($type === self::REGEX) {
+			if(count($regex_parameter) > $nb_parameters) {
+				$controller->error404();
+			}
+			elseif (count($regex_parameter) < $nb_parameters) {
+				for($i = 0; $i < $nb_parameters; $i++) {
+					$regex_parameter[] = null;
+				}
+			}
+			$tmp = [];
+			foreach ($regex_parameter as $item) {
+				if($item !== '') {
+					$tmp[] = $item;
+				}
+			}
+			$regex_parameter = $tmp;
+			$regex_parameter = array_flatten($regex_parameter);
 		}
 		return $controller->$method(...$controller->get_parameters_table($method), ...$regex_parameter);
 	}
