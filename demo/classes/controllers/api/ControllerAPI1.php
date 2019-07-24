@@ -9,6 +9,10 @@ use mvc_router\router\Router;
 
 class ControllerAPI1 extends Controller {
 
+	/**
+	 * @route_disabled
+	 * @param string $message
+	 */
 	public function error404($message = 'Page not found !') {
 		header('HTTP/1.0 404 '.$message);
 		exit($this->inject->get_service_json()->encode(
