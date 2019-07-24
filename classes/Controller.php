@@ -76,10 +76,10 @@ class Controller extends Base {
 		return $this->inject->get_service_json()->encode($message);
 	}
 
-	protected function xml($message) {
-		$this->define_content_type(self::XML);
-		return $this->inject->get_service_xml()->encode($message);
-	}
+//	protected function xml($message) {
+//		$this->define_content_type(self::XML);
+//		return $this->inject->get_service_xml()->encode($message);
+//	}
 
 	protected function text($message) {
 		$this->define_content_type(self::TEXT);
