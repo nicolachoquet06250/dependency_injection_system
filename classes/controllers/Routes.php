@@ -9,7 +9,7 @@ use mvc_router\services\Route;
 class Routes extends Controller {
 
 	/**
-	 * @route_disabled
+	 * @route \/routes\/?(stats)?
 	 * @param Router      $router
 	 * @param Route       $service_route
 	 * @param string|null $stats
