@@ -5,7 +5,6 @@ namespace mvc_router\mvc;
 
 
 use mvc_router\Base;
-use mvc_router\WrapperFactory;
 
 class Controller extends Base {
 	const JSON = 1;
@@ -19,11 +18,6 @@ class Controller extends Base {
 		self::HTML => 'text/html',
 		self::TEXT => 'plain/text',
 	];
-
-	public static function run($route) {
-		$dw = WrapperFactory::create()->get_dependency_wrapper();
-		$dw->get_router()->execute($route);
-	}
 
 	private function define_content_type($type) {
 		header('Content-Type: '.$this->content_types[$type].';charset=utf-8');
