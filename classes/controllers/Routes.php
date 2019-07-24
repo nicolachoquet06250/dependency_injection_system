@@ -2,19 +2,15 @@
 
 namespace mvc_router\mvc;
 
-
-use mvc_router\router\Router;
-use mvc_router\services\Route;
-
 class Routes extends Controller {
 
 	/**
 	 * @route \/routes\/?(stats)?
-	 * @param Router      $router
-	 * @param Route       $service_route
+	 * @param \mvc_router\router\Router      $router
+	 * @param \mvc_router\services\Route       $service_route
 	 * @param string|null $stats
 	 */
-	public function index(Router $router, Route $service_route, $stats) {
+	public function index(\mvc_router\router\Router $router, \mvc_router\services\Route $service_route, $stats) {
 		echo '<meta charset="utf-8" />';
 		echo '<title>Liste des routes</title>';
 		echo '<table style="width: 100%;">';

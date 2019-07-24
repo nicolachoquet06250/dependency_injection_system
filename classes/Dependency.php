@@ -38,9 +38,9 @@ class Dependency {
 			'file' => __DIR__.'/Service.php',
 			'is_singleton' => false,
 		],
-		'mvc_router\services\Toto' => [
-			'name' => 'service_toto',
-			'file' => __DIR__.'/services/Toto.php',
+		'mvc_router\services\Json' => [
+			'name' => 'service_json',
+			'file' => __DIR__.'/services/Json.php',
 			'is_singleton' => false,
 		],
 		'mvc_router\router\RouteFlag' => [
