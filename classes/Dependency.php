@@ -43,6 +43,11 @@ class Dependency {
 			'file' => __DIR__.'/services/Json.php',
 			'is_singleton' => false,
 		],
+		'mvc_router\services\Error' => [
+			'name' => 'service_error',
+			'file' => __DIR__.'/services/Error.php',
+			'is_singleton' => false,
+		],
 		'mvc_router\router\RouteFlag' => [
 			'name' => 'route_flag',
 			'file' => __DIR__.'/RouteFlag.php',

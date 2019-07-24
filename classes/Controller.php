@@ -30,56 +30,13 @@ class Controller extends Base {
 	}
 
 	private function render_not_available($type) {
-		$this->error400(strtoupper($type).' content type is not available for the moment</b>');
-	}
-
-	/**
-	 * @route_disabled
-	 * @param string $message
-	 */
-	public function error400($message = 'Bad request') {
-		header('HTTP/1.0 400 '.$message);
-		exit('<Doctype html>
-<html lang="en">
-	<head>
-		<meta charset="utf-8" />
-		<title>Error 400</title>
-	</head>
-	<body>
-		<h1>Error 400</h1>
-		<p>'.$message.'</p>
-	</body>
-</html>');
-	}
-
-	/**
-	 * @route_disabled
-	 * @param string $message
-	 */
-	public function error404($message = 'Page not found !') {
-		header('HTTP/1.0 404 '.$message);
-		exit('<Doctype html>
-<html lang="en">
-	<head>
-		<meta charset="utf-8" />
-		<title>404 - '.$message.'</title>
-	</head>
-	<body>
-		<h1>Error 404</h1>
-		<p>'.$message.'</p>
-	</body>
-</html>');
+		$this->inject->get_service_error()->error400(strtoupper($type).' content type is not available for the moment</b>');
 	}
 
 	protected function json($message) {
 		$this->define_content_type(self::JSON);
 		return $this->inject->get_service_json()->encode($message);
 	}
-
-//	protected function xml($message) {
-//		$this->define_content_type(self::XML);
-//		return $this->inject->get_service_xml()->encode($message);
-//	}
 
 	protected function text($message) {
 		$this->define_content_type(self::TEXT);

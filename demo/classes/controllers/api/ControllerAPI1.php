@@ -8,22 +8,6 @@ use mvc_router\mvc\Controller;
 use mvc_router\router\Router;
 
 class ControllerAPI1 extends Controller {
-
-	/**
-	 * @route_disabled
-	 * @param string $message
-	 */
-	public function error404($message = 'Page not found !') {
-		header('HTTP/1.0 404 '.$message);
-		exit($this->inject->get_service_json()->encode(
-			[
-				'error' => true,
-				'status' => 404,
-				'message' => $message,
-			]
-		));
-	}
-
 	/**
 	 * @route \/api\/user\/([a-zA-Z0-9\-\_\+\@]+)
 	 * @param Router $router

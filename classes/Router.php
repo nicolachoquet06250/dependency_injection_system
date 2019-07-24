@@ -98,7 +98,7 @@ class Router extends Base implements Singleton {
 				}
 			}
 		}
-		return $this->inject->get_controller()->error404();
+		return $this->inject->get_service_error()->error404();
 	}
 
 	/**
@@ -117,7 +117,7 @@ class Router extends Base implements Singleton {
 		$nb_parameters = count($method_ref->getParameters());
 		if($type === self::REGEX) {
 			if(count($regex_parameter) > $nb_parameters) {
-				$controller->error404();
+				$this->inject->get_service_error()->error404();
 			}
 			elseif (count($regex_parameter) < $nb_parameters) {
 				for($i = 0; $i < $nb_parameters; $i++) {
