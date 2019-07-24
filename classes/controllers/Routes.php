@@ -15,7 +15,6 @@ class Routes extends Controller {
 	 * @param string|null $stats
 	 */
 	public function index(Router $router, Route $service_route, $stats) {
-		var_dump($router->get('stats'));
 		echo '<meta charset="utf-8" />';
 		echo '<title>Liste des routes</title>';
 		echo '<table style="width: 100%;">';

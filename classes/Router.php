@@ -155,9 +155,9 @@ class Router extends Base implements Singleton {
 		foreach ($gets as $get) {
 			if(strstr($get, '=')) {
 				$get = explode('=', $get);
-				if(ctype_digit($get[1])) {
-					$get[1] = intval($get[1]);
-				}
+//				if(ctype_digit($get[1])) {
+//					$get[1] = intval($get[1]);
+//				}
 			}
 			else {
 				$get = [
@@ -170,10 +170,16 @@ class Router extends Base implements Singleton {
 	}
 
 	public function set_get($key, $value) {
+		if(ctype_digit($value)) {
+			$value = intval($value);
+		}
 		$_GET[$key] = $value;
 	}
 
 	public function get($key) {
+		if(isset($_GET[$key]) && ctype_digit($_GET[$key])) {
+			$_GET[$key] = intval($_GET[$key]);
+		}
 		return $_GET[$key] ?? false;
 	}
 
