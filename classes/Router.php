@@ -98,7 +98,7 @@ class Router extends Base implements Singleton {
 				}
 			}
 		}
-		return '';
+		return $this->inject->get_controller()->error404();
 	}
 
 	/**
