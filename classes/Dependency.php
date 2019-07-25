@@ -75,6 +75,12 @@ class Dependency {
 			'is_singleton' => true,
 			'parent' => 'mvc_router\services\Service',
 		],
+		'mvc_router\services\Translate' => [
+			'name' => 'service_translation',
+			'file' => __DIR__.'/services/Translate.php',
+			'is_singleton' => false,
+			'parent' => 'mvc_router\services\Service',
+		],
 
 		'mvc_router\parser\PHPDocParser' => [
 			'name' => 'phpdoc_parser',
