@@ -62,6 +62,12 @@ class Dependency {
 			'is_singleton' => false,
 			'parent' => 'mvc_router\services\Service'
 		],
+		'mvc_router\services\FileGeneration' => [
+			'name' => 'service_generation',
+			'file' => __DIR__.'/services/FileGeneration.php',
+			'is_singleton' => false,
+			'parent' => 'mvc_router\services\Service',
+		],
 		'mvc_router\parser\PHPDocParser' => [
 			'name' => 'phpdoc_parser',
 			'file' => __DIR__.'/utils/parsers/PHPDocParser.php',
