@@ -2,7 +2,7 @@
 
 use mvc_router\dependencies\Dependency;
 
-require_once __DIR__.'/classes/Dependency.php';
+require_once __DIR__.'/autoload.php';
 
 try {
 	Dependency::load_base_dependencies();
@@ -26,5 +26,7 @@ try {
 			break;
 	}
 } catch (Exception $e) {
-	exit($e->getMessage()."\n");
+	echo $e->getMessage()."\n";
+	var_dump($e->getTrace());
+	exit();
 }

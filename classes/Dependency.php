@@ -42,11 +42,19 @@ class Dependency {
 			'name' => 'service_json',
 			'file' => __DIR__.'/services/Json.php',
 			'is_singleton' => false,
+			'parent' => 'mvc_router\services\Service',
 		],
 		'mvc_router\services\Error' => [
 			'name' => 'service_error',
 			'file' => __DIR__.'/services/Error.php',
 			'is_singleton' => false,
+			'parent' => 'mvc_router\services\Service',
+		],
+		'mvc_router\services\Logger' => [
+			'name' => 'service_logger',
+			'file' => __DIR__.'/services/Logger.php',
+			'is_singleton' => false,
+			'parent' => 'mvc_router\services\Service',
 		],
 		'mvc_router\router\RouteFlag' => [
 			'name' => 'route_flag',
