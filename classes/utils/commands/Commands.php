@@ -52,7 +52,7 @@ class Commands extends Base implements Singleton {
 		if(!strstr($command, ':')) {
 			exec($command, $output, $return);
 			return [
-				'output' => implode("\n", $output),
+				'output' => $output,
 				'return' => $return,
 			];
 		}
