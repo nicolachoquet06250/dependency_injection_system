@@ -33,6 +33,7 @@ class Dependency {
 			'is_singleton' => false,
 			'parent' => 'mvc_router\mvc\Controller'
 		],
+
 		'mvc_router\services\Service' => [
 			'name' => 'service',
 			'file' => __DIR__.'/utils/services/Service.php',
@@ -68,21 +69,31 @@ class Dependency {
 			'is_singleton' => false,
 			'parent' => 'mvc_router\services\Service',
 		],
+		'mvc_router\services\Session' => [
+			'name' => 'service_session',
+			'file' => __DIR__.'/services/Session.php',
+			'is_singleton' => true,
+			'parent' => 'mvc_router\services\Service',
+		],
+
 		'mvc_router\parser\PHPDocParser' => [
 			'name' => 'phpdoc_parser',
 			'file' => __DIR__.'/utils/parsers/PHPDocParser.php',
 			'is_singleton' => true
 		],
+
 		'mvc_router\router\Router' => [
 			'name' => 'router',
 			'file' => __DIR__.'/mvc/Router.php',
 			'is_singleton' => true,
 		],
+
 		'mvc_router\helpers\Helpers' => [
 			'name' => 'helpers',
 			'file' => __DIR__.'/utils/Helpers.php',
 			'is_singleton' => true,
 		],
+
 		'mvc_router\commands\Commands' => [
 			'name' => 'commands',
 			'file' => __DIR__.'/utils/commands/Commands.php',
