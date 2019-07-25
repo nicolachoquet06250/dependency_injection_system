@@ -49,6 +49,13 @@ class Commands extends Base implements Singleton {
 	 * @throws Exception
 	 */
 	public function run(string $command) {
+		if(!strstr($command, ':')) {
+			exec($command, $output, $return);
+			return [
+				'output' => implode("\n", $output),
+				'return' => $return,
+			];
+		}
 		$command = explode(' ', $command);
 
 		$command_base = array_shift($command);
