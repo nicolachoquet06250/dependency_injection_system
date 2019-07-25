@@ -28,8 +28,8 @@ class Logger extends Service {
 		return $this;
 	}
 
-	protected function format_header_log() {
-		return date('Y-m-d H:i:s').' | ';
+	protected function format_header_log($with_user_name = false) {
+		return ($with_user_name ? get_current_user().'@'.gethostname().'~' : '').date('Y-m-d_H:i:s').' | ';
 	}
 
 	protected function log_file($message) {
@@ -47,7 +47,7 @@ class Logger extends Service {
 	}
 
 	public function log($message) {
-		$message = $this->format_header_log().$message;
+		$message = $this->format_header_log(true).$message;
 		foreach ($this->types as $type) {
 			switch ($type) {
 				case self::CONSOLE:

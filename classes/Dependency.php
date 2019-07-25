@@ -16,15 +16,15 @@ class Dependency {
 	const NONE = null;
 
 	protected static $base_dependencies = [
-		__DIR__.'/../interfaces/Singleton.php',
-		__DIR__.'/../classes/WrapperFactory.php',
-		__DIR__.'/../classes/Base.php',
+		__DIR__.'/interfaces/Singleton.php',
+		__DIR__.'/WrapperFactory.php',
+		__DIR__.'/Base.php',
 	];
 
 	private static $dependencies = [
 		'mvc_router\mvc\Controller' => [
 			'name' => 'controller',
-			'file' => __DIR__.'/Controller.php',
+			'file' => __DIR__.'/mvc/Controller.php',
 			'is_singleton' => false,
 		],
 		'mvc_router\mvc\Routes' => [
@@ -35,7 +35,7 @@ class Dependency {
 		],
 		'mvc_router\services\Service' => [
 			'name' => 'service',
-			'file' => __DIR__.'/Service.php',
+			'file' => __DIR__.'/utils/services/Service.php',
 			'is_singleton' => false,
 		],
 		'mvc_router\services\Json' => [
@@ -56,39 +56,46 @@ class Dependency {
 			'is_singleton' => false,
 			'parent' => 'mvc_router\services\Service',
 		],
-		'mvc_router\router\RouteFlag' => [
-			'name' => 'route_flag',
-			'file' => __DIR__.'/RouteFlag.php',
-			'is_factory' => true,
+		'mvc_router\services\Route' => [
+			'name' => 'service_routes',
+			'file' => __DIR__.'/services/Route.php',
+			'is_singleton' => false,
+			'parent' => 'mvc_router\services\Service'
 		],
 		'mvc_router\parser\PHPDocParser' => [
 			'name' => 'phpdoc_parser',
-			'file' => __DIR__.'/PHPDocParser.php',
+			'file' => __DIR__.'/utils/parsers/PHPDocParser.php',
 			'is_singleton' => true
 		],
 		'mvc_router\router\Router' => [
 			'name' => 'router',
-			'file' => __DIR__.'/Router.php',
+			'file' => __DIR__.'/mvc/Router.php',
 			'is_singleton' => true,
 		],
 		'mvc_router\helpers\Helpers' => [
 			'name' => 'helpers',
-			'file' => __DIR__.'/Helpers.php',
+			'file' => __DIR__.'/utils/Helpers.php',
 			'is_singleton' => true,
 		],
 		'mvc_router\commands\Commands' => [
 			'name' => 'commands',
-			'file' => __DIR__.'/Commands.php',
+			'file' => __DIR__.'/utils/commands/Commands.php',
 			'is_singleton' => true,
 		],
 		'mvc_router\commands\Command' => [
 			'name' => 'command',
-			'file' => __DIR__.'/Command.php',
+			'file' => __DIR__.'/utils/commands/Command.php',
 			'is_singleton' => false,
 		],
 		'mvc_router\commands\TestCommand' => [
 			'name' => 'command_test',
 			'file' => __DIR__.'/commands/TestCommand.php',
+			'is_singleton' => false,
+			'parent' => 'mvc_router\commands\Command',
+		],
+		'mvc_router\commands\GenerateCommand' => [
+			'name' => 'command_generate',
+			'file' => __DIR__.'/commands/GenerateCommand.php',
 			'is_singleton' => false,
 			'parent' => 'mvc_router\commands\Command',
 		],
@@ -244,6 +251,17 @@ class Dependency {
 	}
 
 	/**
+	 * @param array ...$controller
+	 */
+	public static function add_custom_controllers(...$controller) {
+		foreach ($controller as $ctrl_details) {
+			$type = isset($ctrl_details['type']) ? $ctrl_details['type'] : self::NONE;
+			self::add_custom_controller($ctrl_details['class'], $ctrl_details['name'], $ctrl_details['file'], $type);
+		}
+		self::require_dependency_wrapper();
+	}
+
+	/**
 	 * @param      $class
 	 * @param      $name
 	 * @param      $file
@@ -251,6 +269,17 @@ class Dependency {
 	 */
 	public static function add_custom_command($class, $name, $file, $type = self::NONE) {
 		self::add_custom_dependency($class, $name, $file, '\mvc_router\commands\Command', $type);
+	}
+
+	/**
+	 * @param array $command
+	 */
+	public static function add_custom_commands(...$command) {
+		foreach ($command as $cmd_details) {
+			$type = isset($ctrl_details['type']) ? $cmd_details['type'] : self::NONE;
+			self::add_custom_command($cmd_details['class'], $cmd_details['name'], $cmd_details['file'], $type);
+		}
+		self::require_dependency_wrapper();
 	}
 
 	/**
@@ -396,5 +425,36 @@ class Dependency {
 	 */
 	public static function autoload($class) {
 		Dependency::get_from_classname($class);
+	}
+
+	/**
+	 * FOR ERROR HANDLER
+	 *
+	 * @param $errno
+	 * @param $errstr
+	 * @param $errfile
+	 * @param $errline
+	 * @return string
+	 */
+	private static function format_error( $errno, $errstr, $errfile, $errline ) {
+		$trace = print_r( debug_backtrace( false ), true );
+		$content = "<b style='color: red;'>Error( $errstr; code( $errno ); file( $errfile ); line( $errline ); <pre>$trace</pre> )</b>";
+		return $content;
+	}
+
+	/**
+	 * FOR ERROR HANDLER
+	 */
+	public static function fatal_handler() {
+		$error = error_get_last();
+
+		if(!is_null($error)) {
+			$errno   = $error["type"];
+			$errfile = $error["file"];
+			$errline = $error["line"];
+			$errstr  = $error["message"];
+
+			echo self::format_error( $errno, $errstr, $errfile, $errline);
+		}
 	}
 }

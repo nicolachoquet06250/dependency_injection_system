@@ -1,2 +1,6 @@
 .idea/
 classes/DependencyWrapper.php
+demo/autoload.php
+demo/index.php
+demo/htaccess.php
+demo/.htaccess

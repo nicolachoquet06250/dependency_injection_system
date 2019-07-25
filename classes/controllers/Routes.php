@@ -10,7 +10,7 @@ class Routes extends Controller {
 	 * @param \mvc_router\services\Route       $service_route
 	 * @param string|null $stats
 	 */
-	public function index(\mvc_router\router\Router $router, \mvc_router\services\Route $service_route, $stats) {
+	public function index(\mvc_router\router\Router $router, \mvc_router\services\Route $service_route, $stats = null) {
 		echo '<meta charset="utf-8" />';
 		echo '<title>Liste des routes</title>';
 		echo '<table style="width: 100%;">';
