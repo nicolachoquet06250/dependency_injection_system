@@ -30,9 +30,14 @@ class Dependency {
 		],
 		'mvc_router\mvc\Routes' => [
 			'name' => 'routes_controller',
-			'file' => __DIR__.'/controllers/Routes.php',
+			'file' => __DIR__.'/mvc/controllers/Routes.php',
 			'is_singleton' => false,
 			'parent' => 'mvc_router\mvc\Controller'
+		],
+		'mvc_router\mvc\Model' => [
+			'name' => 'model',
+			'file' => __DIR__.'/mvc/Model.php',
+			'is_singleton' => false,
 		],
 
 		'mvc_router\services\Service' => [
