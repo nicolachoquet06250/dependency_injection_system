@@ -425,6 +425,10 @@ class Dependency {
 		return false;
 	}
 
+	/**
+	 * @param string $elem
+	 * @return bool
+	 */
 	public static function is_command($elem) {
 		foreach (self::$dependencies as $class => $dependency) {
 			if($dependency['name'] === $elem) {
