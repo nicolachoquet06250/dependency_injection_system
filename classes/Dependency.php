@@ -6,6 +6,7 @@ namespace mvc_router\dependencies;
 
 use Exception;
 use mvc_router\Base;
+use mvc_router\confs\Conf;
 use mvc_router\WrapperFactory;
 use ReflectionClass;
 use ReflectionException;
@@ -137,6 +138,10 @@ class Dependency {
 		return WrapperFactory::create();
 	}
 
+	public static function is_in($class) {
+		return isset(self::$dependencies[$class]);
+	}
+
 	/**
 	 * @param $classname
 	 * @return Base
@@ -166,7 +171,9 @@ class Dependency {
 				   (isset(self::$dependencies[$classname]['is_factory']) && self::$dependencies[$classname]['is_factory'])
 				? $classname::create() : new $classname();
 		}
-		else throw new Exception($classname.' is not a dependency');
+		else {
+			throw new Exception($classname.' is not a dependency');
+		}
 	}
 
 	/**
@@ -316,7 +323,7 @@ class Dependency {
 			$name = substr($name, 4, strlen($name) - 4);
 			$dependency_class = null;
 			if(self::method_exists('get_'.$name)) {
-				return Dependency::get_from_classname(self::get_class_from_method('get_'.$name));
+				return self::get_from_classname(self::get_class_from_method('get_'.$name));
 			}
 			return null;
 		}
@@ -447,7 +454,8 @@ class Dependency {
 	 * @throws Exception
 	 */
 	public static function autoload($class) {
-		Dependency::get_from_classname($class);
+		if(self::is_in($class)) self::get_from_classname($class);
+		elseif (Conf::is_in($class)) Conf::get_from_classname($class);
 	}
 
 	/**

@@ -4,11 +4,13 @@
 namespace mvc_router;
 
 
+use mvc_router\confs\ConfWrapper;
 use mvc_router\dependencies\DependencyWrapper;
 use mvc_router\interfaces\Singleton;
 
 class WrapperFactory implements Singleton {
 	private static $dependency_wrapper = null;
+	private static $conf_wrapper = null;
 	private static $instance = null;
 
 	private function __construct() {}
@@ -19,6 +21,14 @@ class WrapperFactory implements Singleton {
 			WrapperFactory::$dependency_wrapper = new DependencyWrapper();
 		}
 		return WrapperFactory::$dependency_wrapper;
+	}
+
+	/** @return ConfWrapper */
+	public function get_conf_wrapper() {
+		if(is_null(self::$conf_wrapper)) {
+			self::$conf_wrapper = new ConfWrapper();
+		}
+		return self::$conf_wrapper;
 	}
 
 	public static function create() {

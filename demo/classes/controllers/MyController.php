@@ -62,4 +62,11 @@ class MyController extends Controller {
 	public function translate(Translate $service_translation) {
 		return $service_translation->__('Je suis %1', ['Nicolas']).' '.$service_translation->__('et toi tu es %1', ['Yann']);
 	}
+
+	/**
+	 * @route /conf
+	 */
+	public function test_confs() {
+		return $this->html($this->confs->get_mysql()->host);
+	}
 }

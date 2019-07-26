@@ -5,6 +5,7 @@ namespace mvc_router;
 
 
 use Exception;
+use mvc_router\confs\ConfWrapper;
 use mvc_router\dependencies\Dependency;
 use mvc_router\dependencies\DependencyWrapper;
 use ReflectionMethod;
@@ -13,6 +14,8 @@ use ReflectionObject;
 class Base {
 	/** @var DependencyWrapper $inject */
 	protected $inject;
+	/** @var ConfWrapper $confs */
+	protected $confs;
 	private $dependencies_injection_enabled = false;
 
 	public function __construct() {
@@ -20,7 +23,9 @@ class Base {
 	}
 
 	protected function after_construct() {
-		$this->inject = WrapperFactory::create()->get_dependency_wrapper();
+		$wf = WrapperFactory::create();
+		$this->inject = $wf->get_dependency_wrapper();
+		$this->confs = $wf->get_conf_wrapper();
 		$this->enable_dependencies_injection();
 	}
 

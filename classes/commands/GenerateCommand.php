@@ -4,6 +4,7 @@
 namespace mvc_router\commands;
 
 
+use mvc_router\confs\Conf;
 use mvc_router\dependencies\Dependency;
 use mvc_router\services\FileGeneration;
 use mvc_router\services\Translate;
@@ -15,7 +16,8 @@ class GenerateCommand extends Command {
 		}
 
 		Dependency::require_dependency_wrapper();
-		return 'DependencyWrapper.php has been generated !';
+		Conf::require_conf_wrapper();
+		return 'DependencyWrapper.php and ConfWrapper.php has been generated !';
 	}
 
 	public function base_files(FileGeneration $generation) {
