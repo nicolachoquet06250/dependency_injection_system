@@ -2,22 +2,33 @@
 
 namespace mvc_router\mvc;
 
+use mvc_router\router\Router;
+use mvc_router\services\Route;
+use mvc_router\services\Translate;
+
 class Routes extends Controller {
 
 	/**
 	 * @route \/routes\/?(stats)?
-	 * @param \mvc_router\router\Router      $router
-	 * @param \mvc_router\services\Route       $service_route
+	 * @param Router      $router
+	 * @param Route       $service_route
+	 * @param Translate   $service_translation
 	 * @param string|null $stats
 	 */
-	public function index(\mvc_router\router\Router $router, \mvc_router\services\Route $service_route, $stats = null) {
+	public function index(Router $router, Route $service_route, Translate $service_translation, $stats = null) {
+		$service_translation->set_default_language(Translate::EN);
 		echo '<meta charset="utf-8" />';
-		echo '<title>Liste des routes</title>';
+		echo '<title>'.$service_translation->__('Liste des routes').'</title>';
 		echo '<table style="width: 100%;">';
-		$service_route->write_array_header('Type', 'Controlleur', 'Méthode', 'Route');
+		$service_route->write_array_header(
+			$service_translation->__('Type'),
+			$service_translation->__('Controlleur'),
+			$service_translation->__('Méthode'),
+			$service_translation->__('Route')
+		);
 		$service_route->write_array_lines($router);
 		if($router->get('stats') === true || $router->get('stats') === 1 || !is_null($stats)) {
-			$service_route->write_array_header('Stats', '', '', '');
+			$service_route->write_array_header($service_translation->__('Stats'), '', '', '');
 			$service_route->write_stats_controllers();
 			$service_route->write_stats_types();
 			echo '<tr>
@@ -25,7 +36,7 @@ class Routes extends Controller {
 </tr>
 <tr>
 	<th colspan="4">
-		<button onclick="window.location.href = \'/routes\';">Cacher les stats</button>
+		<button onclick="window.location.href = \'/routes\';">'.$service_translation->__('Cacher les stats').'</button>
 	</th>
 </tr>';
 		}
@@ -35,7 +46,7 @@ class Routes extends Controller {
 </tr>
 <tr>
 	<th colspan="4">
-		<button onclick="window.location.href = \'/routes/stats\';">Voir les stats</button>
+		<button onclick="window.location.href = \'/routes/stats\';">'.$service_translation->__('Voir les stats').'</button>
 	</th>
 </tr>';
 		}

@@ -23,8 +23,12 @@ class Translate extends Service {
 		return isset($_SERVER['HTTP_ACCEPT_LANGUAGE']) ? explode(',', explode(';', $_SERVER['HTTP_ACCEPT_LANGUAGE'])[0])[1] : geoip_country_code_by_name(gethostname());
 	}
 
-	protected function set_default_language($lang = self::FR) {
+	public function set_default_language($lang = self::FR) {
 		self::$default_language = $lang;
+	}
+
+	public function get_default_language() {
+		return self::$default_language;
 	}
 
 	protected function get_file_path($lang) {
@@ -48,8 +52,8 @@ class Translate extends Service {
 	}
 
 	public function __($text, $params = []) {
-		if($this->get_translated($text, $this->get_current_language())) {
-			$text = $this->get_translated($text, $this->get_current_language());
+		if(($translated = $this->get_translated($text, $this->get_default_language())) || $translated === '') {
+			$text = $translated === '' ? $text : $translated;
 			return $this->replace_vars_with_params($text, $params);
 		}
 		return '[ Missing Translation ] '.$this->replace_vars_with_params($text, $params);

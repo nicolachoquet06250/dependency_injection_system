@@ -1,4 +1,5 @@
 .idea/
+classes/translations/
 classes/DependencyWrapper.php
 demo/autoload.php
 demo/index.php

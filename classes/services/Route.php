@@ -82,7 +82,13 @@ class Route extends Service {
 	}
 
 	public function write_stats_controllers() {
-		$this->write_array_header('Controlleurs ( nom )', 'Stat ( % )', 'Controlleurs ( nb )', 'Routes ( nb )');
+		$service_translation = $this->inject->get_service_translation();
+		$this->write_array_header(
+			$service_translation->__('Controlleurs ( nom )'),
+			$service_translation->__('Stat ( % )'),
+			$service_translation->__('Controlleurs ( nb )'),
+			$service_translation->__('Routes ( nb )')
+		);
 		$total_of_routes = $this->get_route_number();
 		echo '<tbody>';
 		foreach ($this->get_different_controllers() as $controller_name => $nb_of_this_controller) {
@@ -97,7 +103,13 @@ class Route extends Service {
 	}
 
 	public function write_stats_types() {
-		$this->write_array_header('Type ( nom )', 'Stat ( % )', 'Types ( nb )', 'Routes ( nb )');
+		$service_translation = $this->inject->get_service_translation();
+		$this->write_array_header(
+			$service_translation->__('Type ( nom )'),
+			$service_translation->__('Stat ( % )'),
+			$service_translation->__('Types ( nb )'),
+			$service_translation->__('Routes ( nb )')
+		);
 		$total_of_routes = $this->get_route_number();
 		echo '<tbody>';
 		foreach ($this->get_different_types() as $type_name => $nb_of_this_type) {
