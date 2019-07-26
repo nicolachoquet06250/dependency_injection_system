@@ -22,7 +22,14 @@ class Conf {
 		]
 	];
 
+	/**
+	 * @param string $class
+	 * @return bool
+	 */
 	public static function is_in($class) {
+		if(substr($class, 0, 1) === '\\') {
+			$class = substr($class, 1, strlen($class) - 1);
+		}
 		return isset(self::$confs[$class]);
 	}
 
@@ -184,6 +191,9 @@ class Conf {
 	 * @return mixed|null
 	 */
 	public static function get_name_from_class($classname) {
+		if(substr($classname, 0, 1) === '\\') {
+			$classname = substr($classname, 1, strlen($classname) - 1);
+		}
 		if(isset(self::$confs[$classname])) {
 			return self::$confs[$classname]['name'];
 		}

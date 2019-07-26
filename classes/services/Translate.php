@@ -15,6 +15,12 @@ class Translate extends Service {
 		self::US => self::US,
 	];
 
+	protected $languages_names = [
+		self::FR => 'Français',
+		self::EN => 'Anglais - RU',
+		self::US => 'Anglais - US'
+	];
+
 	protected static $default_language = self::FR;
 
 	protected $file_tpl = '%__DIR__%/../translations/translation_%lang%.json';
@@ -29,6 +35,10 @@ class Translate extends Service {
 
 	public function get_default_language() {
 		return self::$default_language;
+	}
+
+	public function get_languages() {
+		return $this->languages_names;
 	}
 
 	protected function get_file_path($lang) {

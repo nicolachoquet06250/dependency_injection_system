@@ -1,5 +1,6 @@
 <?php
 
+	use mvc_router\confs\Conf;
 	use mvc_router\dependencies\Dependency;
 
 	require_once __DIR__.'/../autoload.php';
@@ -16,3 +17,9 @@
 			'file' => __DIR__.'/classes/controllers/api/ControllerAPI1.php',
 		]
 	);
+
+	Conf::extend_conf('mvc_router\confs\Mysql', 'mvc_router\confs\custom\Mysql', [
+		'name' => 'mysql',
+		'type' => Conf::NONE,
+		'file' => __DIR__.'/classes/confs/Mysql.php',
+	]);

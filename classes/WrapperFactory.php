@@ -17,18 +17,12 @@ class WrapperFactory implements Singleton {
 
 	/** @return DependencyWrapper */
 	public function get_dependency_wrapper() {
-		if(is_null(WrapperFactory::$dependency_wrapper)) {
-			WrapperFactory::$dependency_wrapper = new DependencyWrapper();
-		}
-		return WrapperFactory::$dependency_wrapper;
+		return self::dependencies();
 	}
 
 	/** @return ConfWrapper */
 	public function get_conf_wrapper() {
-		if(is_null(self::$conf_wrapper)) {
-			self::$conf_wrapper = new ConfWrapper();
-		}
-		return self::$conf_wrapper;
+		return self::confs();
 	}
 
 	public static function create() {
@@ -36,5 +30,21 @@ class WrapperFactory implements Singleton {
 			self::$instance = new WrapperFactory();
 		}
 		return self::$instance;
+	}
+
+	/** @return DependencyWrapper */
+	public static function dependencies() {
+		if(is_null(WrapperFactory::$dependency_wrapper)) {
+			WrapperFactory::$dependency_wrapper = new DependencyWrapper();
+		}
+		return WrapperFactory::$dependency_wrapper;
+	}
+
+	/** @return ConfWrapper */
+	public static function confs() {
+		if(is_null(self::$conf_wrapper)) {
+			self::$conf_wrapper = new ConfWrapper();
+		}
+		return self::$conf_wrapper;
 	}
 }

@@ -7,6 +7,12 @@ use mvc_router\services\Service;
 use mvc_router\services\Translate;
 
 class MyController extends Controller {
+	/** @var mvc_router\services\Translate $service_translation */
+	public $service_translation;
+
+	/** @var mvc_router\confs\custom\Mysql $mysqli_conf */
+	public $mysqli_conf;
+
 	/**
 	 * @route /mon/example/
 	 */
@@ -67,6 +73,6 @@ class MyController extends Controller {
 	 * @route /conf
 	 */
 	public function test_confs() {
-		return $this->html($this->confs->get_mysql()->host);
+		return $this->html($this->service_translation->get_default_language().'<br>'.$this->mysqli_conf->user);
 	}
 }
