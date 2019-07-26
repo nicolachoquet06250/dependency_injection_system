@@ -4,6 +4,7 @@
 use mvc_router\mvc\Controller;
 use mvc_router\router\Router;
 use mvc_router\services\Service;
+use mvc_router\services\Translate;
 
 class MyController extends Controller {
 	/**
@@ -51,5 +52,14 @@ class MyController extends Controller {
 		$service->hello();
 		var_dump($param1);
 		echo '</pre>';
+	}
+
+	/**
+	 * @route /translate
+	 * @param Translate $service_translation
+	 * @return bool|string
+	 */
+	public function translate(Translate $service_translation) {
+		return $service_translation->__('Je suis %1', ['Nicolas']).' '.$service_translation->__('et toi tu es %1', ['Yann']);
 	}
 }

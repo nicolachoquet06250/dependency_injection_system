@@ -7,7 +7,7 @@ class Json extends Service {
 		return json_encode($object);
 	}
 
-	public function decode($string) {
-		return json_decode($string);
+	public function decode($string, $assoc = false) {
+		return json_decode($string, $assoc);
 	}
 }
