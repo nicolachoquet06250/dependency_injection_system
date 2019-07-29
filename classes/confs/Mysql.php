@@ -4,6 +4,8 @@
 namespace mvc_router\confs;
 
 
+use Exception;
+use mvc_router\dependencies\DependencyWrapper;
 use mysqli;
 use mysqli_result;
 
@@ -14,15 +16,34 @@ class Mysql {
 	public $db_name;
 	public $port = 3306;
 
-	/** @var mysqli $connector */
 	protected $connector;
-	/** @var mysqli_result $last_result */
 	protected $last_result;
 	/** @var string $last_query */
 	protected $last_query;
 
+	/**
+	 * Mysql constructor.
+	 *
+	 * @throws Exception
+	 */
 	public function __construct() {
-		$this->connector = new mysqli($this->host, $this->user, $this->pass, $this->db_name, $this->port);
+		if(!in_array('\mysqli', get_declared_classes()) && !in_array('mysqli', get_declared_classes())) {
+			throw new Exception(
+				DependencyWrapper::get_wrapper_factory()
+								 ->get_dependency_wrapper()
+								 ->get_service_translation()
+								 ->__("L'extension php-mysql doit être installée et activée pour pouvoir utiliser les configurations Mysql !")
+			);
+		}
+		try {
+			/** @var mysqli connector */
+			if($this->host && $this->user && $this->pass) {
+				$this->connector = new mysqli($this->host, $this->user, $this->pass, $this->db_name, $this->port);
+			}
+		}
+		catch (\mysql_xdevapi\Exception $e) {
+			throw new Exception('bad mysql credentials');
+		}
 	}
 
 	/**
