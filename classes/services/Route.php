@@ -68,7 +68,7 @@ class Route extends Service {
 				' . $route_detail['method'] . '
 			</td>
 			<td>
-				'.str_replace('\\', '', $route).'
+				'.($route_detail['type'] === Router::STRING ? '<a href="'.str_replace('\\', '', $route).'">' : '').str_replace('\\', '', $route).($route_detail['type'] === Router::STRING ? '</a>' : '').'
 			</td>
 		</tr>';
 	}
