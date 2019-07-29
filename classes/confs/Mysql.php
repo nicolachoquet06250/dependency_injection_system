@@ -11,8 +11,10 @@ use mysqli_result;
 
 class Mysql {
 	public $host;
+	public $user_prefix = '';
 	public $user;
 	public $pass;
+	public $db_prefix = '';
 	public $db_name;
 	public $port = 3306;
 
