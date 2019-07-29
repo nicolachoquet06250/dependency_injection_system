@@ -39,6 +39,11 @@ class Dependency {
 			'file' => __DIR__.'/mvc/Model.php',
 			'is_singleton' => false,
 		],
+		'mvc_router\mvc\View' => [
+			'name' => 'view',
+			'file' => __DIR__.'/mvc/View.php',
+			'is_singleton' => false
+		],
 
 		'mvc_router\services\Service' => [
 			'name' => 'service',
@@ -436,6 +441,20 @@ class Dependency {
 					return true;
 				}
 				if(!isset($dependency['parent']) && ($class === 'mvc_router\commands\Command' || $class === '\mvc_router\commands\Command')) {
+					return true;
+				}
+			}
+		}
+		return false;
+	}
+
+	public static function is_view($elem) {
+		foreach (self::$dependencies as $class => $dependency) {
+			if($dependency['name'] === $elem) {
+				if(isset($dependency['parent']) && ($dependency['parent'] === 'mvc_router\mvc\View' || $dependency['parent'] === '\mvc_router\mvc\View')) {
+					return true;
+				}
+				if(!isset($dependency['parent']) && ($class === 'mvc_router\mvc\View' || $class === '\mvc_router\mvc\View')) {
 					return true;
 				}
 			}

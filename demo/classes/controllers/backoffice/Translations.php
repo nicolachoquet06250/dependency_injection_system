@@ -5,6 +5,7 @@ namespace mvc_router\mvc\backoffice;
 
 
 use mvc_router\mvc\Controller;
+use mvc_router\mvc\views\MyView;
 use mvc_router\router\Router;
 
 class Translations extends Controller {
@@ -108,5 +109,14 @@ class Translations extends Controller {
 	echo '</tbody>
 </table>';
 	echo '</form>';
+	}
+
+	/**
+	 * @route /translations
+	 * @param MyView $myView
+	 * @return MyView
+	 */
+	public function test2(MyView $myView) {
+		return $myView;
 	}
 }

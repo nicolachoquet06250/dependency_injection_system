@@ -5,6 +5,8 @@
 
 	require_once __DIR__.'/../autoload.php';
 
+	Dependency::add_custom_dependency('\mvc_router\mvc\views\MyView', 'my_view', __DIR__.'/classes/views/MyView.php', '\mvc_router\mvc\View');
+
 	Dependency::add_custom_controllers(
 		[
 			'class' => '\MyController',
