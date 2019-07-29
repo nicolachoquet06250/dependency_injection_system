@@ -23,7 +23,18 @@ try {
 		$request_uri = str_replace(\'/index.php\', \'\', $request_uri);
 	}
 
-	echo $dw->get_router()->execute($request_uri);
+	$router_return = $dw->get_router()->execute($request_uri);
+	if(gettype($router_return) === \'object\') {
+		if(Dependency::is_view(Dependency::get_name_from_class(get_class($router_return)))) {
+			echo $router_return;
+		}
+		else {
+			$dw->get_service_error()->error404($dw->get_service_translation()->__(\'La vue %1 n\\\'à pas été reconnu !\', [Dependency::get_name_from_class(get_class($router_return))]));
+		}
+	}
+	else {
+		echo $router_return;
+	}
 }
 catch (Exception $e) {
 	$dw->get_service_error()->error500($e->getMessage());
