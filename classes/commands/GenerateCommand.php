@@ -46,7 +46,7 @@ class GenerateCommand extends Command {
 				if(is_file($directory.'/'.$elem)) {
 					$file_content = file_get_contents($directory.'/'.$elem);
 					if(strstr($file_content, '->__(')) {
-						preg_match_all('/->__\(\'([^\']+)\'/m', $file_content, $matches);
+						preg_match_all('/\-\>\_\_\([\'|"](.+)[\'|"](, ?\[.*\])?\)[,|, ]?/m', $file_content, $matches);
 						$matches = $matches[1];
 						foreach ($matches as $match) {
 							$translation->write_translated($match);

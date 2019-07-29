@@ -66,7 +66,10 @@ class MyController extends Controller {
 	 * @return bool|string
 	 */
 	public function translate(Translate $service_translation) {
-		return $service_translation->__('Je suis %1', ['Nicolas']).' '.$service_translation->__('et toi tu es %1', ['Yann']);
+		$sentence_p1 = $service_translation->__('Je suis %1', ['Nicolas']);
+		$sentence_p2 = $service_translation->__('et toi tu es %1', ['Yann']);
+		$sentence_p3 = $service_translation->__('Je suis %1 et tu es %2', ['Nicolas', 'Yann']);
+		return $sentence_p1.' '.$sentence_p2.'; '.$sentence_p3;
 	}
 
 	/**

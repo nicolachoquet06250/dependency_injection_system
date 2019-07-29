@@ -43,7 +43,8 @@ class Routes extends Controller {
 		);
 		$service_route->write_array_lines($router);
 		if($router->get('stats') === true || $router->get('stats') === 1 || !is_null($stats)) {
-			$service_route->write_array_header($this->translation->__('Stats'), '', '', '');
+			$stats = $this->translation->__('Stats');
+			$service_route->write_array_header($stats, '', '', '');
 			$service_route->write_stats_controllers();
 			$service_route->write_stats_types();
 			echo '<tr>

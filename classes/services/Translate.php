@@ -73,20 +73,45 @@ class Translate extends Service {
 		return isset($this->get_array($lang)[$key]) ? $this->get_array($lang)[$key] : false;
 	}
 
-	public function write_translated($key) {
+	public function write_translated($key, $value = null, $lang = null) {
+		if(!is_null($value) && !is_null($lang)) {
+			$translations = $this->get_array($lang);
+			$translations[$key] = $value;
+			file_put_contents($this->get_file_path($lang), $this->inject->get_service_json()->encode($translations));
+		}
+		else {
+			foreach (array_keys($this->languages) as $language) {
+				$translations = $this->get_array($language);
+				if (!isset($translations[$key])) {
+					$translations[$key] = '';
+					if ($language === self::$default_language) {
+						$translations[$key] = $key;
+					}
+				}
+				file_put_contents($this->get_file_path($language), $this->inject->get_service_json()->encode($translations));
+			}
+		}
+	}
+
+	public function remove_key($key) {
 		foreach (array_keys($this->languages) as $language) {
 			$translations = $this->get_array($language);
-			if(!isset($translations[$key])) {
-				$translations[$key] = '';
-				if($language === self::$default_language) {
-					$translations[$key] = $key;
-				}
+			if (isset($translations[$key])) {
+				unset($translations[$key]);
 			}
 			file_put_contents($this->get_file_path($language), $this->inject->get_service_json()->encode($translations));
 		}
 	}
 
-	protected function get_array($lang = self::FR) {
+	public function add_key($key, $value) {
+		foreach (array_keys($this->languages) as $language) {
+			$translations = $this->get_array($language);
+			$translations[$key] = ($language === $this->get_default_language() ? $value : '');
+			file_put_contents($this->get_file_path($language), $this->inject->get_service_json()->encode($translations));
+		}
+	}
+
+	public function get_array($lang = self::FR) {
 		if(!is_dir(__DIR__.'/../translations')) {
 			mkdir(__DIR__.'/../translations', 0777, true);
 		}

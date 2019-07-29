@@ -185,7 +185,10 @@ class Router extends Base implements Singleton {
 		return $_GET[$key] ?? false;
 	}
 
-	public function post($key) {
+	public function post($key = null) {
+		if(is_null($key)) {
+			return $_POST;
+		}
 		return $_POST[$key] ?? false;
 	}
 }
