@@ -20,7 +20,6 @@ class Translations extends Controller {
 		echo '<title>'.$this->translation->__('Liste des traductions').'</title>';
 
 		echo '<form id="change-lang" method="get" action="">
-<input type="hidden" name="update" value="1">
 <select name="lang" onchange="document.querySelector(\'#change-lang\').submit()">
 	<option value="" disabled '.(!$router->get('lang') ? 'selected="selected"' : '').'>'.$this->translation->__('Choisir').'</option>';
 		foreach ($this->translation->get_languages() as $language => $name) {
@@ -51,14 +50,13 @@ class Translations extends Controller {
 		  }).then(() => window.location.href = \''.array_keys($router->get_current_route())[0].'?lang='.$lang.'\')
 		}
 </script>';
-
 		if(!empty($router->post())) {
 			if($router->post('add')) {
 				$key = $router->post('key');
 				$value = $router->post('value');
 				$this->translation->add_key(str_replace('_', ' ', $key), $value);
 			}
-			elseif ($router->post('update')) {
+			else {
 				foreach ($router->post() as $key => $value) {
 					$this->translation->write_translated(str_replace('_', ' ', $key), $value, $lang);
 				}
