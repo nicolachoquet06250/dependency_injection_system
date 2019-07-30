@@ -11,10 +11,26 @@ $dw = Dependency::get_wrapper_factory()->get_dependency_wrapper();
 $commands = $dw->get_commands();
 $service_logger = $dw->get_service_logger()->types(Logger::CONSOLE);
 
+$service_logger->log('command: git pull');
 $pull = $commands->run('git pull');
-if(!empty($pull['output'])) $service_logger->log($pull['output']);
-if(!empty($pull['return'])) $service_logger->log($pull['return']);
+if(!empty($pull['output']))
+	$service_logger->log($pull['output']);
+if(!empty($pull['return']))
+	$service_logger->log($pull['return']);
 
+$service_logger->log('---------------------------------------------------------------------------');
+
+$service_logger->log('command: generate:dependencies -p custom-file=demo/update_dependencies.php');
 $service_logger->log(
 	$commands->run('generate:dependencies -p custom-file=demo/update_dependencies.php')
 );
+
+$service_logger->log('---------------------------------------------------------------------------');
+
+$composer_cmd = 'composer '.(is_dir(__DIR__.'/vendor') ? 'update' : 'install');
+$service_logger->log('command: '.$composer_cmd);
+$composer = $commands->run($composer_cmd);
+if (!empty($pull['output']))
+	$service_logger->log($pull['output']);
+if (!empty($pull['return']))
+	$service_logger->log($pull['return']);
