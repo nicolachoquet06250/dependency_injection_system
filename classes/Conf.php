@@ -225,9 +225,10 @@ class Conf {
 				}
 				require_once self::$confs[$classname]['file'];
 			}
+			$instanciate_method = isset(self::$confs[$classname]['method']) ? self::$confs[$classname]['method'] : 'create';
 			return (isset(self::$confs[$classname]['is_singleton']) && self::$confs[$classname]['is_singleton']) ||
 				   (isset(self::$confs[$classname]['is_factory']) && self::$confs[$classname]['is_factory'])
-				? $classname::create() : new $classname();
+				? $classname::$instanciate_method() : new $classname();
 		}
 		else throw new Exception($classname.' is not a conf');
 	}

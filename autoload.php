@@ -6,6 +6,10 @@
 	require_once __DIR__.'/classes/Dependency.php';
 	require_once __DIR__.'/classes/Conf.php';
 
+	if(is_dir(__DIR__.'/vendor') && is_file(__DIR__.'/vendor/autoload.php')) {
+		require_once __DIR__.'/vendor/autoload.php';
+	}
+
 	register_shutdown_function([Dependency::class, 'fatal_handler']);
 	spl_autoload_register([Dependency::class, 'autoload'], true);
 

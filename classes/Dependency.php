@@ -133,6 +133,12 @@ class Dependency {
 			'is_singleton' => false,
 			'parent' => 'mvc_router\commands\Command',
 		],
+
+		'Curl\Curl' => [
+			'name' => 'request',
+			'file' => __DIR__.'/../vendor/autoload.php',
+			'is_singleton' => false,
+		],
 	];
 
 	public static function load_base_dependencies() {
@@ -179,14 +185,15 @@ class Dependency {
 						$parent = substr($parent, 1, strlen($parent) - 1);
 					}
 					if(isset(self::$dependencies[$parent])) {
-						require_once self::$dependencies[$parent]['file'];
+						require_once realpath(self::$dependencies[$parent]['file']);
 					}
 				}
-				require_once self::$dependencies[$classname]['file'];
+				require_once realpath(self::$dependencies[$classname]['file']);
 			}
+			$instanciate_method = isset(self::$confs[$classname]['method']) ? self::$confs[$classname]['method'] : 'create';
 			return (isset(self::$dependencies[$classname]['is_singleton']) && self::$dependencies[$classname]['is_singleton']) ||
 				   (isset(self::$dependencies[$classname]['is_factory']) && self::$dependencies[$classname]['is_factory'])
-				? $classname::create() : new $classname();
+				? $classname::$instanciate_method() : new $classname();
 		}
 		else {
 			throw new Exception($classname.' is not a dependency');
@@ -455,6 +462,17 @@ class Dependency {
 					return true;
 				}
 				if(!isset($dependency['parent']) && ($class === 'mvc_router\mvc\View' || $class === '\mvc_router\mvc\View')) {
+					return true;
+				}
+			}
+		}
+		return false;
+	}
+
+	public static function is_composer($elem) {
+		foreach (self::$dependencies as $class => $dependency) {
+			if($dependency['name'] === $elem) {
+				if(strstr($dependency['file'], 'vendor/autoload.php')) {
 					return true;
 				}
 			}
