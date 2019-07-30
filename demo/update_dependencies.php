@@ -25,8 +25,13 @@
 		]
 	);
 
-	Conf::extend_conf('mvc_router\confs\Mysql', 'mvc_router\confs\custom\Mysql', [
-		'name' => 'mysql',
-		'type' => Conf::NONE,
-		'file' => __DIR__.'/classes/confs/Mysql.php',
-	]);
+	Conf::extend_confs(
+		[
+			'class' => [
+				'old' => 'mvc_router\confs\Mysql',
+				'new' => 'mvc_router\confs\custom\Mysql'
+			],
+			'name' => 'mysql',
+			'file' => __DIR__.'/classes/confs/Mysql.php',
+		]
+	);

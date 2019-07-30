@@ -107,9 +107,26 @@ class Conf {
 		}
 	}
 
-	public static function extend_conf($old_class, $new_class, $details) {
+	public static function extend_conf($old_class, $new_class, $name, $file, $type = self::NONE) {
 		self::$confs[$old_class]['name'] = '_'.self::$confs[$old_class]['name'];
-		self::add_custom_conf($new_class, $details['name'], $details['file'], $old_class, $details['type']);
+		self::add_custom_conf($new_class, $name, $file, $old_class, $type);
+	}
+
+	public static function add_custom_confs(...$conf) {
+		foreach ($conf as $conf_details) {
+			$type = isset($ctrl_details['type']) ? $conf_details['type'] : self::NONE;
+			self::add_custom_conf($conf_details['class'], $conf_details['name'], $conf_details['file'], $type);
+		}
+		self::require_conf_wrapper();
+	}
+
+	public static function extend_confs(...$conf) {
+		foreach ($conf as $conf_details) {
+			$type = isset($ctrl_details['type']) ? $conf_details['type'] : self::NONE;
+			self::extend_conf($conf_details['class']['old'], $conf_details['class']['new'],
+							  $conf_details['name'], $conf_details['file'], $type);
+		}
+		self::require_conf_wrapper();
 	}
 
 	public static function delete_conf_wrapper() {

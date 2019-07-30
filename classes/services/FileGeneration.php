@@ -25,11 +25,15 @@ try {
 
 	$router_return = $dw->get_router()->execute($request_uri);
 	if(gettype($router_return) === \'object\') {
-		if(Dependency::is_view(Dependency::get_name_from_class(get_class($router_return)))) {
-			echo $router_return;
-		}
+		if(Dependency::is_view(Dependency::get_name_from_class(get_class($router_return)))) echo $router_return;
 		else {
-			$dw->get_service_error()->error404($dw->get_service_translation()->__(\'La vue %1 n\\\'à pas été reconnu !\', [Dependency::get_name_from_class(get_class($router_return))]));
+			$errors = $dw->get_service_error();
+			$translation = $dw->get_service_translation();
+			$errors->error404(
+				$translation->__(\'La vue %1 n\\\'à pas été reconnu !\', [
+					Dependency::get_name_from_class(get_class($router_return))
+				])
+			);
 		}
 	}
 	else {
@@ -66,12 +70,16 @@ RewriteRule ^([^\.]+)$ /index.php?q=$0 [QSA,L]
 	public function generate_update_dependencies($custom_dir) {
 		$ud = '<?php
 
+	use mvc_router\confs\Conf;
 	use mvc_router\dependencies\Dependency;
 
 	require_once \''.(realpath(__DIR__.'/../../')).'/autoload.php\';
 
 	// parameters are arrays
 	Dependency::add_custom_controllers();
+	
+	// parameters are arrays
+	Conf::extend_confs()
 ';
 
 		if(!is_file(__DIR__.'/../../'.$custom_dir.'/update_dependencies.php')) {
