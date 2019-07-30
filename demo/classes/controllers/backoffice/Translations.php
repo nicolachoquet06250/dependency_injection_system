@@ -113,10 +113,15 @@ class Translations extends Controller {
 
 	/**
 	 * @route /translations
+	 * @param Router $router
 	 * @param MyView $myView
 	 * @return MyView
 	 */
-	public function test2(MyView $myView) {
+	public function test2(Router $router, MyView $myView) {
+		$this->translation->set_default_language();
+		if($router->get('lang')) {
+			$this->translation->set_default_language($router->get('lang'));
+		}
 		return $myView;
 	}
 }
