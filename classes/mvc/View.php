@@ -14,6 +14,8 @@ abstract class View extends Base {
 	private $use_bootstrap 		= false;
 	private $use_none 			= true;
 
+	protected $vars = [];
+
 	/** @var \mvc_router\services\Translate $translate */
 	public $translate;
 
@@ -69,6 +71,14 @@ abstract class View extends Base {
 
 	final public function is_use_none() {
 		return $this->use_none;
+	}
+
+	final public function assign($var, $value) {
+		$this->vars[$var] = $value;
+	}
+
+	final public function get($var) {
+		return isset($this->vars[$var]) ? $this->vars[$var] : null;
 	}
 
 	abstract public function render();
