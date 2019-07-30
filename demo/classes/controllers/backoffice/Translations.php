@@ -122,6 +122,8 @@ class Translations extends Controller {
 		if($router->get('lang')) {
 			$this->translation->set_default_language($router->get('lang'));
 		}
+		$myView->assign('lang', $this->translation->get_default_language());
+		$myView->assign('current_route', $router->get_current_route(true));
 		return $myView;
 	}
 }

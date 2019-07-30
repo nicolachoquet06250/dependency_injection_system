@@ -148,7 +148,10 @@ class Router extends Base implements Singleton {
 		return isset(self::$routes['/']) ? self::$routes['/'] : false;
 	}
 
-	public function get_current_route() {
+	public function get_current_route($key = false) {
+		if($key) {
+			return array_keys($this->get_current_route())[0];
+		}
 		return self::$CURRENT_ROUTE;
 	}
 
