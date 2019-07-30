@@ -6,7 +6,7 @@ namespace mvc_router\mvc\views;
 
 use mvc_router\mvc\View;
 
-class MyView extends View {
+class Translation extends View {
 	public function render() {
 		$lang = $this->get('lang');
 

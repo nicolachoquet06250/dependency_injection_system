@@ -5,7 +5,7 @@ namespace mvc_router\mvc\backoffice;
 
 
 use mvc_router\mvc\Controller;
-use mvc_router\mvc\views\MyView;
+use mvc_router\mvc\views\Translation;
 use mvc_router\router\Router;
 
 class Translations extends Controller {
@@ -113,11 +113,11 @@ class Translations extends Controller {
 
 	/**
 	 * @route /translations
-	 * @param Router $router
-	 * @param MyView $myView
-	 * @return MyView
+	 * @param Router      $router
+	 * @param Translation $myView
+	 * @return Translation
 	 */
-	public function test2(Router $router, MyView $myView) {
+	public function test2(Router $router, Translation $myView) {
 		$this->translation->set_default_language();
 		if($router->get('lang')) {
 			$this->translation->set_default_language($router->get('lang'));

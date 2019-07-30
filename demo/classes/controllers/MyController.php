@@ -2,6 +2,7 @@
 
 
 use mvc_router\mvc\Controller;
+use mvc_router\mvc\views\BasicView;
 use mvc_router\router\Router;
 use mvc_router\services\Service;
 use mvc_router\services\Translate;
@@ -17,7 +18,7 @@ class MyController extends Controller {
 	 * @route /mon/example/
 	 */
 	public function index() {
-		var_dump('index');
+		return'index';
 	}
 
 	/**
@@ -45,7 +46,7 @@ class MyController extends Controller {
 	 * @route /test/lol/var
 	 */
 	public function toto() {
-		var_dump('hello 1');
+		return'hello 1';
 	}
 
 	/**
@@ -62,14 +63,17 @@ class MyController extends Controller {
 
 	/**
 	 * @route /translate
-	 * @param Translate $service_translation
+	 * @param Translate                       $service_translation
+	 * @param BasicView $basicView
 	 * @return bool|string
 	 */
-	public function translate(Translate $service_translation) {
+	public function translate(Translate $service_translation, BasicView $basicView) {
 		$sentence_p1 = $service_translation->__('Je suis %1', ['Nicolas']);
 		$sentence_p2 = $service_translation->__('et toi tu es %1', ['Yann']);
 		$sentence_p3 = $service_translation->__('Je suis %1 et tu es %2', ['Nicolas', 'Yann']);
-		return $sentence_p1.' '.$sentence_p2.'; '.$sentence_p3;
+		$basicView->assign('var', 'translated');
+		$basicView->assign('translated', $sentence_p1.' '.$sentence_p2.'; '.$sentence_p3);
+		return $basicView;
 	}
 
 	/**

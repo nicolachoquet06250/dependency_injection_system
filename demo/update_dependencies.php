@@ -5,7 +5,11 @@
 
 	require_once __DIR__.'/../autoload.php';
 
-	Dependency::add_custom_dependency('\mvc_router\mvc\views\MyView', 'my_view', __DIR__.'/classes/views/MyView.php', '\mvc_router\mvc\View');
+	Dependency::add_custom_dependency('\mvc_router\mvc\views\Translation', 'translation_view',
+									  __DIR__.'/classes/views/Translation.php', '\mvc_router\mvc\View');
+
+	Dependency::add_custom_dependency('\mvc_router\mvc\views\BasicView', 'my_basic_view',
+									  __DIR__.'/classes/views/BasicView.php', '\mvc_router\mvc\View');
 
 	Dependency::add_custom_controllers(
 		[
