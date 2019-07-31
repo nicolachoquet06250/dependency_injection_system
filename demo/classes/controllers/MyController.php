@@ -84,10 +84,10 @@ class MyController extends Controller {
 	/**
 	 * @route /test/managers
 	 * @param MyManager $manager
+	 * @return string
 	 * @throws Exception
 	 */
 	public function test_manager(MyManager $manager) {
-		echo '<pre>';
-		var_dump($manager->get_entity());
+		return '<pre>'.$this->var_dump($manager->get_entity());
 	}
 }

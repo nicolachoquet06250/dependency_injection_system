@@ -42,6 +42,14 @@ class Controller extends Base {
 		return $message;
 	}
 
+	protected function var_dump(...$elements) {
+		ob_start();
+		var_dump(...$elements);
+		$output = ob_get_contents();
+		ob_clean();
+		return $output;
+	}
+
 	protected function render($message, $type = self::TEXT) {
 		$method = 'text';
 		switch ($type) {
