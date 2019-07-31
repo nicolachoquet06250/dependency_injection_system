@@ -1,6 +1,7 @@
 <?php
 
 
+use mvc_router\data\gesture\custom\managers\MyManager;
 use mvc_router\mvc\Controller;
 use mvc_router\mvc\views\BasicView;
 use mvc_router\router\Router;
@@ -10,9 +11,6 @@ use mvc_router\services\Translate;
 class MyController extends Controller {
 	/** @var mvc_router\services\Translate $service_translation */
 	public $service_translation;
-
-	/** @var mvc_router\confs\custom\Mysql $mysqli_conf */
-	public $mysqli_conf;
 
 	/**
 	 * @route /mon/example/
@@ -80,6 +78,16 @@ class MyController extends Controller {
 	 * @route /conf
 	 */
 	public function test_confs() {
-		return $this->html($this->service_translation->get_default_language().'<br>'.$this->mysqli_conf->user);
+		return $this->html($this->service_translation->get_default_language());
+	}
+
+	/**
+	 * @route /test/managers
+	 * @param MyManager $manager
+	 * @throws Exception
+	 */
+	public function test_manager(MyManager $manager) {
+		echo '<pre>';
+		var_dump($manager->get_entity());
 	}
 }

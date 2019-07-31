@@ -11,6 +11,14 @@
 	Dependency::add_custom_dependency('\mvc_router\mvc\views\BasicView', 'my_basic_view',
 									  __DIR__.'/classes/views/BasicView.php', '\mvc_router\mvc\View');
 
+	Dependency::add_custom_dependency('\mvc_router\data\gesture\custom\managers\MyManager', 'my_manager',
+								  __DIR__.'/classes/datas/managers/MyManager.php',
+									  '\mvc_router\data\gesture\Manager');
+
+	Dependency::add_custom_dependency('\mvc_router\data\gesture\custom\entities\MyManager', 'entity_my_manager',
+								  __DIR__.'/classes/datas/entities/MyManager.php',
+								  '\mvc_router\data\gesture\Manager');
+
 	Dependency::add_custom_controllers(
 		[
 			'class' => '\MyController',

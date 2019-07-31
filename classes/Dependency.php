@@ -45,6 +45,17 @@ class Dependency {
 			'is_singleton' => false
 		],
 
+		'mvc_router\data\gesture\Manager' => [
+			'name' => 'manager',
+			'file' => __DIR__.'/data_gesture/Manager.php',
+			'is_singleton' => false,
+		],
+		'mvc_router\data\gesture\Entity' => [
+			'name' => 'entity',
+			'file' => __DIR__.'/data_gesture/Entity.php',
+			'is_singleton' => false,
+		],
+
 		'mvc_router\services\Service' => [
 			'name' => 'service',
 			'file' => __DIR__.'/utils/services/Service.php',

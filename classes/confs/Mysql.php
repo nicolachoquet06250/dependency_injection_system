@@ -10,13 +10,13 @@ use mysqli;
 use mysqli_result;
 
 class Mysql {
-	public $host;
-	public $user_prefix = '';
-	public $user;
-	public $pass;
-	public $db_prefix = '';
-	public $db_name;
-	public $port = 3306;
+	protected $host;
+	protected $user_prefix = '';
+	protected  $user;
+	protected  $pass;
+	protected  $db_prefix = '';
+	protected  $db_name;
+	protected  $port = 3306;
 
 	protected $connector;
 	protected $last_result;
@@ -54,6 +54,9 @@ class Mysql {
 	 * @return bool|mysqli_result|Mysql
 	 */
 	public function query($query, $vars = []) {
+		if(!$this->connector) {
+			return;
+		}
 		$this->last_query = $query;
 		foreach ($vars as $num => $var) {
 			$query = str_replace('$'.$num, $var, $query);

@@ -7,6 +7,7 @@ namespace mvc_router;
 use Exception;
 use mvc_router\confs\Conf;
 use mvc_router\confs\ConfWrapper;
+use mvc_router\data\gesture\Manager;
 use mvc_router\dependencies\Dependency;
 use mvc_router\dependencies\DependencyWrapper;
 use ReflectionClass;
@@ -21,6 +22,7 @@ class Base {
 	/** @var ConfWrapper $confs */
 	protected $confs;
 	private $dependencies_injection_enabled = false;
+	protected $dependency_injection_method = false;
 
 	/**
 	 * Base constructor.
@@ -68,7 +70,6 @@ class Base {
 				}
 			}
 			$props = $_props;
-
 			foreach ($props as $prop) {
 				$doc = $prop->getDocComment();
 				$class = str_replace(['/**', '*/', "\t", " * ", "@var ", ' $'.$prop->getName(), "\n", ' '], '', $doc);
@@ -96,13 +97,14 @@ class Base {
 	}
 
 	/**
-	 * @param $name
-	 * @param $arguments
-	 * @return null
+	 * @param string $name
+	 * @param array ...$arguments
+	 * @return null|mixed
 	 * @throws Exception
 	 */
-	public function __call($name, $arguments) {
+	protected function call($name, ...$arguments) {
 		if(!$this->is_dependencies_injection_enabled()) {
+			$this->dependency_injection_method = false;
 			return $this->$name(...$arguments);
 		}
 		$ref_obj = new ReflectionObject($this);
@@ -124,10 +126,22 @@ class Base {
 				}
 				$method_return = null;
 				eval('$method_return = $this->'.$name.'(...$parameters);');
+				$this->dependency_injection_method = true;
 				return $method_return;
 			}
 		}
+		$this->dependency_injection_method = null;
 		return null;
+	}
+
+	/**
+	 * @param $name
+	 * @param $arguments
+	 * @return null
+	 * @throws Exception
+	 */
+	public function __call($name, $arguments) {
+		return $this->call($name, ...$arguments);
 	}
 
 	/**
