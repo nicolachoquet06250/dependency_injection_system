@@ -25,6 +25,14 @@ class Translate extends Service {
 
 	protected $file_tpl = '%__DIR__%/../translations/translation_%lang%.json';
 
+	protected function encode_text($text) {
+		return base64_encode($text);
+	}
+
+	public function decode_text($text) {
+		return base64_decode($text);
+	}
+
 	protected function get_current_language() {
 		return isset($_SERVER['HTTP_ACCEPT_LANGUAGE']) ? explode(',', explode(';', $_SERVER['HTTP_ACCEPT_LANGUAGE'])[0])[1] : geoip_country_code_by_name(gethostname());
 	}
@@ -70,10 +78,12 @@ class Translate extends Service {
 	}
 
 	protected function get_translated($key, $lang = self::FR) {
+		$key = $this->encode_text($key);
 		return isset($this->get_array($lang)[$key]) ? $this->get_array($lang)[$key] : false;
 	}
 
 	public function write_translated($key, $value = null, $lang = null) {
+		$key = $this->encode_text($key);
 		if(!is_null($value) && !is_null($lang)) {
 			$translations = $this->get_array($lang);
 			$translations[$key] = $value;
@@ -85,7 +95,7 @@ class Translate extends Service {
 				if (!isset($translations[$key])) {
 					$translations[$key] = '';
 					if ($language === self::$default_language) {
-						$translations[$key] = $key;
+						$translations[$key] = $this->decode_text($key);
 					}
 				}
 				file_put_contents($this->get_file_path($language), $this->inject->get_service_json()->encode($translations));
@@ -94,6 +104,7 @@ class Translate extends Service {
 	}
 
 	public function remove_key($key) {
+		$key = $this->encode_text($key);
 		foreach (array_keys($this->languages) as $language) {
 			$translations = $this->get_array($language);
 			if (isset($translations[$key])) {
@@ -104,6 +115,7 @@ class Translate extends Service {
 	}
 
 	public function add_key($key, $value) {
+		$key = $this->encode_text($key);
 		foreach (array_keys($this->languages) as $language) {
 			$translations = $this->get_array($language);
 			$translations[$key] = ($language === $this->get_default_language() ? $value : '');

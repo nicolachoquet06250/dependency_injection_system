@@ -19,6 +19,10 @@
 								  __DIR__.'/classes/datas/entities/MyManager.php',
 								  '\mvc_router\data\gesture\Manager');
 
+	Dependency::add_custom_dependency('\mvc_router\mvc\views\Translations', 'translations_views',
+									__DIR__.'/classes/views/Translations.php',
+										'\mvc_router\mvc\View');
+
 	Dependency::add_custom_controllers(
 		[
 			'class' => '\MyController',

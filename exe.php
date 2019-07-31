@@ -26,8 +26,6 @@ try {
 	}
 } catch (Exception $e) {
 	echo $e->getMessage()."\n";
-	echo '<pre>';
 	var_dump($e->getTrace());
-	echo '</pre>';
 	exit();
 }

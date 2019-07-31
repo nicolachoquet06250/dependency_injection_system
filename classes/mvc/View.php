@@ -4,9 +4,11 @@
 namespace mvc_router\mvc;
 
 
+use Exception;
 use mvc_router\Base;
+use mvc_router\services\Translate;
 
-abstract class View extends Base {
+class View extends Base {
 	const UTF8 = 'utf-8';
 	protected $encoding = self::UTF8;
 
@@ -16,7 +18,7 @@ abstract class View extends Base {
 
 	private $vars = [];
 
-	/** @var \mvc_router\services\Translate $translate */
+	/** @var Translate $translate */
 	public $translate;
 
 	// translation helper
@@ -81,12 +83,14 @@ abstract class View extends Base {
 		return isset($this->vars[$var]) ? $this->vars[$var] : null;
 	}
 
-	abstract public function render();
+	public function render(): string {
+		return '';
+	}
 	public function __toString() {
 		try {
 			return $this->render();
 		}
-		catch (\Exception $e) {
+		catch (Exception $e) {
 			return $e->getMessage();
 		}
 	}

@@ -36,13 +36,22 @@ class GenerateCommand extends Command {
 		$translation->initialize_translation_files();
 
 		$this->parcoure_dir(realpath(__DIR__.'/../../'), $translation);
+
+		$languages = $translation->get_languages();
+		$languages_imploded = implode(', ', array_keys($languages));
+		if(count($languages) > 1) {
+			return $translation->__('Les langues %1 ont bien été générés', [$languages_imploded]);
+		}
+		else {
+			return $translation->__('La langue %1 à bien été généré', [$languages_imploded]);
+		}
 	}
 
 	private function parcoure_dir($directory, Translate $translation) {
 		$dir = opendir($directory);
 
 		while (($elem = readdir($dir)) !== false) {
-			if($elem !== '.' && $elem !== '..' && substr($elem, 0, 1) !== '.' && $elem !== 'GenerateCommand.php') {
+			if($elem !== '.' && $elem !== '..' && substr($elem, 0, 1) !== '.') {
 				if(is_file($directory.'/'.$elem)) {
 					$file_content = file_get_contents($directory.'/'.$elem);
 					if(strstr($file_content, '->__(')) {

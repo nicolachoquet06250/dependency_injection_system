@@ -7,7 +7,7 @@ namespace mvc_router\mvc\views;
 use mvc_router\mvc\View;
 
 class Translation extends View {
-	public function render() {
+	public function render(): string {
 		$lang = $this->get('lang');
 
 		return <<<EOT

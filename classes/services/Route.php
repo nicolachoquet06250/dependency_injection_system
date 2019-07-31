@@ -47,17 +47,18 @@ class Route extends Service {
 	}
 
 	public function write_array_lines(Router $router) {
-		echo '<tbody>';
+		$str = '<tbody>';
 		$details = $router->get_root_route();
-		if($details) $this->write_array_line('/', $details);
+		if($details) $str .= $this->write_array_line('/', $details);
 		foreach ( $router->routes() as $route => $details ) {
-			if($route !== '/') $this->write_array_line($route, $details);
+			if($route !== '/') $str .= $this->write_array_line($route, $details);
 		}
-		echo '</tbody>';
+		$str .= '</tbody>';
+		return $str;
 	}
 
 	public function write_array_line($route, $route_detail) {
-		echo '<tr>
+		return '<tr>
 			<td>
 				' . ( $route_detail['type'] === Router::STRING ? 'String' : 'Regex' ) . '
 			</td>
@@ -74,52 +75,55 @@ class Route extends Service {
 	}
 
 	public function write_array_header(...$labels) {
-		echo '<thead><tr>';
+		$str = '<thead><tr>';
 		foreach ($labels as $label) {
-			echo '<th>'.$label.'</th>';
+			$str .= '<th>'.$label.'</th>';
 		}
-		echo '</tr></thead>';
+		$str .= '</tr></thead>';
+		return $str;
 	}
 
 	public function write_stats_controllers() {
 		$service_translation = $this->inject->get_service_translation();
-		$this->write_array_header(
+		$str = $this->write_array_header(
 			$service_translation->__('Controlleurs ( nom )'),
 			$service_translation->__('Stat ( % )'),
 			$service_translation->__('Controlleurs ( nb )'),
 			$service_translation->__('Routes ( nb )')
 		);
 		$total_of_routes = $this->get_route_number();
-		echo '<tbody>';
+		$str .= '<tbody>';
 		foreach ($this->get_different_controllers() as $controller_name => $nb_of_this_controller) {
-			echo '<tr>
+			$str .= '<tr>
 	<td>'.$controller_name.'</td>
 	<td>'.((100 * $nb_of_this_controller) / $total_of_routes).'</td>
 	<td>'.$nb_of_this_controller.'</td>
 	<td>'.$total_of_routes.'</td>
 </tr>';
 		}
-		echo '</tbody>';
+		$str .= '</tbody>';
+		return $str;
 	}
 
 	public function write_stats_types() {
 		$service_translation = $this->inject->get_service_translation();
-		$this->write_array_header(
+		$str = $this->write_array_header(
 			$service_translation->__('Type ( nom )'),
 			$service_translation->__('Stat ( % )'),
 			$service_translation->__('Types ( nb )'),
 			$service_translation->__('Routes ( nb )')
 		);
 		$total_of_routes = $this->get_route_number();
-		echo '<tbody>';
+		$str .= '<tbody>';
 		foreach ($this->get_different_types() as $type_name => $nb_of_this_type) {
-			echo '<tr>
+			$str .= '<tr>
 	<td>'.$type_name.'</td>
 	<td>'.((100 * $nb_of_this_type) / $total_of_routes).'</td>
 	<td>'.$nb_of_this_type.'</td>
 	<td>'.$total_of_routes.'</td>
 </tr>';
 		}
-		echo '</tbody>';
+		$str .= '</tbody>';
+		return $str;
 	}
 }

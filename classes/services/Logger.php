@@ -11,6 +11,7 @@ class Logger extends Service {
 	protected $types = [];
 	protected $path = __DIR__.'/../../';
 	protected $file;
+	protected $separator = '';
 
 	public function __construct() {
 		parent::__construct();
@@ -26,6 +27,14 @@ class Logger extends Service {
 		$this->path = $path;
 		$this->file = $file;
 		return $this;
+	}
+
+	public function separator($separator) {
+		$this->separator = $separator;
+	}
+
+	public function log_separator() {
+		return $this->log($this->separator);
 	}
 
 	protected function format_header_log($with_user_name = false) {
@@ -63,5 +72,6 @@ class Logger extends Service {
 					$this->log_file($message);
 			}
 		}
+		return $this;
 	}
 }

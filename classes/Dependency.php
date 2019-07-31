@@ -45,6 +45,13 @@ class Dependency {
 			'is_singleton' => false
 		],
 
+		'mvc_router\mvc\views\Route' => [
+			'name' => 'route_view',
+			'file' => __DIR__.'/mvc/views/Route.php',
+			'is_singleton' => false,
+			'parent' => 'mvc_router\mvc\View'
+		],
+
 		'mvc_router\data\gesture\Manager' => [
 			'name' => 'manager',
 			'file' => __DIR__.'/data_gesture/Manager.php',
@@ -521,8 +528,12 @@ class Dependency {
 	 * @throws Exception
 	 */
 	public static function autoload($class) {
-		if(self::is_in($class)) self::get_from_classname($class);
-		elseif (Conf::is_in($class)) Conf::get_from_classname($class);
+		if(self::is_in($class)) {
+			self::get_from_classname($class);
+		}
+		elseif (Conf::is_in($class)) {
+			Conf::get_from_classname($class);
+		}
 	}
 
 	/**
