@@ -10,9 +10,9 @@ class FileGeneration extends Service {
 
 use mvc_router\dependencies\Dependency;
 
-require_once \''.(realpath(__DIR__.'/../../')).$custom_dir.'/autoload.php\';
-require_once \''.(realpath(__DIR__.'/../../')).$custom_dir.'/update_dependencies.php\';
-require_once \''.(realpath(__DIR__.'/../../')).$custom_dir.'/htaccess.php\';
+require_once \''.(realpath(__DIR__.'/../../')).'/'.$custom_dir.'/autoload.php\';
+require_once \''.(realpath(__DIR__.'/../../')).'/'.$custom_dir.'/update_dependencies.php\';
+require_once \''.(realpath(__DIR__.'/../../')).'/'.$custom_dir.'/htaccess.php\';
 
 $dw = Dependency::get_wrapper_factory()->get_dependency_wrapper();
 try {

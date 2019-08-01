@@ -11,8 +11,12 @@ use mvc_router\services\Translate;
 
 class GenerateCommand extends Command {
 	public function dependencies() {
-		if($this->param('custom-file')) {
+		if($this->param('custom-file') && is_file($this->param('custom-file'))) {
 			require_once __DIR__.'/../../'.$this->param('custom-file');
+		}
+		else {
+			$this->inject->get_service_logger()
+						 ->log('WARNING: file '.realpath(__DIR__.'/../../'.$this->param('custom-file')).' not found !');
 		}
 
 		Dependency::require_dependency_wrapper();
@@ -22,7 +26,7 @@ class GenerateCommand extends Command {
 
 	public function base_files(FileGeneration $generation) {
 		if(!$this->param('custom-dir')) {
-			$this->add_param('custom-dir', '/');
+			$this->add_param('custom-dir', '');
 		}
 		$custom_dir = $this->param('custom-dir');
 		$generation->generate_base_htaccess($custom_dir);

@@ -46,6 +46,7 @@ class Logger extends Service {
 
 	public function separator($separator) {
 		$this->separator = $separator;
+		return $this;
 	}
 
 	public function log_separator() {
