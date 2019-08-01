@@ -22,7 +22,7 @@ class Routes extends Controller {
 		$route_view->assign('translation', $this->translation);
 		$route_view->assign('service_route', $service_route);
 		$route_view->assign('router', $router);
-		$route_view->assign('stats', $stats);
+		$route_view->assign('stats', $router->get('stats') === true || $router->get('stats') === 1 || !is_null($stats));
 
 		if($lang = $router->get('lang')) {
 			$this->translation->set_default_language($lang);
