@@ -18,6 +18,18 @@ class Logger extends Service {
 		$this->file = date('Y-m-d').'.log';
 	}
 
+	public function get_path_file() {
+		return $this->path.$this->file;
+	}
+
+	public function get_file_content() {
+		return file_get_contents($this->get_path_file());
+	}
+
+	public function remove_file() {
+		unlink($this->get_path_file());
+	}
+
 	public function types(...$types) {
 		$this->types = array_merge($this->types, $types);
 		return $this;
@@ -42,11 +54,11 @@ class Logger extends Service {
 	}
 
 	protected function log_file($message) {
-		$complete_path = $this->path.$this->file;
+		$complete_path = $this->get_path_file();
 		if(!is_file($complete_path)) {
 			touch($complete_path);
 		}
-		$content = file_get_contents($complete_path);
+		$content = $this->get_file_content();
 		$content .= $message."\n";
 		file_put_contents($complete_path, $content);
 	}
