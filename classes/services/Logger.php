@@ -89,4 +89,11 @@ class Logger extends Service {
 		}
 		return $this;
 	}
+
+	public function log_if($message, bool $condition) {
+		if($condition) {
+			$this->log($message);
+		}
+		return $this;
+	}
 }
