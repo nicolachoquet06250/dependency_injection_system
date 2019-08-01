@@ -151,6 +151,12 @@ class Dependency {
 			'is_singleton' => false,
 			'parent' => 'mvc_router\commands\Command',
 		],
+		'mvc_router\commands\CloneCommand' => [
+			'name' => 'command_clone',
+			'file' => __DIR__.'/commands/CloneCommand.php',
+			'is_singleton' => false,
+			'parent' => 'mvc_router\commands\Command',
+		],
 
 		'Curl\Curl' => [
 			'name' => 'request',
