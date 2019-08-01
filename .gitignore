@@ -1,8 +1,6 @@
-.idea/
-vendor/
+!classes
 classes/translations/
 classes/logs/
-
 classes/DependencyWrapper.php
 classes/ConfWrapper.php
 composer.lock
