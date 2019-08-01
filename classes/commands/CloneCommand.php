@@ -5,7 +5,6 @@ namespace mvc_router\commands;
 
 
 use Exception;
-use mvc_router\services\Logger;
 
 class CloneCommand extends Command {
 	/**
@@ -28,5 +27,14 @@ class CloneCommand extends Command {
 		$log = "Repository {$repo} has normally been cloned";
 		$log .= ($dest = $this->param('dest')) || ($dest = $this->param('destination')) ? " in {$root}{$dest}" : '';
 		return $log;
+	}
+
+	/**
+	 * 4 seconds duration
+	 */
+	public function test_stats() {
+		for($i = 0; $i < 200000; $i++) {
+			var_dump('ocucou');
+		}
 	}
 }

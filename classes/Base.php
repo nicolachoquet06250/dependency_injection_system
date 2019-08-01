@@ -7,9 +7,9 @@ namespace mvc_router;
 use Exception;
 use mvc_router\confs\Conf;
 use mvc_router\confs\ConfWrapper;
-use mvc_router\data\gesture\Manager;
 use mvc_router\dependencies\Dependency;
 use mvc_router\dependencies\DependencyWrapper;
+use mvc_router\services\Logger;
 use ReflectionClass;
 use ReflectionException;
 use ReflectionMethod;
@@ -135,12 +135,32 @@ class Base {
 	}
 
 	/**
+	 * @param string $name
+	 * @param array  ...$arguments
+	 * @return mixed|null
+	 * @throws Exception
+	 */
+	protected function call_with_stats_time($name, ...$arguments) {
+		$logger = $this->inject->get_service_logger();
+		$logger->types(Logger::FILE);
+		$logger->file(__DIR__.'/logs/stats/', date('Y-m-d').'.log');
+		$logger->log('START: '.__CLASS__.'::'.$name);
+		$result = $this->call($name, ...$arguments);
+		$logger->log('END: '.__CLASS__.'::'.$name);
+		return $result;
+	}
+
+	/**
 	 * @param $name
 	 * @param $arguments
 	 * @return null
 	 * @throws Exception
 	 */
 	public function __call($name, $arguments) {
+		if(strstr($name, '_stat_time') || strstr($name, 'stat_time_')) {
+			$name = str_replace(['_stat_time', 'stat_time_'], '', $name);
+			return $this->call_with_stats_time($name, ...$arguments);
+		}
 		return $this->call($name, ...$arguments);
 	}
 

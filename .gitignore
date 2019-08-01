@@ -1,10 +1,12 @@
 .idea/
+vendor/
 classes/translations/
+classes/logs/
+
 classes/DependencyWrapper.php
 classes/ConfWrapper.php
 demo/autoload.php
 demo/index.php
 demo/htaccess.php
 demo/.htaccess
-vendor/
 composer.lock

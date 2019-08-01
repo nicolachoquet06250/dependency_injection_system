@@ -19,6 +19,9 @@ class Logger extends Service {
 	}
 
 	public function get_path_file() {
+		if(!is_dir($this->path)) {
+			mkdir($this->path, 0777, true);
+		}
 		return $this->path.$this->file;
 	}
 

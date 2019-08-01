@@ -9,6 +9,26 @@ use mvc_router\Base;
 use ReflectionMethod;
 use ReflectionObject;
 
+/**
+ * Class Command
+ *
+ * @method void stat_time_clean_params()
+ * @method void clean_params_stat_time()
+ *
+ * @method void stat_time_add_param($key, $value)
+ * @method void add_param_stat_time($key, $value)
+ *
+ * @method void stat_time_param($key)
+ * @method void param_stat_time($key)
+ *
+ * @method void stat_time_params()
+ * @method void params_stat_time()
+ *
+ * @method void stat_time_execute($method, ...$parameters)
+ * @method void execute_stat_time($method, ...$parameters)
+ *
+ * @package mvc_router\commands
+ */
 class Command extends Base {
 	private $params = [];
 
@@ -39,8 +59,12 @@ class Command extends Base {
 	 */
 	public function execute($method, ...$parameters) {
 		$class_ref = new ReflectionObject($this);
+		$_method = $method;
+		if($this->param('stat_time')) {
+			$_method = 'stat_time_'.$method;
+		}
 		if(in_array($method, array_keys($class_ref->getMethods(ReflectionMethod::IS_PUBLIC)))) {
-			return $this->$method(...$this->get_parameters_table($method), ...$parameters);
+			return $this->$_method(...$this->get_parameters_table($method), ...$parameters);
 		}
 		return null;
 	}
