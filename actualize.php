@@ -16,7 +16,8 @@ $service_logger = $dw->get_service_logger()
 					 ->types(Logger::CONSOLE)
 					 ->separator('---------------------------------------------------------------------------');
 
-run_system_commands(['git pull', 'composer '.(is_dir(__DIR__.'/vendor') ? 'update' : 'install')], $service_logger, $commands);
+run_system_commands(['git pull', 'composer '.(is_dir(__DIR__.'/vendor') ? 'update' : 'install')],
+					$service_logger, $commands);
 run_framework_commands(['generate:dependencies -p custom-file='.$dir.'/update_dependencies.php', 'generate:translations',
 						   'generate:base_files -p custom-dir='.$dir],
 					   $service_logger, $commands);
