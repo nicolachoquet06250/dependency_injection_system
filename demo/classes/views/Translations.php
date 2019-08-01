@@ -5,7 +5,6 @@ namespace mvc_router\mvc\views;
 
 
 use mvc_router\mvc\View;
-use mvc_router\services\Translate;
 
 class Translations extends View {
 
@@ -14,8 +13,7 @@ class Translations extends View {
 	 */
 	private function generate_all_vars_string() {
 		$lang = $this->get('lang');
-		/** @var Translate $translation */
-		$translation = $this->get('translation');
+		$translation = $this->translate;
 		$router = $this->get('router');
 
 		$selected_default = !$lang ? 'selected="selected"' : '';

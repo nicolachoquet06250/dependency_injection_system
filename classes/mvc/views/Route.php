@@ -9,7 +9,7 @@ use mvc_router\mvc\View;
 class Route extends View {
 	public function render(): string {
 		$lang = $this->get('lang');
-		$translation = $this->get('translation');
+		$translation = $this->translate;
 		$service_route = $this->get('service_route');
 		$router = $this->get('router');
 		$stats = $this->get('stats');

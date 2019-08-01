@@ -42,7 +42,6 @@ class Translations extends Controller {
 			$this->translation->remove_key($router->get('key_to_remove'));
 		}
 
-		$translations_view->assign('translation', $this->translation);
 		$translations_view->assign('router', $router);
 		$translations_view->assign('lang', $lang);
 

@@ -6,7 +6,6 @@ namespace mvc_router\mvc;
 
 use Exception;
 use mvc_router\Base;
-use mvc_router\services\Translate;
 
 class View extends Base {
 	const UTF8 = 'utf-8';
@@ -18,7 +17,7 @@ class View extends Base {
 
 	private $vars = [];
 
-	/** @var Translate $translate */
+	/** @var \mvc_router\services\Translate $translate */
 	public $translate;
 
 	// translation helper
