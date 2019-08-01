@@ -6,7 +6,7 @@ use mvc_router\services\Logger;
 require_once __DIR__.'/autoload.php';
 require_once __DIR__.'/classes/basic_functions.php';
 
-$default_dir = 'demo';
+$default_dir = 'demo2';
 array_shift($argv);
 
 $repository = array_shift($argv);
