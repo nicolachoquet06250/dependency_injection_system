@@ -5,8 +5,4 @@ classes/logs/
 
 classes/DependencyWrapper.php
 classes/ConfWrapper.php
-demo/autoload.php
-demo/index.php
-demo/htaccess.php
-demo/.htaccess
 composer.lock

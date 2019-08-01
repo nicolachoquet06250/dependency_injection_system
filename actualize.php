@@ -15,8 +15,19 @@ $commands       = $dw->get_commands();
 $service_logger = $dw->get_service_logger()
 					 ->types(Logger::CONSOLE)
 					 ->separator('---------------------------------------------------------------------------');
+$pulls = [];
+$directory = __DIR__.'/';
+$_dir = opendir($directory);
+while (($elem = readdir($_dir)) !== false) {
+	if($elem !== '.' && $elem !== '..' && is_dir($directory.$elem.'/.git')) {
+		$pulls[] = $directory.$elem;
+	}
+}
+$pulls = array_map(function ($_dir) {
+	return 'cd '.$_dir.' & git pull';
+}, $pulls);
 
-run_system_commands(['git pull', 'composer '.(is_dir(__DIR__.'/vendor') ? 'update' : 'install')],
+run_system_commands(array_merge($pulls, ['composer '.(is_dir(__DIR__.'/vendor') ? 'update' : 'install')]),
 					$service_logger, $commands);
 run_framework_commands(['generate:dependencies -p custom-file='.$dir.'/update_dependencies.php', 'generate:translations',
 						   'generate:base_files -p custom-dir='.$dir],
