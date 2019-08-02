@@ -110,6 +110,12 @@ class Dependency {
 			'is_singleton' => false,
 			'parent' => 'mvc_router\services\Service',
 		],
+		'mvc_router\services\FileSystem' => [
+			'name' => 'service_fs',
+			'file' => __DIR__.'/services/FileSystem.php',
+			'is_singleton' => false,
+			'parent' => 'mvc_router\services\Service',
+		],
 
 		'mvc_router\parser\PHPDocParser' => [
 			'name' => 'phpdoc_parser',

@@ -6,23 +6,24 @@ use mvc_router\services\Logger;
 require_once __DIR__.'/autoload.php';
 require_once __DIR__.'/classes/basic_functions.php';
 
-$default_dir = 'demo2';
+$default_dir = 'demo';
 array_shift($argv);
 $dir = empty($argv) ? $default_dir : array_shift($argv);
 
 $dw = Dependency::get_wrapper_factory()->get_dependency_wrapper();
+$fs = $dw->get_service_fs();
 $commands       = $dw->get_commands();
 $service_logger = $dw->get_service_logger()
 					 ->types(Logger::CONSOLE)
 					 ->separator('---------------------------------------------------------------------------');
 $pulls = [];
-$directory = __DIR__.'/';
-$_dir = opendir($directory);
-while (($elem = readdir($_dir)) !== false) {
-	if($elem !== '.' && $elem !== '..' && is_dir($directory.$elem.'/.git')) {
-		$pulls[] = $directory.$elem;
+$fs->browse_root(function ($file) use (&$pulls) {
+	$path = realpath(dirname($file).'/.git');
+	if($path && !in_array(realpath(dirname($file)), $pulls)) {
+		$pulls[] = realpath(dirname($file));
 	}
-}
+}, true);
+
 $pulls = array_map(function ($_dir) {
 	return 'cd '.$_dir.' & git pull';
 }, $pulls);
