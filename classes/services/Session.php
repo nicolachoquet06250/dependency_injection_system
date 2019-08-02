@@ -8,10 +8,12 @@ use mvc_router\interfaces\Singleton;
 
 class Session extends Service implements Singleton {
 	private static $instance = null;
+	protected $session_id;
 
 	public function __construct() {
 		parent::__construct();
-		session_start();
+		@session_start();
+		$this->session_id = session_id();
 	}
 
 	public static function create() {
