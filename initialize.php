@@ -6,11 +6,18 @@ use mvc_router\services\Logger;
 require_once __DIR__.'/autoload.php';
 require_once __DIR__.'/classes/basic_functions.php';
 
-$default_dir = 'demo2';
+$default_dir = 'demo';
+$default_repo = 'https://github.com/nicolachoquet06250/mvc_router_demo.git';
 array_shift($argv);
 
-$repository = array_shift($argv);
-$dir = empty($argv) ? $default_dir : array_shift($argv);
+if(count($argv) === 0) {
+	$repository = $default_repo;
+	$dir = $default_dir;
+}
+else {
+	$repository = array_shift($argv);
+	$dir        = empty($argv) ? $default_dir : array_shift($argv);
+}
 
 $dw = Dependency::get_wrapper_factory()->get_dependency_wrapper();
 $commands       = $dw->get_commands();
