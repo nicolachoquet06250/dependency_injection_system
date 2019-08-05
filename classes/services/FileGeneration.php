@@ -93,4 +93,12 @@ RewriteRule ^([^\.]+)$ /index.php?q=$0 [QSA,L]
 
 		file_put_contents(__DIR__.'/../../'.$custom_dir.'/autoload.php', $autoload);
 	}
+	public function generate_gitignore($custom_dir) {
+		$gitingore = '.htaccess
+autoload.php
+htaccess.php
+index.php';
+
+		file_put_contents(__DIR__.'/../../'.$custom_dir.'/.gitignore', $gitingore);
+	}
 }

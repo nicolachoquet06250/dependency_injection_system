@@ -33,6 +33,7 @@ class GenerateCommand extends Command {
 		$generation->generate_index($custom_dir);
 		$generation->generate_update_dependencies($custom_dir);
 		$generation->generate_custom_autoload($custom_dir);
+		$generation->generate_gitignore($custom_dir);
 		return 'All default files has been generated !';
 	}
 
