@@ -11,11 +11,20 @@ class View extends Base {
 	const UTF8 = 'utf-8';
 	protected $encoding = self::UTF8;
 
+	const HTML = 'html';
+	const JSON = 'json';
+
 	private $use_materialize 	= false;
 	private $use_bootstrap 		= false;
 	private $use_none 			= true;
 
 	private $vars = [];
+
+	protected $content_types = [
+		'json' => 'application/json',
+		'html' => 'text/html',
+		'text' => 'plain/text',
+	];
 
 	/** @var \mvc_router\services\Translate $translate */
 	public $translate;
@@ -80,6 +89,10 @@ class View extends Base {
 
 	final protected function get($var) {
 		return isset($this->vars[$var]) ? $this->vars[$var] : null;
+	}
+
+	public function header($content_type = self::HTML) {
+		header('Content-Type: '.$this->content_types[$content_type]);
 	}
 
 	public function render(): string {

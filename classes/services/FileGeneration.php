@@ -79,7 +79,7 @@ RewriteRule ^([^\.]+)$ /index.php?q=$0 [QSA,L]
 	Dependency::add_custom_controllers();
 	
 	// parameters are arrays
-	Conf::extend_confs()
+	Conf::extend_confs();
 ';
 
 		if(!is_file(__DIR__.'/../../'.$custom_dir.'/update_dependencies.php')) {
@@ -88,6 +88,7 @@ RewriteRule ^([^\.]+)$ /index.php?q=$0 [QSA,L]
 	}
 	public function generate_custom_autoload($custom_dir) {
 		$autoload = '<?php
+	const __SITE_NAME__ = \''.$custom_dir.'\';
 	require_once __DIR__.\'/../autoload.php\';
 ';
 
