@@ -20,6 +20,9 @@ class Router extends Base implements Singleton {
 	const REGEX = 0;
 	const STRING = 1;
 
+	const HTTP_GET = 'get';
+	const HTTP_POST = 'post';
+
 	const DEFAULT_ROUTE_METHOD = 'index';
 
 	private static $CURRENT_ROUTE = null;
@@ -36,15 +39,17 @@ class Router extends Base implements Singleton {
 	 * @param        $ctrl
 	 * @param string $method
 	 * @param int    $type
+	 * @param string $http_method
 	 * @return Router
 	 * @throws Exception
 	 */
-	public function route($route, $ctrl, $method = self::DEFAULT_ROUTE_METHOD, $type = self::STRING) {
+	public function route($route, $ctrl, $method = self::DEFAULT_ROUTE_METHOD, $type = self::STRING, $http_method = self::HTTP_GET) {
 		if(Dependency::exists($ctrl) && Dependency::is_controller($ctrl))
 			self::$routes[$route] = [
 				'type' => $type,
 				'controller' => $ctrl,
-				'method' => $method
+				'method' => $method,
+				'http_method' => $http_method,
 			];
 		else throw new Exception('controller '.$ctrl.' not found !');
 		return $this;
@@ -61,8 +66,9 @@ class Router extends Base implements Singleton {
 		foreach (Dependency::controllers() as $class => $controller) {
 			Dependency::get_from_classname($class);
 			$ref_class = new ReflectionClass($class);
+			$doc_parser = $this->inject->get_phpdoc_parser();
 			foreach ($ref_class->getMethods(ReflectionMethod::IS_PUBLIC) as $method) {
-				$this->inject->get_phpdoc_parser()->get_method_route($this, $class, $method);
+				$doc_parser->get_method_route($this, $class, $method);
 			}
 		}
 	}
