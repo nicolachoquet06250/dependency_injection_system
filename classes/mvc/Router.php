@@ -87,6 +87,12 @@ class Router extends Base implements Singleton {
 		foreach (self::$routes as $route_str => $_route) {
 			if($_route['type'] === self::STRING) {
 				if($route === $route_str) {
+					if($_route['http_method'] !== 'both' && ($_route['http_method'] === 'get' && $_SERVER['REQUEST_METHOD'] !== 'GET')
+					   || ($_route['http_method'] === 'post' && $_SERVER['REQUEST_METHOD'] === 'GET')) {
+						$translations = $this->inject->get_service_translation();
+						$error_message = $translations->__('Mauvaise méthode de requête http utilisée !');
+						$this->inject->get_service_error()->error400($error_message);
+					}
 					self::$CURRENT_ROUTE = [$route => $_route];
 					return $this->run_controller(self::STRING, $_route['controller'], $_route['method']);
 				}

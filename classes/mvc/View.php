@@ -61,10 +61,11 @@ class View extends Base {
 		$this->use_materialize = true;
 		$this->use_none = false;
 		return '
-	<meta charset="'.$this->encoding.'"
-	<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+	<meta charset="'.$this->encoding.'" />
+	<link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet" />
+	<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
 	
-	<link rel="stylesheet" href="https://materializecss.com/bin/materialize.css">
+	<link rel="stylesheet" href="https://materializecss.com/bin/materialize.css" />
 
 	'.($use_jquery ? '<script src="https://code.jquery.com/jquery-3.2.1.min.js"></script>' : '').'
     <script src="https://materializecss.com/bin/materialize.js"></script>

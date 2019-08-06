@@ -58,6 +58,9 @@ class Route extends Service {
 	}
 
 	public function write_array_line($route, $route_detail) {
+		if($route_detail['http_method'] === Router::HTTP_POST) {
+			return '';
+		}
 		return '<tr>
 			<td>
 				' . ( $route_detail['type'] === Router::STRING ? 'String' : 'Regex' ) . '

@@ -22,7 +22,7 @@ class PHPDocParser extends Base implements Singleton {
 	}
 
 	protected function clean_doc($doc) {
-		return str_replace(['/**', ' */', "\t", ' * '], '', $doc);
+		return str_replace(['/**', ' */', "\t", ' * ', ' *'], '', $doc);
 	}
 
 	protected function get_route($doc, $class, $method_name) {
@@ -39,7 +39,7 @@ class PHPDocParser extends Base implements Singleton {
 			$doc = $_doc;
 			foreach ($doc as $item) {
 				if(substr($item, 0, strlen('@route ')) === '@route ') {
-					$route = str_replace('@route ', '', $doc)[0];
+					$route = str_replace(['@route ', ' '], '', $item);
 					break;
 				}
 			}
@@ -62,7 +62,7 @@ class PHPDocParser extends Base implements Singleton {
 			foreach ($doc as $item) {
 				if(substr($item, 0, strlen('@http ')) === '@http '
 				   || substr($item, 0, strlen('@http_method ')) === '@http_method ') {
-					$http_method = str_replace(['@http ', '@http_method '], '', $doc)[0];
+					$http_method = str_replace(['@http ', '@http_method ', ' '], '', $item);
 					break;
 				}
 			}
