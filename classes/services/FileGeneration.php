@@ -73,7 +73,7 @@ RewriteRule ^([^\.]+)$ /index.php?q=$0 [QSA,L]
 	use mvc_router\confs\Conf;
 	use mvc_router\dependencies\Dependency;
 
-	require_once \''.(realpath(__DIR__.'/../../')).'/autoload.php\';
+	require_once __DIR__.\'/../autoload.php\';
 
 	// parameters are arrays
 	Dependency::add_custom_controllers();
