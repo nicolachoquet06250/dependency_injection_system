@@ -17,4 +17,7 @@
 	Dependency::require_dependency_wrapper();
 	Conf::require_conf_wrapper();
 
-	Dependency::get_wrapper_factory()->get_dependency_wrapper()->get_triggers()->initialize();
+	$triggers = Dependency::get_wrapper_factory()->get_dependency_wrapper()->get_triggers();
+	if($triggers) {
+		$triggers->initialize();
+	}
