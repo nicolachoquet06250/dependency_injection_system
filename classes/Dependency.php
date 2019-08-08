@@ -116,6 +116,18 @@ class Dependency {
 			'is_singleton' => false,
 			'parent' => 'mvc_router\services\Service',
 		],
+		'mvc_router\services\Trigger' => [
+			'name' => 'service_trigger',
+			'file' => __DIR__.'/services/Trigger.php',
+			'is_singleton' => false,
+			'parent' => 'mvc_router\services\Service',
+		],
+		'mvc_router\services\TriggerRegisterer' => [
+			'name' => 'triggers',
+			'file' => __DIR__.'/services/TriggerRegisterer.php',
+			'is_singleton' => false,
+			'parent' => 'mvc_router\services\Service',
+		],
 
 		'mvc_router\parser\PHPDocParser' => [
 			'name' => 'phpdoc_parser',

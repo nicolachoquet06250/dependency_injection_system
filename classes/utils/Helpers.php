@@ -29,4 +29,16 @@ class Helpers extends Base implements Singleton {
 		}
 		return $newArray;
 	}
+
+	public function is_cli() {
+		return PHP_SAPI === 'cli';
+	}
+
+	public function is_cli_server() {
+		return PHP_SAPI === 'cli-server';
+	}
+
+	public function is_cgi() {
+		return substr(PHP_SAPI, 0, 3) === 'cgi';
+	}
 }

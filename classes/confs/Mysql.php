@@ -14,7 +14,7 @@ class Mysql {
 	protected $user_prefix = '';
 	protected  $user;
 	protected  $pass;
-	protected  $db_prefix = '';
+	protected  $db_prefix = 'mvc_router_';
 	protected  $db_name;
 	protected  $port = 3306;
 
@@ -40,7 +40,10 @@ class Mysql {
 		try {
 			/** @var mysqli connector */
 			if($this->host && $this->user && $this->pass) {
-				$this->connector = new mysqli($this->host, $this->user, $this->pass, $this->db_name, $this->port);
+				$user = $this->user_prefix !== '' ? $this->user_prefix.'_'.$this->user : $this->user;
+				$db_name = $this->db_name
+					? ($this->db_prefix !== '' ? $this->db_prefix.'_'.$this->db_name : $this->db_name) : null;
+				$this->connector = new mysqli($this->host, $user, $this->pass, $db_name, $this->port);
 			}
 		}
 		catch (\mysql_xdevapi\Exception $e) {

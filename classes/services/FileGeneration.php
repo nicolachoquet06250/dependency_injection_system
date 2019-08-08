@@ -88,8 +88,13 @@ RewriteRule ^([^\.]+)$ /index.php?q=$0 [QSA,L]
 	}
 	public function generate_custom_autoload($custom_dir) {
 		$autoload = '<?php
-	const __SITE_NAME__ = \''.$custom_dir.'\';
-	require_once __DIR__.\'/../autoload.php\';
+
+use mvc_router\dependencies\Dependency;
+
+const __SITE_NAME__ = \''.$custom_dir.'\';
+require_once __DIR__.\'/../autoload.php\';
+
+Dependency::get_wrapper_factory()->get_dependency_wrapper()->get_triggers()->initialize();
 ';
 
 		file_put_contents(__DIR__.'/../../'.$custom_dir.'/autoload.php', $autoload);

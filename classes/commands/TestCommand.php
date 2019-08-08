@@ -5,6 +5,8 @@ namespace mvc_router\commands;
 
 
 use Exception;
+use mvc_router\services\Trigger;
+use ReflectionException;
 
 class TestCommand extends Command {
 	/**
@@ -23,5 +25,9 @@ class TestCommand extends Command {
 		}
 		$directory = realpath($directory);
 		$commands->run('php -S localhost:'.$port.' -t '.$directory);
+	}
+
+	public function helper_is_cli(Trigger $triggers) {
+		$triggers->trig('trigger_test', 'test');
 	}
 }
