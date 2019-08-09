@@ -81,11 +81,10 @@ class Commands extends Base implements Singleton {
 				}
 				$_command->add_param($key, $value);
 			}
-			if(!defined('CURRENT_USED_SITE')) {
-				define('CURRENT_USED_SITE', 'demo');
-			}
-			if(is_file(__DIR__.'/../../../'.CURRENT_USED_SITE.'/update_dependencies.php')) {
-				require_once __DIR__.'/../../../'.CURRENT_USED_SITE.'/update_dependencies.php';
+			if(defined('CURRENT_USED_SITE')) {
+				if(is_file(__DIR__.'/../../../'.CURRENT_USED_SITE.'/update_dependencies.php')) {
+					require_once __DIR__.'/../../../'.CURRENT_USED_SITE.'/update_dependencies.php';
+				}
 			}
 
 			$_command->clean_params();
