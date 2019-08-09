@@ -57,7 +57,9 @@ class Conf {
 			if(substr($conf_class, 0, 1) !== '\\') {
 				$conf_class = '\\'.$conf_class;
 			}
-			$final_class .= "\t * @method ".$conf_class." get_".$conf_details['name']."()\n";
+			if(substr($conf_details['name'], 0, 1) !== '_') {
+				$final_class .= "\t * @method ".$conf_class." get_".$conf_details['name']."()\n";
+			}
 		}
 		$final_class .= $class_end;
 
@@ -127,6 +129,7 @@ class Conf {
 							  $conf_details['name'], $conf_details['file'], $type);
 		}
 		self::require_conf_wrapper();
+		return self::$confs;
 	}
 
 	public static function delete_conf_wrapper() {

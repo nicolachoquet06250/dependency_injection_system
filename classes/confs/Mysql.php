@@ -5,11 +5,12 @@ namespace mvc_router\confs;
 
 
 use Exception;
+use mvc_router\Base;
 use mvc_router\dependencies\DependencyWrapper;
 use mysqli;
 use mysqli_result;
 
-class Mysql {
+class Mysql extends Base {
 	protected $host;
 	protected $user_prefix = '';
 	protected  $user;
@@ -22,6 +23,8 @@ class Mysql {
 	protected $last_result;
 	/** @var string $last_query */
 	protected $last_query;
+	/** @var string $last_complete_query */
+	protected $last_complete_query;
 
 	/**
 	 * Mysql constructor.
@@ -29,11 +32,10 @@ class Mysql {
 	 * @throws Exception
 	 */
 	public function __construct() {
+		parent::__construct();
 		if(!in_array('\mysqli', get_declared_classes()) && !in_array('mysqli', get_declared_classes())) {
 			throw new Exception(
-				DependencyWrapper::get_wrapper_factory()
-								 ->get_dependency_wrapper()
-								 ->get_service_translation()
+				$this->inject->get_service_translation()
 								 ->__("L'extension php-mysql doit être installée et activée pour pouvoir utiliser les configurations Mysql !")
 			);
 		}
@@ -57,46 +59,50 @@ class Mysql {
 	 * @return bool|mysqli_result|Mysql
 	 */
 	public function query($query, $vars = []) {
-		if(!$this->connector) {
-			return;
+		if($this->is_connected()) {
+			if (!$this->connector) {
+				return false;
+			}
+			$this->last_query = $query;
+			foreach ($vars as $num => $var) {
+				$query = str_replace('$'.($num + 1), is_string($var) ? "\"{$var}\"" : $var, $query);
+			}
+			$this->last_complete_query = $query;
+			if (substr($query, 0, strlen('SELECT '))) {
+				$this->last_result = $this->connector->query($query);
+				return $this;
+			}
+			return $this->connector->query($query);
 		}
-		$this->last_query = $query;
-		foreach ($vars as $num => $var) {
-			$query = str_replace('$'.$num, $var, $query);
-		}
-		if(substr($query, 0, strlen('SELECT '))) {
-			$this->last_result = $this->connector->query($query);
-			return $this;
-		}
-		return $this->connector->query($query);
+		return null;
 	}
 
 	/**
 	 * @return mixed
 	 */
 	public function fetch_row() {
-		return $this->get_last_result()->fetch_row();
+		return $this->is_connected() && !is_null($this->get_last_result()) ? $this->get_last_result()->fetch_row() : [];
 	}
 
 	/**
 	 * @return array|null
 	 */
 	public function fetch_assoc() {
-		return $this->get_last_result()->fetch_assoc();
+		return $this->is_connected() && !is_null($this->get_last_result()) ? $this->get_last_result()->fetch_assoc() : [];
 	}
 
 	/**
 	 * @return mixed
 	 */
 	public function fetch_array() {
-		return $this->get_last_result()->fetch_array();
+		return $this->is_connected() && !is_null($this->get_last_result()) ? $this->get_last_result()->fetch_array() : [];
 	}
 
 	/**
 	 * @return mixed
 	 */
 	public function fetch_all() {
-		return $this->get_last_result()->fetch_all();
+		return $this->is_connected() && !is_null($this->get_last_result()) ? $this->get_last_result()->fetch_all() : [];
 	}
 
 	/**
@@ -107,9 +113,23 @@ class Mysql {
 	}
 
 	/**
+	 * @return string
+	 */
+	public function get_last_complete_query() {
+		return $this->last_complete_query;
+	}
+
+	/**
 	 * @return mysqli_result
 	 */
 	public function get_last_result() {
 		return $this->last_result;
+	}
+
+	/**
+	 * @return bool
+	 */
+	public function is_connected() {
+		return $this->connector !== false && !is_null($this->connector) && !$this->connector->connect_error;
 	}
 }

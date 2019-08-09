@@ -76,8 +76,18 @@ class Commands extends Base implements Singleton {
 			$_command = $this->inject->$get_command();
 			$params = $this->clean_params($params);
 			foreach ($params as $key => $value) {
+				if($key === 'current_used_site') {
+					define('CURRENT_USED_SITE', $value);
+				}
 				$_command->add_param($key, $value);
 			}
+			if(!defined('CURRENT_USED_SITE')) {
+				define('CURRENT_USED_SITE', 'demo');
+			}
+			if(is_file(__DIR__.'/../../../'.CURRENT_USED_SITE.'/update_dependencies.php')) {
+				require_once __DIR__.'/../../../'.CURRENT_USED_SITE.'/update_dependencies.php';
+			}
+
 			$_command->clean_params();
 			return $_command->execute($command_method);
 		}

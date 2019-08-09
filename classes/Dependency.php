@@ -243,9 +243,7 @@ class Dependency {
 				   (isset(self::$dependencies[$classname]['is_factory']) && self::$dependencies[$classname]['is_factory'])
 				? $classname::$instanciate_method() : new $classname();
 		}
-		else {
-			throw new Exception($classname.' is not a dependency');
-		}
+		else throw new Exception($classname.' is not a dependency');
 	}
 
 	/**
