@@ -157,7 +157,7 @@ class Dependency {
 			'file' => __DIR__.'/utils/commands/Command.php',
 			'is_singleton' => false,
 		],
-		'mvc_router\commands\TestCommand' => [
+		'mvc_router\commands\TestCommand'     => [
 			'name' => 'command_test',
 			'file' => __DIR__.'/commands/TestCommand.php',
 			'is_singleton' => false,
@@ -169,9 +169,15 @@ class Dependency {
 			'is_singleton' => false,
 			'parent' => 'mvc_router\commands\Command',
 		],
-		'mvc_router\commands\CloneCommand' => [
+		'mvc_router\commands\CloneCommand'    => [
 			'name' => 'command_clone',
 			'file' => __DIR__.'/commands/CloneCommand.php',
+			'is_singleton' => false,
+			'parent' => 'mvc_router\commands\Command',
+		],
+		'mvc_router\commands\InstallCommand'  => [
+			'name' => 'command_install',
+			'file' => __DIR__.'/commands/InstallCommand.php',
 			'is_singleton' => false,
 			'parent' => 'mvc_router\commands\Command',
 		],

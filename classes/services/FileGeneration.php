@@ -104,7 +104,8 @@ Dependency::get_wrapper_factory()->get_dependency_wrapper()->get_triggers()->ini
 autoload.php
 htaccess.php
 index.php';
-
-		file_put_contents(__DIR__.'/../../'.$custom_dir.'/.gitignore', $gitingore);
+		if(!realpath(__DIR__.'/../../'.$custom_dir.'/.gitignore')) {
+			file_put_contents(realpath(__DIR__.'/../../'.$custom_dir).'/.gitignore', $gitingore);
+		}
 	}
 }
