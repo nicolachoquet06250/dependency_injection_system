@@ -13,8 +13,8 @@ class Logger extends Service {
 	protected $file;
 	protected $separator = '';
 
-	public function __construct() {
-		parent::__construct();
+	public function after_construct() {
+		parent::after_construct();
 		$this->file = date('Y-m-d').'.log';
 	}
 

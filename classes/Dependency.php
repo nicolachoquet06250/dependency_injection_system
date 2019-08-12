@@ -128,10 +128,26 @@ class Dependency {
 			'is_singleton' => false,
 			'parent' => 'mvc_router\services\Service',
 		],
+		'mvc_router\services\Lock' => [
+			'name' => 'service_lock',
+			'file' => __DIR__.'/services/Lock.php',
+			'is_singleton' => false,
+			'parent' => 'mvc_router\services\Service',
+		],
 
 		'mvc_router\parser\PHPDocParser' => [
 			'name' => 'phpdoc_parser',
 			'file' => __DIR__.'/utils/parsers/PHPDocParser.php',
+			'is_singleton' => true
+		],
+		'mvc_router\queues\Queue' => [
+			'name' => 'util_queue',
+			'file' => __DIR__.'/utils/queues/Queue.php',
+			'is_singleton' => false
+		],
+		'mvc_router\queues\QueueList' => [
+			'name' => 'util_queue_list',
+			'file' => __DIR__.'/utils/queues/QueueList.php',
 			'is_singleton' => true
 		],
 

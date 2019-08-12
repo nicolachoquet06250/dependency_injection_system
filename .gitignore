@@ -2,6 +2,8 @@
 vendor/
 classes/translations/
 classes/logs/
+classes/lock/
+classes/queues/
 
 classes/DependencyWrapper.php
 classes/ConfWrapper.php
