@@ -55,6 +55,12 @@ class Router extends Base implements Singleton {
 		return $this;
 	}
 
+	/**
+	 * @param string $ctrl
+	 * @param string $method
+	 * @return Router
+	 * @throws Exception
+	 */
 	public function root_route($ctrl, $method = self::DEFAULT_ROUTE_METHOD) {
 		return $this->route('/', $ctrl, $method);
 	}
@@ -149,6 +155,9 @@ class Router extends Base implements Singleton {
 		return $controller->$method(...$controller->get_parameters_table($method), ...$regex_parameter);
 	}
 
+	/**
+	 * @return array
+	 */
 	public function routes() {
 		return self::$routes;
 	}
@@ -160,6 +169,10 @@ class Router extends Base implements Singleton {
 		return isset(self::$routes['/']) ? self::$routes['/'] : false;
 	}
 
+	/**
+	 * @param bool $key
+	 * @return array|string|null
+	 */
 	public function get_current_route($key = false) {
 		if($key) {
 			return array_keys($this->get_current_route())[0];
@@ -167,14 +180,14 @@ class Router extends Base implements Singleton {
 		return self::$CURRENT_ROUTE;
 	}
 
+	/**
+	 * @param string $gets
+	 */
 	public function set_gets_from_string(string $gets) {
 		$gets = explode('&', $gets);
 		foreach ($gets as $get) {
 			if(strstr($get, '=')) {
 				$get = explode('=', $get);
-//				if(ctype_digit($get[1])) {
-//					$get[1] = intval($get[1]);
-//				}
 			}
 			else {
 				$get = [
@@ -186,13 +199,21 @@ class Router extends Base implements Singleton {
 		}
 	}
 
-	public function set_get($key, $value) {
+	/**
+	 * @param string $key
+	 * @param mixed $value
+	 */
+	public function set_get(string $key, $value) {
 		if(ctype_digit($value)) {
 			$value = intval($value);
 		}
 		$_GET[$key] = $value;
 	}
 
+	/**
+	 * @param string $key
+	 * @return bool|mixed
+	 */
 	public function get($key) {
 		if(isset($_GET[$key])) {
 			$_GET[$key] = urldecode($_GET[$key]);
@@ -203,10 +224,21 @@ class Router extends Base implements Singleton {
 		return $_GET[$key] ?? false;
 	}
 
+	/**
+	 * @param string|null $key
+	 * @return bool|mixed
+	 */
 	public function post($key = null) {
 		if(is_null($key)) {
 			return $_POST;
 		}
 		return $_POST[$key] ?? false;
+	}
+
+	/**
+	 * @return string
+	 */
+	public function get_base_url() {
+		return $_SERVER['HTTP_HOST'];
 	}
 }

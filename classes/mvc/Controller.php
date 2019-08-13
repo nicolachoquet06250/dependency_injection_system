@@ -43,8 +43,13 @@ class Controller extends Base {
 	}
 
 	protected function var_dump(...$elements) {
+		$helpers = $this->inject->get_helpers();
+		$pre_start = $helpers->is_cli() || $helpers->is_cli_server() ? '<pre>' : '';
+		$pre_end = $helpers->is_cli() || $helpers->is_cli_server() ? '</pre>' : '';
 		ob_start();
+		echo $pre_start;
 		var_dump(...$elements);
+		echo $pre_end;
 		$output = ob_get_contents();
 		ob_clean();
 		return $output;

@@ -4,6 +4,7 @@ namespace mvc_router\mvc;
 
 use mvc_router\router\Router;
 use mvc_router\services\Route;
+use mvc_router\services\UrlGenerator;
 
 class Routes extends Controller {
 
@@ -31,5 +32,20 @@ class Routes extends Controller {
 		$route_view->assign('lang', $this->translation->get_default_language());
 
 		return $route_view;
+	}
+
+	/**
+	 * @route /routes/url_generator
+	 * @param UrlGenerator $urlGenerator
+	 * @return false|string
+	 */
+	public function url_generator(UrlGenerator $urlGenerator) {
+		$link_with_stats = '<a href="'.$urlGenerator->get_current_protocol().
+						   $urlGenerator->get_base_url().
+						   $urlGenerator->get_url_from_ctrl_and_method($this, 'index', 'stats').'">Aller aux routes avec stats</a>';
+		$link_without_stats = '<a href="'.$urlGenerator->get_current_protocol().
+						   $urlGenerator->get_base_url().
+						   $urlGenerator->get_url_from_ctrl_and_method($this, 'index').'">Aller aux routes sans stats</a>';
+		return $link_with_stats.'<br>'.$link_without_stats;
 	}
 }
