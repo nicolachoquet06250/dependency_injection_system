@@ -44,13 +44,13 @@ class UrlGenerator extends Service {
 	 * @return string|null
 	 */
 	public function get_url_from_ctrl_and_method(Controller $ctrl, string $method, ...$for_regex_url) {
-		echo '<pre>';
 		$ctrl_class = get_class($ctrl);
+		$base = $this->get_current_protocol().$this->get_base_url();
 		foreach ($this->router->routes() as $route => $route_detail) {
 			$current_ctrl_class = Dependency::get_class_from_name($route_detail['controller']);
 			if($ctrl_class === $current_ctrl_class && $method === $route_detail['method']) {
 				if($route_detail['type'] === Router::STRING) {
-					return $route;
+					return $base.$route;
 				}
 				preg_match_all('/((\/\?)?\([^\)\(]+\)\??)/', $route, $matches);
 				array_shift($matches);
@@ -58,11 +58,11 @@ class UrlGenerator extends Service {
 				foreach ($matches as $i => $match) {
 					$route = str_replace($match, (isset($for_regex_url[$i]) ? $for_regex_url[$i] : ''), $route);
 				}
-				$route = str_replace('\/', '/', $route);
+				$route = str_replace(['\/', '//'], '/', $route);
 				if(substr($route, strlen($route) - 1, 1) === '\\') {
 					$route = substr($route, 0, strlen($route) - 1);
 				}
-				return $route;
+				return $base.$route;
 			}
 		}
 		return null;

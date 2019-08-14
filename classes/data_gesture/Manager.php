@@ -86,27 +86,46 @@ abstract class Manager extends Base {
 			throw new Exception($this->inject->get_service_translation()
 											 ->__(get_class($this).'::'.$method_name.'() requis '.count($method_params).' et vous en avez renseigné '.count($arguments)));
 		}
-		$fields = explode('_from_', $method_name)[0];
-		$fields = str_replace('get_', '', $fields);
-		$fields = explode('_', $fields);
+		if(substr($name, 0, strlen('get_')) === 'get_'
+		   || substr($name, 0, strlen('select_')) === 'select_'
+		   || substr($name, 0, strlen('find_')) === 'find_') {
+			$fields = explode('_from_', $method_name)[0];
+			$fields = str_replace(['get_', 'select_', 'find_'], '', $fields);
+			$fields = explode('_', $fields);
 
-		$from_keys = explode('_from_', $method_name)[1];
-		$from_keys = explode('_', $from_keys);
-		foreach ($from_keys as $i => $from_key) {
-			$from_keys[$from_key] = $arguments[$i];
-			unset($from_keys[$i]);
-		}
-		$key_string = [];
-		foreach ($from_keys as $from_key => $from_key_value) {
-			if(is_string($from_key_value)) {
-				$from_key_value = '"'.$from_key_value.'"';
+			$from_keys = explode('_from_', $method_name)[1];
+			$from_keys = explode('_', $from_keys);
+			foreach ($from_keys as $i => $from_key) {
+				$from_keys[$from_key] = $arguments[$i];
+				unset($from_keys[$i]);
 			}
-			if(is_array($from_key_value)) {
-				$from_key_value = '"'.implode(', ', $from_key_value).'"';
+			$key_string = [];
+			foreach ($from_keys as $from_key => $from_key_value) {
+				if (is_string($from_key_value)) {
+					$from_key_value = '"'.$from_key_value.'"';
+				}
+				if (is_array($from_key_value)) {
+					$from_key_value = '"'.implode(', ', $from_key_value).'"';
+				}
+				$key_string[] = '`'.$from_key.'`='.$from_key_value;
 			}
-			$key_string[] = '`'.$from_key.'`='.$from_key_value;
+			$fields = count($fields) === 1 && $fields[0] === 'all' ? '*' : '`'.implode('`, `', $fields).'`';
+			$mysqli->query('SELECT '.$fields.' FROM '.$this->get_table().' WHERE '.implode(' AND ', $key_string));
+			$result = $mysqli->get_last_result()->fetch_assoc();
+			if ($mysqli->get_last_result()->num_rows === 1 && count($result) > 1) {
+				$result = [$result];
+			}
+			return $result;
+		} elseif (substr($name, 0, strlen('del_')) === 'del_'
+				  || substr($name, 0, strlen('delete_')) === 'delete_'
+				  || substr($name, 0, strlen('remove_')) === 'remove_') {
+
+		} elseif (substr($name, 0, strlen('update_')) === 'update_') {
+
+		} elseif (substr($name, 0, strlen('insert_')) === 'insert_'
+					|| substr($name, 0, strlen('set_')) === 'set_') {
+
 		}
-		$mysqli->query('SELECT `'.implode('`, `', $fields).'` FROM '.$this->get_table().' WHERE '.implode(' AND ', $key_string));
-		return true;
+		return null;
 	}
 }

@@ -6,7 +6,6 @@ namespace mvc_router\confs;
 
 use Exception;
 use mvc_router\Base;
-use mvc_router\dependencies\DependencyWrapper;
 use mysqli;
 use mysqli_result;
 
@@ -26,17 +25,12 @@ class Mysql extends Base {
 	/** @var string $last_complete_query */
 	protected $last_complete_query;
 
-	/**
-	 * Mysql constructor.
-	 *
-	 * @throws Exception
-	 */
-	public function __construct() {
-		parent::__construct();
+	public function after_construct() {
+		parent::after_construct();
 		if(!in_array('\mysqli', get_declared_classes()) && !in_array('mysqli', get_declared_classes())) {
 			throw new Exception(
 				$this->inject->get_service_translation()
-								 ->__("L'extension php-mysql doit être installée et activée pour pouvoir utiliser les configurations Mysql !")
+							 ->__("L'extension php-mysql doit être installée et activée pour pouvoir utiliser les configurations Mysql !")
 			);
 		}
 		try {
