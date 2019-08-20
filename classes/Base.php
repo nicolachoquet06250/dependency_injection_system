@@ -34,6 +34,13 @@ class Base {
 	}
 
 	/**
+	 * @return string
+	 */
+	public final function get_class() {
+		return get_class($this);
+	}
+
+	/**
 	 * @throws ReflectionException
 	 */
 	protected function after_construct() {
@@ -196,5 +203,32 @@ class Base {
 			}
 		}
 		return [];
+	}
+
+	/**
+	 * @param $key
+	 * @return mixed
+	 */
+	public function get($key) {
+		return $this->$key;
+	}
+
+	/**
+	 * @param string $key
+	 * @param mixed $value
+	 * @return $this
+	 * @throws ReflectionException
+	 */
+	public function set($key, $value) {
+		$prop_ref = new \ReflectionProperty($this->get_class(), $key);
+		if(strstr($prop_ref->getDocComment(), 'int') || strstr($prop_ref->getDocComment(), 'integer')) {
+			$value = (int)$value;
+		} elseif (strstr($prop_ref->getDocComment(), 'bool') || strstr($prop_ref->getDocComment(), 'boolean')) {
+			$value = (bool)$value;
+		} elseif (strstr($prop_ref->getDocComment(), 'string')) {
+			$value = (string)$value;
+		}
+		$this->$key = $value;
+		return $this;
 	}
 }

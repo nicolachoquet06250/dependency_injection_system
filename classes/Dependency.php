@@ -600,8 +600,8 @@ class Dependency {
 	 * @throws Exception
 	 */
 	public static function autoload($class) {
-		if(self::is_in($class)) {
-			self::get_from_classname($class);
+		if(Dependency::is_in($class)) {
+			Dependency::get_from_classname($class);
 		}
 		elseif (Conf::is_in($class)) {
 			Conf::get_from_classname($class);

@@ -10,8 +10,8 @@ class Session extends Service implements Singleton {
 	private static $instance = null;
 	protected $session_id;
 
-	public function __construct() {
-		parent::__construct();
+	public function after_construct() {
+		parent::after_construct();
 		@session_start();
 		$this->session_id = session_id();
 	}

@@ -92,7 +92,7 @@ RewriteRule ^([^\.]+)$ /index.php?q=$0 [QSA,L]
 use mvc_router\dependencies\Dependency;
 
 const __SITE_NAME__ = \''.$custom_dir.'\';
-require_once __DIR__.\'/../autoload.php\';
+require_once __DIR__.\'/update_dependencies.php\';
 
 Dependency::get_wrapper_factory()->get_dependency_wrapper()->get_triggers()->initialize();
 ';
