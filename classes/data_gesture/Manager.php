@@ -41,6 +41,21 @@ abstract class Manager extends Base {
 		return $virtual_methods;
 	}
 
+	protected function get_sql_string_from_array(array $fields) {
+		$key_string = [];
+		foreach ($fields as $i => $key) {
+			$value = $fields[$i];
+			if (is_string($value)) {
+				$value = '"'.$value.'"';
+			}
+			if (is_array($value)) {
+				$value = '"'.implode(', ', $value).'"';
+			}
+			$key_string[] = '`'.$key.'`='.$value;
+		}
+		return $key_string;
+	}
+
 	/**
 	 * @param string $method
 	 * @return bool|mixed
@@ -70,19 +85,9 @@ abstract class Manager extends Base {
 	 */
 	protected function get_from(array $keys, array $values) {
 		$mysqli = $this->get_mysql();
-		$key_string = [];
-		foreach ($keys as $i => $key) {
-			$value = $values[$i];
-			if (is_string($value)) {
-				$value = '"'.$value.'"';
-			}
-			if (is_array($value)) {
-				$value = '"'.implode(', ', $value).'"';
-			}
-			$key_string[] = '`'.$key.'`='.$value;
-		}
-		$mysqli->query('SELECT * FROM `'.$this->get_table().'` WHERE '.implode(' AND ', $key_string));
-		return $mysqli->fetch_object(Dependency::get_name_from_class($this->get_entity()->get_class()));
+		$keys = $this->associate_keys_and_values($keys, $values);
+		return $mysqli->query('SELECT * FROM `'.$this->get_table().'` WHERE '.implode(' AND ', $this->get_sql_string_from_array($keys)))
+			->fetch_object(Dependency::get_name_from_class($this->get_entity()->get_class()));
 	}
 
 	/**
@@ -98,19 +103,9 @@ abstract class Manager extends Base {
 			return [];
 		}
 		$mysqli = $this->get_mysql();
-		$key_string = [];
-		foreach ($from_keys as $i => $key) {
-			$value = $values[$i];
-			if (is_string($value)) {
-				$value = '"'.$value.'"';
-			}
-			if (is_array($value)) {
-				$value = '"'.implode(', ', $value).'"';
-			}
-			$key_string[] = '`'.$key.'`='.$value;
-		}
-		$mysqli->query('SELECT `'.implode('`, `', $search_keys).'` FROM `'.$this->get_table().'` WHERE '.implode(' AND ', $key_string));
-		return $mysqli->fetch_object(Dependency::get_name_from_class($this->get_entity()->get_class()));
+		$from_keys = $this->associate_keys_and_values($from_keys, $values);
+		return $mysqli->query('SELECT `'.implode('`, `', $search_keys).'` FROM `'.$this->get_table().'` WHERE '.implode(' AND ', $this->get_sql_string_from_array($from_keys)))
+			->fetch_object(Dependency::get_name_from_class($this->get_entity()->get_class()));
 	}
 
 	/**
@@ -160,7 +155,8 @@ abstract class Manager extends Base {
 
 	/**
 	 * @param string $method_name
-	 * @param mixed ...$arguments
+	 * @param mixed  ...$arguments
+	 * @return array|bool|\mvc_router\confs\Mysql
 	 * @throws Exception
 	 */
 	protected function delete($method_name, ...$arguments) {
@@ -168,23 +164,9 @@ abstract class Manager extends Base {
 		$fields = explode('_where_', $method_name)[1];
 		$fields = explode('_', $fields);
 		$fields = $this->associate_keys_and_values($fields, $arguments);
-		$key_string = [];
-		foreach ($fields as $i => $key) {
-			$value = $fields[$i];
-			if (is_string($value)) {
-				$value = '"'.$value.'"';
-			}
-			if (is_array($value)) {
-				$value = '"'.implode(', ', $value).'"';
-			}
-			$key_string[] = '`'.$key.'`='.$value;
-		}
-		if(empty($arguments)) {
-			$mysql->query('DELETE FROM `'.$this->get_table().'`');
-		}/* else {
-			$mysql->query('');
-		}*/
-		throw new Exception('Le type de requête `DELETE` n\'à pas encore été développé !');
+		return $mysql->query((empty($arguments) ?
+			'DELETE FROM `'.$this->get_table().'`'
+			: 'DELETE FROM `'.$this->get_table().'` WHERE '.implode(' AND ', $this->get_sql_string_from_array($fields))));
 	}
 
 	/**
