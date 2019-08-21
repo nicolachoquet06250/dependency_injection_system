@@ -13,6 +13,50 @@ use ReflectionException;
 abstract class Manager extends Base {
 	protected $entity_class = null;
 
+	/**
+	 * @return array
+	 * @throws ReflectionException
+	 */
+	protected final function get_virtual_methods() {
+		$class_ref = new ReflectionClass(get_class($this));
+		$doc = $class_ref->getDocComment();
+		$doc = str_replace(['/**', ' */', ' * ', ' *'], '', $doc);
+		$doc = explode("\n", $doc);
+		$virtual_methods = [];
+		foreach ($doc as $i => $item) {
+			if($item !== '' && strstr($item, '@method ') !== false) {
+				$virtual_method = explode('(', $item)[0];
+				$method = explode(' ', $virtual_method)[2];
+				$params = explode('(', str_replace(')', '', $item))[1];
+				$params = explode(', ', $params);
+				$params = array_map(function($param) {
+					return explode(' ', $param)[0];
+				}, $params);
+				$virtual_methods[] = [
+					'name' 			=> $method,
+					'params_type' 	=> $params
+				];
+			}
+		}
+		return $virtual_methods;
+	}
+
+	/**
+	 * @param string $method
+	 * @return bool|mixed
+	 * @throws ReflectionException
+	 */
+	protected final function has_virtual_method($method) {
+		$virtual_methods = $this->get_virtual_methods();
+		$current_method = null;
+		foreach ($virtual_methods as $virtual_method) {
+			if($virtual_method['name'] === $method) {
+				return $virtual_method;
+			}
+		}
+		return false;
+	}
+
 	protected final function get_mysql() {
 		return $this->confs->get_mysql();
 	}
@@ -70,10 +114,36 @@ abstract class Manager extends Base {
 	}
 
 	/**
-	 * @param string $method_name
+	 * @param array $keys
+	 * @param array $values
+	 * @return array
+	 * @throws Exception
+	 */
+	protected final function associate_keys_and_values(array $keys, array $values) {
+		foreach ($keys as $i => $key) {
+			$_key = null;
+			$_key = $this->get_associate_entity_property($key);
+			$keys[($_key ?? $key)] = $values[$i];
+			unset($keys[$i]);
+		}
+		return $keys;
+	}
+
+	/**
+	 * @param string $key
+	 * @return bool|string|null
+	 * @throws Exception
+	 */
+	protected final function get_associate_entity_property($key) {
+		return $this->get_entity()->has($key) ?? null;
+	}
+
+	/**
+	 * @param string  $method_name
 	 * @param mixed[] ...$arguments
 	 * @return Base|Base[]
 	 * @throws ReflectionException
+	 * @throws Exception
 	 */
 	protected function select($method_name, ...$arguments) {
 		$fields = explode('_from_', $method_name)[0];
@@ -82,24 +152,102 @@ abstract class Manager extends Base {
 
 		$from_keys = explode('_from_', $method_name)[1];
 		$from_keys = explode('_', $from_keys);
-		foreach ($from_keys as $i => $from_key) {
-			$from_keys[$from_key] = $arguments[$i];
-			unset($from_keys[$i]);
-		}
+		$from_keys = $this->associate_keys_and_values($from_keys, $arguments);
 		return count($fields) === 1 && $fields[0] === 'all'
 			? $this->get_from(array_keys($from_keys), array_values($from_keys))
 			: $this->get_keys_from($fields, array_keys($from_keys), array_values($from_keys));
 	}
 
 	/**
+	 * @param string $method_name
+	 * @param mixed ...$arguments
+	 * @throws Exception
+	 */
+	protected function delete($method_name, ...$arguments) {
+		$mysql = $this->get_mysql();
+		$fields = explode('_where_', $method_name)[1];
+		$fields = explode('_', $fields);
+		$fields = $this->associate_keys_and_values($fields, $arguments);
+		$key_string = [];
+		foreach ($fields as $i => $key) {
+			$value = $fields[$i];
+			if (is_string($value)) {
+				$value = '"'.$value.'"';
+			}
+			if (is_array($value)) {
+				$value = '"'.implode(', ', $value).'"';
+			}
+			$key_string[] = '`'.$key.'`='.$value;
+		}
+		if(empty($arguments)) {
+			$mysql->query('DELETE FROM `'.$this->get_table().'`');
+		}/* else {
+			$mysql->query('');
+		}*/
+		throw new Exception('Le type de requête `DELETE` n\'à pas encore été développé !');
+	}
+
+	/**
+	 * @param string $method_name
+	 * @param mixed ...$arguments
+	 * @throws Exception
+	 */
+	protected function update($method_name, ...$arguments) {
+		throw new Exception('Le type de requête `UPDATE` n\'à pas encore été développé !');
+	}
+
+	/**
+	 * @param string $method_name
+	 * @param mixed ...$arguments
+	 * @throws Exception
+	 */
+	protected function insert($method_name, ...$arguments) {
+		throw new Exception('Le type de requête `INSERT` n\'à pas encore été développé !');
+	}
+
+	/**
+	 * @param string $method
+	 * @return bool
+	 */
+	protected final function is_select($method) {
+		return substr($method, 0, strlen('get_')) === 'get_'
+			   || substr($method, 0, strlen('select_')) === 'select_'
+			   || substr($method, 0, strlen('find_')) === 'find_';
+	}
+
+	/**
+	 * @param string $method
+	 * @return bool
+	 */
+	protected final function is_delete($method) {
+		return substr($method, 0, strlen('del_')) === 'del_'
+			   || substr($method, 0, strlen('delete_')) === 'delete_'
+			   || substr($method, 0, strlen('remove_')) === 'remove_';
+	}
+
+	/**
+	 * @param string $method
+	 * @return bool
+	 */
+	protected final function is_update($method) {
+		return substr($method, 0, strlen('update_')) === 'update_';
+	}
+
+	/**
+	 * @param string $method
+	 * @return bool
+	 */
+	protected final function is_insert($method) {
+		return substr($method, 0, strlen('insert_')) === 'insert_'
+		|| substr($method, 0, strlen('set_')) === 'set_';
+	}
+
+	/**
 	 * @return string
+	 * @throws Exception
 	 */
 	protected function get_table() {
-		$class = get_class($this);
-		$class = str_replace('\\', '/', $class);
-		$class = explode('/', $class);
-		$class = $class[count($class) - 1];
-		return strtolower($class);
+		return $this->get_entity()->get_table();
 	}
 
 	/**
@@ -135,36 +283,8 @@ abstract class Manager extends Base {
 	 * @throws Exception
 	 */
 	protected function call($name, ...$arguments) {
-		$class_ref = new ReflectionClass(get_class($this));
-		$doc = $class_ref->getDocComment();
-		$doc = str_replace(['/**', ' */', ' * ', ' *'], '', $doc);
-		$doc = explode("\n", $doc);
-		$virtual_methods = [];
-		foreach ($doc as $i => $item) {
-			if($item !== '' && strstr($item, '@method ') !== false) {
-				$virtual_method = explode('(', $item)[0];
-				$method = explode(' ', $virtual_method)[2];
-				$params = explode('(', str_replace(')', '', $item))[1];
-				$params = explode(', ', $params);
-				$params = array_map(function($param) {
-					return explode(' ', $param)[0];
-				}, $params);
-				$virtual_methods[] = [
-					'name' 			=> $method,
-					'params_type' 	=> $params
-				];
-			}
-		}
-		$method_exists = false;
-		$current_method = null;
-		foreach ($virtual_methods as $virtual_method) {
-			if($virtual_method['name'] === $name) {
-				$method_exists = true;
-				$current_method = $virtual_method;
-				break;
-			}
-		}
-		if(!$method_exists) {
+		$current_method = $this->has_virtual_method($name);
+		if(!$current_method) {
 			return parent::call($name, ...$arguments);
 		}
 		$method_name = $current_method['name'];
@@ -173,24 +293,10 @@ abstract class Manager extends Base {
 			throw new Exception($this->inject->get_service_translation()
 											 ->__(get_class($this).'::'.$method_name.'() requis '.count($method_params).' et vous en avez renseigné '.count($arguments)));
 		}
-		$is_select = substr($name, 0, strlen('get_')) === 'get_'
-					 || substr($name, 0, strlen('select_')) === 'select_'
-					 || substr($name, 0, strlen('find_')) === 'find_';
-		$is_delete = substr($name, 0, strlen('del_')) === 'del_'
-					 || substr($name, 0, strlen('delete_')) === 'delete_'
-					 || substr($name, 0, strlen('remove_')) === 'remove_';
-		$is_update = substr($name, 0, strlen('update_')) === 'update_';
-		$is_insert = substr($name, 0, strlen('insert_')) === 'insert_'
-					 || substr($name, 0, strlen('set_')) === 'set_';
-		if($is_select) {
-			return $this->select($method_name, ...$arguments);
-		} elseif ($is_delete) {
-			throw new Exception('Le type de requête `DELETE` n\'à pas encore été développé !');
-		} elseif ($is_update) {
-			throw new Exception('Le type de requête `UPDATE` n\'à pas encore été développé !');
-		} elseif ($is_insert) {
-			throw new Exception('Le type de requête `INSERT` n\'à pas encore été développé !');
-		}
+		if($this->is_select($name)) return $this->select($method_name, ...$arguments);
+		elseif ($this->is_delete($name)) return $this->delete($name, ...$arguments);
+		elseif ($this->is_update($name)) return $this->update($name, ...$arguments);
+		elseif ($this->is_insert($name)) return $this->insert($name, ...$arguments);
 		return null;
 	}
 }

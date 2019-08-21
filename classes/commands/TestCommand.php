@@ -5,6 +5,7 @@ namespace mvc_router\commands;
 
 
 use Exception;
+use mvc_router\data\gesture\pizzygo\managers\User;
 use mvc_router\services\Trigger;
 
 class TestCommand extends Command {
@@ -26,10 +27,16 @@ class TestCommand extends Command {
 		$commands->run('php -S localhost:'.$port.' -t '.$directory);
 	}
 
+	/**
+	 * @param Trigger $triggers
+	 */
 	public function helper_is_cli(Trigger $triggers) {
 		$triggers->trig('trigger_test', 'test');
 	}
 
+	/**
+	 * @return array|string
+	 */
 	public function mysql() {
 		$mysql = $this->confs->get_mysql();
 		if(!$mysql->is_connected()) {
@@ -44,5 +51,13 @@ class TestCommand extends Command {
 			$users[] = $data;
 		}
 		return $users;
+	}
+
+	/**
+	 * @param User $userManager
+	 */
+	public function managers(User $userManager) {
+		$user = $userManager->get_all_from_id_lastname(1, 'Choquet');
+		$user->save();
 	}
 }

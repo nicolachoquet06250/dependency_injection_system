@@ -161,7 +161,7 @@ class Mysql extends Base {
 			$obj = Dependency::get_from_name($class_dependency_name);
 			if($obj) {
 				foreach ($item as $key => $value) {
-					$obj->set($key, $value);
+					$obj->set($key, $value, true);
 				}
 				$results[] = $obj;
 			}
