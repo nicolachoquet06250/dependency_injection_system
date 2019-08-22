@@ -18,20 +18,36 @@ class Entity extends Base {
 	/**
 	 * @return string
 	 */
+	protected function get_manager_class() {
+		if($this->manager_class) {
+			return $this->manager_class;
+		}
+		$class = $this->get_class();
+		return str_replace('entities', 'managers', $class);
+	}
+
+	/**
+	 * @return string
+	 */
 	public function get_table() {
 		$class = get_class($this);
 		$class = str_replace('\\', '/', $class);
 		$class = explode('/', $class);
 		$class = $class[count($class) - 1];
-		return strtolower($class);
+		preg_match_all('/[A-Z][a-z]+/', $class, $matches);
+		$matches = $this->inject->get_helpers()->array_flatten($matches);
+		$matches = array_map(function ($match) {
+			return strtolower($match);
+		}, $matches);
+		return implode('_', $matches);
 	}
 
 	/**
 	 * @return string|null
 	 */
 	protected final function get_entity_dependency_name() {
-		if($this->manager_class && Dependency::is_in($this->manager_class)) {
-			return Dependency::get_name_from_class($this->manager_class);
+		if($this->get_manager_class() && Dependency::is_in($this->get_manager_class())) {
+			return Dependency::get_name_from_class($this->get_manager_class());
 		}
 		return null;
 	}
@@ -43,7 +59,7 @@ class Entity extends Base {
 	protected function get_manager() {
 		$dependency_name = $this->get_entity_dependency_name();
 		if($dependency_name) return $this->inject->{'get_'.$dependency_name}();
-		throw new Exception($this->inject->get_service_translation()->__("Le manager %1 n'à pas été reconnu !", [$this->manager_class]));
+		throw new Exception($this->inject->get_service_translation()->__("Le manager %1 n'à pas été reconnu !", [$this->get_manager_class()]));
 	}
 
 	/**

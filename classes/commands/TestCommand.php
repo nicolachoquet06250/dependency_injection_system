@@ -5,6 +5,7 @@ namespace mvc_router\commands;
 
 
 use Exception;
+use mvc_router\data\gesture\pizzygo\managers\AddressType;
 use mvc_router\data\gesture\pizzygo\managers\User;
 use mvc_router\services\Password;
 use mvc_router\services\Trigger;
@@ -56,10 +57,10 @@ class TestCommand extends Command {
 	}
 
 	/**
-	 * @param User     $userManager
-	 * @param Password $passwordService
+	 * @param User        $userManager
+	 * @param Password    $passwordService
 	 * @return bool|\mvc_router\data\gesture\pizzygo\entities\User|\mvc_router\data\gesture\pizzygo\entities\User[]
-	 * @throws ReflectionException
+	 * @throws Exception
 	 */
 	public function managers(User $userManager, Password $passwordService) {
 		$password = $passwordService->b_crypt('2669NICOLAS2107');

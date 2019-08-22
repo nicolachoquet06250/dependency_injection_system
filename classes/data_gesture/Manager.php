@@ -12,7 +12,18 @@ use ReflectionClass;
 use ReflectionException;
 
 abstract class Manager extends Base {
-	protected $entity_class = null;
+	protected $entity_class;
+
+	/**
+	 * @return string
+	 */
+	protected function get_entity_class() {
+		if($this->entity_class) {
+			return $this->entity_class;
+		}
+		$class = $this->get_class();
+		return str_replace('managers', 'entities', $class);
+	}
 
 	/**
 	 * @return array
@@ -254,8 +265,8 @@ abstract class Manager extends Base {
 	 * @return string|null
 	 */
 	protected final function get_entity_dependency_name() {
-		if($this->entity_class && Dependency::is_in($this->entity_class)) {
-			return Dependency::get_name_from_class($this->entity_class);
+		if($this->get_entity_class() && Dependency::is_in($this->get_entity_class())) {
+			return Dependency::get_name_from_class($this->get_entity_class());
 		}
 		return null;
 	}
@@ -267,17 +278,17 @@ abstract class Manager extends Base {
 	public function get_entity() {
 		$dependency_name = $this->get_entity_dependency_name();
 		if($dependency_name) return $this->inject->{'get_'.$dependency_name}();
-		throw new Exception($this->inject->get_service_translation()->__("L'entité %1 n'à pas été reconnu !", [$this->entity_class]));
+		throw new Exception($this->inject->get_service_translation()->__("L'entité %1 n'à pas été reconnu !", [$this->get_entity_class()]));
 	}
 
 	/**
-	 * @return Entity[]|Entity
+	 * @return Base|Base[]|Entity|Entity[]
 	 * @throws ReflectionException
 	 */
 	public function get_all() {
 		$mysqli = $this->confs->get_mysql();
 		$mysqli->query('SELECT * FROM `'.$this->get_table().'`');
-		return $mysqli->fetch_object(Dependency::get_name_from_class($this->entity_class));
+		return $mysqli->fetch_object(Dependency::get_name_from_class($this->get_entity_class()));
 	}
 
 	/**
