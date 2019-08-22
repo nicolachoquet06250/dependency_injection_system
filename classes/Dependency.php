@@ -382,6 +382,18 @@ class Dependency {
 		}
 	}
 
+	public static function add_custom_dependencies(...$dependencies) {
+		foreach ($dependencies as $dependency) {
+			self::add_custom_dependency(
+				$dependency['class'],
+				$dependency['name'],
+				$dependency['file'],
+				(isset($dependency['parent']) ? $dependency['parent'] : null),
+				(isset($dependency['type']) ? $dependency['type'] : self::NONE)
+			);
+		}
+	}
+
 	public static function extend_dependency($old_class, $new_class, $details) {
 		self::$dependencies[$old_class]['name'] = '_'.self::$dependencies[$old_class]['name'];
 		self::add_custom_dependency($new_class, $details['name'], $details['file'], $old_class, $details['type']);

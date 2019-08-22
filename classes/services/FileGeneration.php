@@ -79,6 +79,9 @@ RewriteRule ^([^\.]+)$ /index.php?q=$0 [QSA,L]
 	Dependency::add_custom_controllers();
 	
 	// parameters are arrays
+	Dependencies::add_custom_dependencies();
+	
+	// parameters are arrays
 	Conf::extend_confs();
 ';
 
