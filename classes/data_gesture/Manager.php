@@ -6,6 +6,7 @@ namespace mvc_router\data\gesture;
 
 use Exception;
 use mvc_router\Base;
+use mvc_router\confs\Mysql;
 use mvc_router\dependencies\Dependency;
 use ReflectionClass;
 use ReflectionException;
@@ -26,6 +27,7 @@ abstract class Manager extends Base {
 		foreach ($doc as $i => $item) {
 			if($item !== '' && strstr($item, '@method ') !== false) {
 				$virtual_method = explode('(', $item)[0];
+				str_replace("\t", ' ', $virtual_method);
 				$method = explode(' ', $virtual_method)[2];
 				$params = explode('(', str_replace(')', '', $item))[1];
 				$params = explode(', ', $params);
@@ -43,8 +45,7 @@ abstract class Manager extends Base {
 
 	protected function get_sql_string_from_array(array $fields) {
 		$key_string = [];
-		foreach ($fields as $i => $key) {
-			$value = $fields[$i];
+		foreach ($fields as $key => $value) {
 			if (is_string($value)) {
 				$value = '"'.$value.'"';
 			}
@@ -79,7 +80,7 @@ abstract class Manager extends Base {
 	/**
 	 * @param array $keys
 	 * @param array $values
-	 * @return Base[]|Base
+	 * @return Entity[]|Entity
 	 * @throws ReflectionException
 	 * @throws Exception
 	 */
@@ -94,7 +95,7 @@ abstract class Manager extends Base {
 	 * @param array $search_keys
 	 * @param array $from_keys
 	 * @param array $values
-	 * @return Base[]|Base
+	 * @return Entity[]|Entity
 	 * @throws ReflectionException
 	 * @throws Exception
 	 */
@@ -136,7 +137,7 @@ abstract class Manager extends Base {
 	/**
 	 * @param string  $method_name
 	 * @param mixed[] ...$arguments
-	 * @return Base|Base[]
+	 * @return Entity|Entity[]
 	 * @throws ReflectionException
 	 * @throws Exception
 	 */
@@ -156,7 +157,7 @@ abstract class Manager extends Base {
 	/**
 	 * @param string $method_name
 	 * @param mixed  ...$arguments
-	 * @return array|bool|\mvc_router\confs\Mysql
+	 * @return array|bool|Mysql
 	 * @throws Exception
 	 */
 	protected function delete($method_name, ...$arguments) {
@@ -180,11 +181,28 @@ abstract class Manager extends Base {
 
 	/**
 	 * @param string $method_name
-	 * @param mixed ...$arguments
+	 * @param mixed  ...$arguments
+	 * @return Entity|bool
 	 * @throws Exception
 	 */
 	protected function insert($method_name, ...$arguments) {
-		throw new Exception('Le type de requête `INSERT` n\'à pas encore été développé !');
+		$method_name = str_replace(['set_', 'insert_'], '', $method_name);
+		$fields = explode('_', $method_name);
+		$fields = $this->associate_keys_and_values($fields, $arguments);
+		$mysql = $this->get_mysql();
+		$fields = array_keys($fields);
+		$arg_str = [];
+		foreach ($arguments as $argument) {
+			$arg_str[] = is_string($argument) ? '"'.$argument.'"' : (is_bool($argument) ? ($argument ? '1' : '0') : $argument);
+		}
+		$insert = $mysql->query('INSERT INTO `'.$this->get_table().'` (`'.implode('`, `', $fields).'`) VALUES('.implode(', ', $arg_str).')');
+		if(!$insert) {
+			return false;
+		}
+		$mysql->query('SELECT id FROM `'.$this->get_table().'` ORDER BY id DESC LIMIT 1');
+		list($insert_id) = $mysql->fetch_row();
+		$mysql->query('SELECT * FROM `'.$this->get_table().'` WHERE `id`='.$insert_id);
+		return $mysql->fetch_object($this->get_entity_dependency_name());
 	}
 
 	/**
@@ -233,22 +251,27 @@ abstract class Manager extends Base {
 	}
 
 	/**
+	 * @return string|null
+	 */
+	protected final function get_entity_dependency_name() {
+		if($this->entity_class && Dependency::is_in($this->entity_class)) {
+			return Dependency::get_name_from_class($this->entity_class);
+		}
+		return null;
+	}
+
+	/**
 	 * @return Entity
 	 * @throws Exception
 	 */
 	public function get_entity() {
-		if($this->entity_class) {
-			if(Dependency::is_in($this->entity_class)) {
-				$entity_name = Dependency::get_name_from_class($this->entity_class);
-				$method      = 'get_'.$entity_name;
-				return $this->inject->$method();
-			}
-		}
+		$dependency_name = $this->get_entity_dependency_name();
+		if($dependency_name) return $this->inject->{'get_'.$dependency_name}();
 		throw new Exception($this->inject->get_service_translation()->__("L'entité %1 n'à pas été reconnu !", [$this->entity_class]));
 	}
 
 	/**
-	 * @return array|Base
+	 * @return Entity[]|Entity
 	 * @throws ReflectionException
 	 */
 	public function get_all() {

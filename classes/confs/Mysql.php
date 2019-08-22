@@ -96,7 +96,6 @@ class Mysql extends Base {
 				$_query = $this->connector->prepare($query);
 				$_query->execute($vars);
 				$this->connector->commit();
-				$this->last_insert_id = $this->connector->lastInsertId('id');
 				return $this;
 			}
 			$_query = $this->connector->prepare($query);
@@ -124,7 +123,7 @@ class Mysql extends Base {
 	public function fetch_row() {
 		$fetch_result = $this->count_rows();
 		return $this->is_connected() && !$this->is_in_error()
-			? $fetch_result[array_key_first($fetch_result)] : [];
+			? $fetch_result[array_keys($fetch_result)[0]] : [];
 	}
 
 	/**

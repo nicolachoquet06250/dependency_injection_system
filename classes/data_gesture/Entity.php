@@ -4,12 +4,15 @@
 namespace mvc_router\data\gesture;
 
 
+use Exception;
 use mvc_router\Base;
+use mvc_router\dependencies\Dependency;
 use ReflectionClass;
 use ReflectionException;
 
 class Entity extends Base {
 
+	protected $manager_class;
 	protected $updated_fields = [];
 
 	/**
@@ -21,6 +24,26 @@ class Entity extends Base {
 		$class = explode('/', $class);
 		$class = $class[count($class) - 1];
 		return strtolower($class);
+	}
+
+	/**
+	 * @return string|null
+	 */
+	protected final function get_entity_dependency_name() {
+		if($this->manager_class && Dependency::is_in($this->manager_class)) {
+			return Dependency::get_name_from_class($this->manager_class);
+		}
+		return null;
+	}
+
+	/**
+	 * @return Manager
+	 * @throws Exception
+	 */
+	protected function get_manager() {
+		$dependency_name = $this->get_entity_dependency_name();
+		if($dependency_name) return $this->inject->{'get_'.$dependency_name}();
+		throw new Exception($this->inject->get_service_translation()->__("Le manager %1 n'à pas été reconnu !", [$this->manager_class]));
 	}
 
 	/**
@@ -59,7 +82,7 @@ class Entity extends Base {
 	 * @param string $key
 	 * @param mixed  $value
 	 * @param bool   $init
-	 * @return Base|void
+	 * @return Base|Entity
 	 * @throws ReflectionException
 	 */
 	public function set($key, $value, bool $init = false) {
@@ -67,6 +90,7 @@ class Entity extends Base {
 		if(!$init) {
 			$this->updated_fields[] = $key;
 		}
+		return $this;
 	}
 
 	protected function is_property_updated($property) {
@@ -87,8 +111,18 @@ class Entity extends Base {
 			unset($updated[$key]);
 		}
 		if(!empty($updated)) {
+			$this->updated_fields = [];
 			return $mysql->query('UPDATE `'.$this->get_table().'` SET '.implode(', ', $updated).' WHERE id='.$this->get('id'));
 		}
 		return true;
+	}
+
+	public function __debugInfo() {
+		$fields = $this->get_table_fields();
+		foreach ($fields as $i => $field) {
+			$fields[$field] = $this->get($field);
+			unset($fields[$i]);
+		}
+		return $fields;
 	}
 }
