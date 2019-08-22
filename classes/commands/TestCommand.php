@@ -5,11 +5,9 @@ namespace mvc_router\commands;
 
 
 use Exception;
-use mvc_router\data\gesture\pizzygo\managers\AddressType;
 use mvc_router\data\gesture\pizzygo\managers\User;
 use mvc_router\services\Password;
 use mvc_router\services\Trigger;
-use ReflectionException;
 
 class TestCommand extends Command {
 	/**
