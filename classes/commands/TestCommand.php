@@ -80,6 +80,10 @@ class TestCommand extends Command {
 		return $user && $passwordService->is_valid('2669NICOLAS2107', $user->get('password')) ? $user : false;
 	}
 
+	/**
+	 * @param FileSystem $fileSystem
+	 * @return string|null
+	 */
 	public function number_of_lines_in_project(FileSystem $fileSystem) {
 		$nb_lines = 0;
 		$void = !is_null($this->param('not-void')) ? !$this->param('not-void') : null;
