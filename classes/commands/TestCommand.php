@@ -6,6 +6,7 @@ namespace mvc_router\commands;
 
 use Exception;
 use mvc_router\data\gesture\pizzygo\managers\User;
+use mvc_router\services\FileSystem;
 use mvc_router\services\Password;
 use mvc_router\services\Trigger;
 
@@ -77,5 +78,30 @@ class TestCommand extends Command {
 
 		$user = $userManager->get_all_from_pseudo('nicolachoquet06250');
 		return $user && $passwordService->is_valid('2669NICOLAS2107', $user->get('password')) ? $user : false;
+	}
+
+	public function number_of_lines_in_project(FileSystem $fileSystem) {
+		$nb_lines = 0;
+		$void = !is_null($this->param('not-void')) ? !$this->param('not-void') : null;
+		$fileSystem->browse_root(function ($elem) use ($fileSystem, &$nb_lines, $void) {
+			$content = explode("\n", $fileSystem->read_file($elem));
+			if(is_null($void)) $nb_lines = $nb_lines + count($content);
+			elseif (is_bool($void)) {
+				if($void) foreach ($content as $item) {
+					if (trim($item) === "") {
+						$nb_lines++;
+					}
+				}
+				else foreach ($content as $item) {
+					if (trim($item) !== "") {
+						$nb_lines++;
+					}
+				}
+			}
+		}, true);
+		if(is_null($void)) return "L'application comporte {$nb_lines} lignes de code !";
+		elseif (is_bool($void)) return $void ? "L'application comporte {$nb_lines} lignes de code vides !"
+			: "L'application comporte {$nb_lines} lignes de code non vides !";
+		else return null;
 	}
 }

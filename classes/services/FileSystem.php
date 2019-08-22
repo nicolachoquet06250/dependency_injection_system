@@ -253,4 +253,8 @@ class FileSystem extends Service {
 			return file_put_contents($path.'/'.$dir_name.$file_name.self::EXTENSIONS[$type], $content);
 		} else throw new Exception('Le type de fichier choisis n\'est pas disponible');
 	}
+
+	public function read_file(string $path) {
+		return file_get_contents($path);
+	}
 }

@@ -35,6 +35,11 @@ class Command extends Base {
 	public function clean_params() {
 		foreach ($this->params as $key => $value) {
 			$this->params[$key] = str_replace('%20%', ' ', $value);
+			if($this->params[$key] === 'true') {
+				$this->params[$key] = true;
+			} elseif ($this->params[$key] === 'false') {
+				$this->params[$key] = false;
+			}
 		}
 	}
 
