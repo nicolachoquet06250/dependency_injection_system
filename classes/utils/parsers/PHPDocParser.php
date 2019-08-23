@@ -47,6 +47,86 @@ class PHPDocParser extends Base implements Singleton {
 		return $route;
 	}
 
+	public function get_method_doc($class, $method) {
+		if(is_object($class)) {
+			$class = get_class($class);
+		}
+		$ref = new ReflectionClass($class);
+		if($ref->hasMethod($method)) {
+			$doc = $this->clean_doc($ref->getMethod($method)->getDocComment());
+			$doc = explode("\n", $doc);
+			$_doc = [];
+			foreach ($doc as $line) {
+				if(substr($line, 0, 1) === '@') {
+					$line = str_replace('@', '', $line);
+					$line = explode(' ', $line);
+					$key = array_shift($line);
+					if(isset($_doc[$key]) && !is_array($_doc[$key])) {
+						$new_value = [
+							$_doc[$key],
+							implode(' ', $line),
+						];
+						$_doc[$key] = $new_value;
+					} elseif (isset($_doc[$key]) && is_array($_doc[$key])) {
+						$_doc[$key][] = implode(' ', $line);
+					} else {
+						$_doc[$key] = implode(' ', $line);
+					}
+				} else {
+					if(!isset($_doc['description'])) {
+						$_doc['description'] = $line;
+					} else {
+						$_doc['description'] .= "\n".$line;
+					}
+				}
+			}
+			$doc = $_doc;
+			if(isset($doc['description']) && trim($doc['description']) === '') {
+				unset($doc['description']);
+			}
+			return $doc;
+		}
+		return [];
+	}
+
+	public function get_class_doc($class) {
+		if(is_object($class)) {
+			$class = get_class($class);
+		}
+		$doc = $this->clean_doc((new ReflectionClass($class))->getDocComment());
+		$doc = explode("\n", $doc);
+		$_doc = [];
+		foreach ($doc as $line) {
+			if(substr($line, 0, 1) === '@') {
+				$line = str_replace('@', '', $line);
+				$line = explode(' ', $line);
+				$key = array_shift($line);
+				if(isset($_doc[$key]) && !is_array($_doc[$key])) {
+					$new_value = [
+						$_doc[$key],
+						implode(' ', $line),
+					];
+					$_doc[$key] = $new_value;
+				} elseif (isset($_doc[$key]) && is_array($_doc[$key])) {
+					$_doc[$key][] = implode(' ', $line);
+				} else {
+					$_doc[$key] = implode(' ', $line);
+				}
+			} else {
+				if(!isset($_doc['description'])) {
+					$_doc['description'] = $line;
+				} else {
+					$_doc['description'] .= "\n".$line;
+				}
+			}
+		}
+		$doc = $_doc;
+		if(isset($doc['description']) && trim($doc['description']) === '') {
+			unset($doc['description']);
+		}
+		return $doc;
+	}
+
 	protected function get_http_method($doc) {
 		$http_method = 'get';
 		if($doc) {

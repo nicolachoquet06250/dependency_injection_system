@@ -180,6 +180,12 @@ class Dependency {
 			'file'         => __DIR__.'/utils/commands/Command.php',
 			'is_singleton' => false,
 		],
+		'mvc_router\commands\HelpCommand'  	=> [
+			'name'         => 'command_help',
+			'file'         => __DIR__.'/commands/HelpCommand.php',
+			'is_singleton' => false,
+			'parent'       => 'mvc_router\commands\Command',
+		],
 		'mvc_router\commands\TestCommand'     	=> [
 			'name'         => 'command_test',
 			'file'         => __DIR__.'/commands/TestCommand.php',
