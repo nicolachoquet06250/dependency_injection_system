@@ -203,6 +203,12 @@ class Dependency {
 			'is_singleton' => false,
 			'parent'       => 'mvc_router\commands\Command',
 		],
+		'mvc_router\commands\StartCommand'  	=> [
+			'name'         => 'command_start',
+			'file'         => __DIR__.'/commands/StartCommand.php',
+			'is_singleton' => false,
+			'parent'       => 'mvc_router\commands\Command',
+		],
 
 		'Curl\Curl' 							=> [
 			'name'         => 'request',
@@ -399,8 +405,30 @@ class Dependency {
 	}
 
 	public static function extend_dependency($old_class, $new_class, $details) {
+		$type = isset($details['type']) ? $details['type'] : self::NONE;
 		self::$dependencies[$old_class]['name'] = '_'.self::$dependencies[$old_class]['name'];
-		self::add_custom_dependency($new_class, $details['name'], $details['file'], $old_class, $details['type']);
+		$parent = isset($details['parent']) ? $details['parent'] : $old_class;
+		self::add_custom_dependency($new_class, $details['name'], $details['file'], $parent, $type);
+	}
+
+	public static function extend_dependencies(...$dependencies) {
+		foreach ($dependencies as $dependency) {
+			$class = $dependency['class'];
+			unset($dependency['class']);
+			$details = [
+				'name' => $dependency['name'],
+				'file' => $dependency['file'],
+			];
+			$details['type'] = isset($dependency['type']) ? $dependency['type'] : self::NONE;
+			if($dependency['parent']) {
+				$details['parent'] = $dependency['parent'];
+			}
+			self::extend_dependency(
+				$class['old'],
+				$class['new'],
+				$details
+			);
+		}
 	}
 
 	/**

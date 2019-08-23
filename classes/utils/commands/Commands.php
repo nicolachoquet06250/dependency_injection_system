@@ -70,11 +70,14 @@ class Commands extends Base implements Singleton {
 
 		$params = $command;
 		$params = $this->clean_params($params);
-		foreach ($params as $key => $value) {
-			if($key === 'current_used_site') {
-				define('CURRENT_USED_SITE', $value);
-			}
+
+		if(!defined('CURRENT_USED_SITE')) {
+			$directories       = $this->inject->get_service_fs()->list_directories(__DIR__.'/../../..', false);
+			$current_used_site = end($directories);
+
+			define('CURRENT_USED_SITE', $current_used_site);
 		}
+
 		if(defined('CURRENT_USED_SITE')) {
 			if(is_file(__DIR__.'/../../../'.CURRENT_USED_SITE.'/update_dependencies.php')) {
 				require_once __DIR__.'/../../../'.CURRENT_USED_SITE.'/update_dependencies.php';
@@ -85,7 +88,6 @@ class Commands extends Base implements Singleton {
 			$get_command = 'get_command_'.$command_class;
 			/** @var Command $_command */
 			$_command = $this->inject->$get_command();
-			$params = $this->clean_params($params);
 			foreach ($params as $key => $value) {
 				$_command->add_param($key, $value);
 			}

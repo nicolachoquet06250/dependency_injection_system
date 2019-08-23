@@ -85,6 +85,20 @@ class FileSystem extends Service {
 		}
 	}
 
+	public function list_directories($path = __DIR__.'/../../', $complete_path = true) {
+		$directory = realpath($path);
+		$dir = opendir($directory);
+		$dirs = [];
+		while (($elem = readdir($dir)) !== false) {
+			if($elem !== '.' && $elem !== '..' && substr($elem, 0, 1) !== '.' && $elem !== 'vendor') {
+				if(is_dir($path.'/'.$elem)) {
+					$dirs[] = ($complete_path ? $path.'/' : '').$elem;
+				}
+			}
+		}
+		return $dirs;
+	}
+
 	/**
 	 * @param string $path
 	 * @param string $dir_name
