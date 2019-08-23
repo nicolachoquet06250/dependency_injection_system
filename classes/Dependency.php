@@ -7,6 +7,7 @@ namespace mvc_router\dependencies;
 use Exception;
 use mvc_router\Base;
 use mvc_router\confs\Conf;
+use mvc_router\data\gesture\Manager;
 use mvc_router\WrapperFactory;
 use ReflectionClass;
 use ReflectionException;
@@ -681,5 +682,18 @@ class Dependency {
 
 			echo self::format_error( $errno, $errstr, $errfile, $errline);
 		}
+	}
+
+	/**
+	 * @return Manager[]
+	 */
+	public static function get_managers() {
+		$managers_class = [];
+		foreach (self::$dependencies as $dependency) {
+			if(isset($dependency['parent']) && $dependency['parent'] === 'mvc_router\data\gesture\Manager') {
+				$managers_class[str_replace([__SITE_NAME__.'_', '_manager'], '', $dependency['name'])] = self::get_wrapper_factory()->get_dependency_wrapper()->{"get_{$dependency['name']}"}();
+			}
+		}
+		return $managers_class;
 	}
 }

@@ -30,6 +30,7 @@ class Base {
 	 * @throws ReflectionException
 	 */
 	public final function __construct() {
+		$this->before_construct();
 		$this->after_construct();
 	}
 
@@ -43,11 +44,12 @@ class Base {
 	/**
 	 * @throws ReflectionException
 	 */
-	protected function after_construct() {
+	protected function before_construct() {
 		$this->inject = WrapperFactory::dependencies();
 		$this->confs = WrapperFactory::confs();
-		$this->enable_dependencies_injection();
-	}
+		$this->enable_dependencies_injection();}
+
+	protected function after_construct() {}
 
 	/**
 	 * @throws ReflectionException

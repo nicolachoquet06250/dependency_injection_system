@@ -79,8 +79,8 @@ class Commands extends Base implements Singleton {
 		}
 
 		if(defined('CURRENT_USED_SITE')) {
-			if(is_file(__DIR__.'/../../../'.CURRENT_USED_SITE.'/update_dependencies.php')) {
-				require_once __DIR__.'/../../../'.CURRENT_USED_SITE.'/update_dependencies.php';
+			if(is_file(__DIR__.'/../../../'.CURRENT_USED_SITE.'/autoload.php')) {
+				require_once __DIR__.'/../../../'.CURRENT_USED_SITE.'/autoload.php';
 			}
 		}
 

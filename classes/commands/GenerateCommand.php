@@ -4,6 +4,7 @@
 namespace mvc_router\commands;
 
 
+use Exception;
 use mvc_router\confs\Conf;
 use mvc_router\dependencies\Dependency;
 use mvc_router\services\FileGeneration;
@@ -24,6 +25,11 @@ class GenerateCommand extends Command {
 		return 'DependencyWrapper.php and ConfWrapper.php has been generated !';
 	}
 
+	/**
+	 * @param FileGeneration $generation
+	 * @return string
+	 * @throws Exception
+	 */
 	public function base_files(FileGeneration $generation) {
 		if(!$this->param('custom-dir')) {
 			$this->add_param('custom-dir', '');
@@ -34,7 +40,8 @@ class GenerateCommand extends Command {
 		$generation->generate_update_dependencies($custom_dir);
 		$generation->generate_custom_autoload($custom_dir);
 		$generation->generate_gitignore($custom_dir);
-		return 'All default files has been generated !';
+		$generation->generate_mysql_conf_file($custom_dir);
+		return 'All default files has been generated ! Don\'t forget to fill the classes/confs/mysql.json file';
 	}
 
 	public function translations(Translate $translation) {

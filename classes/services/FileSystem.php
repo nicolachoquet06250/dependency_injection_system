@@ -118,10 +118,11 @@ class FileSystem extends Service {
 	 * @param string      $file_name
 	 * @param int         $type
 	 * @param string|null $namespace
+	 * @param string      $default_content
 	 * @return bool|int
 	 * @throws Exception
 	 */
-	public function create_file(string $path, string $file_name, int $type = self::TEXT, string $namespace = null) {
+	public function create_file(string $path, string $file_name, int $type = self::TEXT, string $namespace = null, $default_content = '') {
 		if(in_array($type, array_keys(self::EXTENSIONS))) {
 			switch ($type) {
 				case self::TEXT:
@@ -130,7 +131,7 @@ class FileSystem extends Service {
 					$content = '';
 					break;
 				case self::JSON:
-					$content = $this->inject->get_service_json()->encode([]);
+					$content = $this->inject->get_service_json()->encode($default_content ? $default_content : []);
 					break;
 				case self::XML:
 					$content = '<?xml version="1.0" encoding="UTF-8"?>

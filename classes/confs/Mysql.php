@@ -61,24 +61,6 @@ class Mysql extends Base {
 		catch (Exception $e) {
 			throw new Exception('bad mysql credentials');
 		}
-//		if(!in_array('\mysqli', get_declared_classes()) && !in_array('mysqli', get_declared_classes())) {
-//			throw new Exception(
-//				$this->inject->get_service_translation()
-//							 ->__("L'extension php-mysql doit être installée et activée pour pouvoir utiliser les configurations Mysql !")
-//			);
-//		}
-//		try {
-//			/** @var mysqli connector */
-//			if($this->host && $this->user && $this->pass) {
-//				$user = $this->user_prefix !== '' ? $this->user_prefix.'_'.$this->user : $this->user;
-//				$db_name = $this->db_name
-//					? ($this->db_prefix !== '' ? $this->db_prefix.'_'.$this->db_name : $this->db_name) : null;
-//				$this->connector = new mysqli($this->host, $user, $this->pass, $db_name, $this->port);
-//			}
-//		}
-//		catch (\mysql_xdevapi\Exception $e) {
-//			throw new Exception('bad mysql credentials');
-//		}
 	}
 
 	/**

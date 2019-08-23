@@ -4,8 +4,10 @@
 namespace mvc_router\commands;
 
 
+use mvc_router\dependencies\Dependency;
 use mvc_router\services\FileSystem;
 use mvc_router\services\Logger;
+use ReflectionException;
 
 class InstallCommand extends Command {
 
@@ -27,6 +29,10 @@ class InstallCommand extends Command {
 		foreach ($cmds as $cmd) $this->run_system_command($cmd, $logger, $commands);
 	}
 
+	/**
+	 * @param Commands $commands
+	 * @param Logger   $logger
+	 */
 	public function install(Commands $commands, Logger $logger) {
 		$default_dir = 'demo';
 		$default_repo = 'https://github.com/nicolachoquet06250/mvc_router_demo.git';
@@ -34,13 +40,22 @@ class InstallCommand extends Command {
 		$dir = $this->param('dir') ? $this->param('dir') : $default_dir;
 		$repo = $this->param('repo') ? $this->param('repo') : $default_repo;
 
-		$this->run_framework_commands(['clone:repo -p repo='.$repo.' dest='.$dir,
-								'generate:dependencies -p custom-file='.$dir.'/update_dependencies.php',
-								'generate:base_files -p custom-dir='.$dir,
-								'generate:translations'],
-							   $logger, $commands);
+		$this->run_framework_commands(
+			[
+				'clone:repo -p repo='.$repo.' dest='.$dir,
+				'generate:dependencies -p custom-file='.$dir.'/update_dependencies.php',
+				'generate:base_files -p custom-dir='.$dir,
+				'generate:translations',
+				'install:databases'
+			],
+			$logger, $commands);
 	}
 
+	/**
+	 * @param Commands   $commands
+	 * @param Logger     $logger
+	 * @param FileSystem $fs
+	 */
 	public function update(Commands $commands, Logger $logger, FileSystem $fs) {
 		$this->init_logger($logger);
 		$pulls = [];
@@ -63,8 +78,19 @@ class InstallCommand extends Command {
 		}, $pulls);
 		$pulls[] = 'composer '.(is_dir(__DIR__.'/vendor') ? 'update' : 'install');
 		$generates[] = 'generate:translations';
+		$generates[] = 'install:databases';
 
 		$this->run_system_commands($pulls, $logger, $commands);
 		$this->run_framework_commands($generates, $logger, $commands);
+	}
+
+	/**
+	 * @throws ReflectionException
+	 */
+	public function databases() {
+		$managers = Dependency::get_managers();
+		foreach ($managers as $manager_name => $manager) {
+			$manager->create_table();
+		}
 	}
 }

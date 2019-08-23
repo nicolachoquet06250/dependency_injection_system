@@ -4,6 +4,8 @@
 namespace mvc_router\services;
 
 
+use Exception;
+
 class FileGeneration extends Service {
 	public function generate_index($custom_dir) {
 		$index = '<?php
@@ -109,6 +111,25 @@ htaccess.php
 index.php';
 		if(!realpath(__DIR__.'/../../'.$custom_dir.'/.gitignore')) {
 			file_put_contents(realpath(__DIR__.'/../../'.$custom_dir).'/.gitignore', $gitingore);
+		}
+	}
+	/**
+	 * @param $custom_dir
+	 * @throws Exception
+	 */
+	public function generate_mysql_conf_file($custom_dir) {
+		$fs = $this->inject->get_service_fs();
+
+		if(!is_file(__DIR__."/../../{$custom_dir}/classes/confs/mysql.json")) {
+			$fs->create_file(__DIR__."/../../{$custom_dir}/classes/confs", 'mysql', FileSystem::JSON, null, [
+				"host" => '',
+				"user" => '',
+				"pass" => "",
+				"user_prefix" => '',
+				"db_prefix" => '',
+				"db_name" => "",
+				"port" => 3306,
+			]);
 		}
 	}
 }
