@@ -16,8 +16,12 @@ try {
 			$logger->log($result);
 			break;
 		case 'object':
-		case 'array':
 			var_dump($result);
+			break;
+		case 'array':
+			foreach ($result as $key => $value) {
+				$logger->log("{$key} => {$value}");
+			}
 			break;
 		case 'integer':
 			$logger->log('program was exited with code '.$result);

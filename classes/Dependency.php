@@ -211,6 +211,10 @@ class Dependency {
 		],
 	];
 
+	public static function get_dependencies() {
+		return self::$dependencies;
+	}
+
 	public static function load_base_dependencies() {
 		foreach (self::$base_dependencies as $base_dependency) {
 			if(is_file($base_dependency)) require_once $base_dependency;

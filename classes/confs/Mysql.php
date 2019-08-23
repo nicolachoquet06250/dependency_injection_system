@@ -92,10 +92,9 @@ class Mysql extends Base {
 				return false;
 			}
 			$this->last_query = $query;
-			if (!substr($query, 0, strlen('SELECT '))) {
+			if (substr($query, 0, strlen('SELECT ')) !== 'SELECT ') {
 				$_query = $this->connector->prepare($query);
-				$_query->execute($vars);
-				$this->connector->commit();
+				$this->last_result = $_query->execute($vars);
 				return $this;
 			}
 			$_query = $this->connector->prepare($query);

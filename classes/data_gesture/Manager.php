@@ -10,9 +10,45 @@ use mvc_router\confs\Mysql;
 use mvc_router\dependencies\Dependency;
 use ReflectionClass;
 use ReflectionException;
+use ReflectionProperty;
 
 abstract class Manager extends Base {
 	protected $entity_class;
+	private $annotation_keys;
+	private $default_sql_type_sizes;
+
+	public function after_construct() {
+		parent::after_construct();
+		$this->init_annotation_keys();
+	}
+
+	protected function init_annotation_keys() {
+		$this->annotation_keys = [
+			'var' => function ($prop, $value) {
+				return str_replace(' $'.$prop, '', $value);
+			},
+			'nullable' => function() {
+				return true;
+			},
+			'primary_key' => function() {
+				return true;
+			},
+			'auto_increment' => function() {
+				return true;
+			},
+			'sql_type' => null,
+			'sql_type_size' => function($prop, $value) {
+				return (int)$value;
+			},
+		];
+
+		$this->default_sql_type_sizes = [
+			'int' => 11,
+			'varchar' => 255,
+			'char' => 255,
+			'tinyint' => 1
+		];
+	}
 
 	/**
 	 * @return string
@@ -257,7 +293,7 @@ abstract class Manager extends Base {
 	 * @return string
 	 * @throws Exception
 	 */
-	protected function get_table() {
+	public function get_table() {
 		return $this->get_entity()->get_table();
 	}
 
@@ -289,6 +325,70 @@ abstract class Manager extends Base {
 		$mysqli = $this->confs->get_mysql();
 		$mysqli->query('SELECT * FROM `'.$this->get_table().'`');
 		return $mysqli->fetch_object(Dependency::get_name_from_class($this->get_entity_class()));
+	}
+
+	/**
+	 * @param bool $force
+	 * @return array|bool|Mysql
+	 * @throws ReflectionException
+	 * @throws Exception
+	 */
+	public function create_table($force = false) {
+		$class_ref = new ReflectionClass($this->get_entity_class());
+		$ref_methods = $class_ref->getProperties(ReflectionProperty::IS_PUBLIC | ReflectionProperty::IS_PROTECTED);
+		$prop_doc = [];
+		foreach ($ref_methods as $i => $ref_method) {
+			if($ref_method->class === $this->get_entity_class()) {
+				$prop_doc[$ref_method->getName()] = [
+					'doc' => $ref_method->getDocComment()
+				];
+			}
+		}
+		foreach ($prop_doc as $prop_name => $details) {
+			$doc = $details['doc'];
+			$doc = str_replace(['/**', "\t", ' * ', ' */'], '', $doc);
+			$doc = explode("\n", $doc);
+			$_doc = [];
+			foreach ($doc as $line) {
+				if($line !== '' && substr($line, 0, 1) === '@') {
+					$_doc[] = $line;
+				}
+			}
+			$doc = $_doc;
+			foreach ($doc as $line) {
+				foreach ($this->annotation_keys as $annotation_key => $callback) {
+					if(substr($line, 0, strlen($annotation_key) + 2) === "@{$annotation_key} " || $line === "@{$annotation_key}") {
+						$annotation_value = str_replace("@{$annotation_key} ", '', $line);
+						$prop_doc[$prop_name][$annotation_key] = !is_null($callback) ? $callback($prop_name, $annotation_value) : $annotation_value;
+					}
+				}
+			}
+		}
+
+		$create_str = [];
+		foreach ($prop_doc as $prop_name => $prop_details) {
+			$type = strtoupper(!empty($prop_details['sql_type'])
+								   ? $prop_details['sql_type'] : $prop_details['var']);
+			$size = !empty($prop_details['sql_type_size'])
+				? $prop_details['sql_type_size'] : (!empty($this->default_sql_type_sizes[strtolower($type)]) ? $this->default_sql_type_sizes[strtolower($type)] : null);
+			$create_str[] = "`{$prop_name}` "
+							.$type
+							.($size ? "({$size})" : '')
+							.(empty($prop_details['nullable']) ?' NOT NULL' :  '')
+							.(!empty($prop_details['primary_key']) ? ' PRIMARY KEY' : '')
+							.(!empty($prop_details['auto_increment']) ? ' AUTO_INCREMENT' : '');
+		}
+		$create_str = implode(",\n\t", $create_str);
+
+		$mysql = $this->get_mysql();
+		$if_not_exists = $force ? '' : 'IF NOT EXISTS ';
+		if($force) {
+			$mysql->query("DROP TABLE `{$this->get_table()}`");
+		}
+		$mysql->query("CREATE TABLE {$if_not_exists}`{$this->get_table()}` (
+	{$create_str}
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4");
+		return $mysql->last_result() ? 'true' : 'false';
 	}
 
 	/**
