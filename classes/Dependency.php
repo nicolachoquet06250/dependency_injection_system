@@ -41,6 +41,7 @@ class Dependency {
 	const TRIGGER_SERVICE         = 'service_trigger';
 	const LOCK_SERVICE            = 'service_lock';
 	const URL_GENERATOR_SERVICE   = 'url_generator';
+	const WEBSOCKET_SERVICE   	  = 'service_websocket';
 
 	const PHP_DOC_PARSER = 'phpdoc_parser';
 	const QUEUE          = 'util_queue';
@@ -55,6 +56,7 @@ class Dependency {
 
 	const CLASS_TRIGGERS = 'triggers';
 	const CLASS_REQUEST  = 'request';
+	const RATCHET_APP_WS = 'ratchet_app_ws';
 
 	protected static $base_dependencies = [
 		__DIR__.'/interfaces/Singleton.php',
@@ -180,6 +182,12 @@ class Dependency {
 			'is_singleton' => false,
 			'parent'       => 'mvc_router\services\Service',
 		],
+		'mvc_router\services\Websocket'      	=> [
+			'name'         => self::WEBSOCKET_SERVICE,
+			'file'         => __DIR__.'/services/Websocket.php',
+			'is_singleton' => false,
+			'parent'       => 'mvc_router\services\Service',
+		],
 
 		'mvc_router\parser\PHPDocParser' 		=> [
 			'name'         => self::PHP_DOC_PARSER,
@@ -261,6 +269,28 @@ class Dependency {
 			'file'         => __DIR__.'/../vendor/autoload.php',
 			'is_singleton' => false,
 		],
+		'Ratchet\App' 							=> [
+			'name'         => self::RATCHET_APP_WS,
+			'file'         => __DIR__.'/../vendor/autoload.php',
+			'is_singleton' => false,
+			'params' 	   => [
+				'host' => [
+					'type' => 'string',
+					'default' => 'localhost'
+				],
+				'port' => [
+					'type' => 'int',
+					'default' => 8080
+				],
+				'address' => [
+					'type' => 'string',
+					'default' => '127.0.0.1'
+				],
+				'loop' => [
+					'default' => null
+				]
+			]
+		],
 	];
 
 	public static function get_dependencies() {
@@ -292,11 +322,12 @@ class Dependency {
 	}
 
 	/**
-	 * @param $classname
+	 * @param       $classname
+	 * @param array $arguments
 	 * @return Base
 	 * @throws Exception
 	 */
-	public static function get_from_classname($classname) {
+	public static function get_from_classname($classname, ...$arguments) {
 		if(gettype($classname) === 'object' && get_class($classname) === 'ReflectionClass') {
 			$classname = $classname->getName();
 		}
@@ -316,10 +347,10 @@ class Dependency {
 				}
 				require_once realpath(self::$dependencies[$classname]['file']);
 			}
-			$instanciate_method = isset(self::$confs[$classname]['method']) ? self::$confs[$classname]['method'] : 'create';
+			$instanciate_method = isset(self::$dependencies[$classname]['method']) ? self::$dependencies[$classname]['method'] : 'create';
 			return (isset(self::$dependencies[$classname]['is_singleton']) && self::$dependencies[$classname]['is_singleton']) ||
 				   (isset(self::$dependencies[$classname]['is_factory']) && self::$dependencies[$classname]['is_factory'])
-				? $classname::$instanciate_method() : new $classname();
+				? $classname::$instanciate_method(...$arguments) : new $classname(...$arguments);
 		}
 		else throw new Exception($classname.' is not a dependency');
 	}
@@ -377,7 +408,13 @@ class Dependency {
 			if(substr($dependency_class, 0, 1) !== '\\') {
 				$dependency_class = '\\'.$dependency_class;
 			}
-			$final_class .= "\t * @method ".$dependency_class." get_".$dependency_details['name']."()\n";
+			$params = [];
+			if(!empty($dependency_details['params'])) {
+				foreach ($dependency_details['params'] as $param_name => $param) {
+					$params[] = (isset($param['type']) ? $param['type'].' ' : '').'$'.$param_name.(isset($param['default']) || is_null($param['default']) ? ' = '.(is_null($param['default']) ? 'null' : (is_string($param['default']) ? '"'.$param['default'].'"' : $param['default'])) : '');
+				}
+			}
+			$final_class .= "\t * @method ".$dependency_class." get_".$dependency_details['name']."(".implode(', ', $params).")\n";
 		}
 		$final_class .= $class_end;
 
@@ -530,7 +567,7 @@ class Dependency {
 			$name = substr($name, 4, strlen($name) - 4);
 			$dependency_class = null;
 			if(self::method_exists('get_'.$name)) {
-				return self::get_from_classname(self::get_class_from_method('get_'.$name));
+				return self::get_from_classname(self::get_class_from_method('get_'.$name), ...$arguments);
 			}
 			return null;
 		}
