@@ -14,9 +14,11 @@ class Conf {
 	const FACTORY = false;
 	const NONE = null;
 
+	const MYSQL = 'mysql';
+
 	protected static $confs = [
 		'mvc_router\confs\Mysql' => [
-			'name' => 'mysql',
+			'name' => self::MYSQL,
 			'file' => __DIR__.'/confs/Mysql.php',
 			'is_singleton' => false
 		]

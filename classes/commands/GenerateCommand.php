@@ -7,7 +7,6 @@ namespace mvc_router\commands;
 use Exception;
 use mvc_router\confs\Conf;
 use mvc_router\dependencies\Dependency;
-use mvc_router\services\FileGeneration;
 use mvc_router\services\Translate;
 
 class GenerateCommand extends Command {
@@ -26,11 +25,11 @@ class GenerateCommand extends Command {
 	}
 
 	/**
-	 * @param FileGeneration $generation
 	 * @return string
 	 * @throws Exception
 	 */
-	public function base_files(FileGeneration $generation) {
+	public function base_files() {
+		$generation = $this->inject->get_service_generation();
 		if(!$this->param('custom-dir')) {
 			$this->add_param('custom-dir', '');
 		}

@@ -212,27 +212,32 @@ class Router extends Base implements Singleton {
 
 	/**
 	 * @param string $key
+	 * @param string $default
+	 * @param bool   $trim
 	 * @return bool|mixed
 	 */
-	public function get($key) {
+	public function get($key, $default = '', $trim = true) {
 		if(isset($_GET[$key])) {
 			$_GET[$key] = urldecode($_GET[$key]);
-			if(ctype_digit($_GET[$key])) {
-				$_GET[$key] = intval($_GET[$key]);
-			}
+			if($trim) $_GET[$key] = trim($_GET[$key]);
+			if(ctype_digit($_GET[$key])) $_GET[$key] = intval($_GET[$key]);
 		}
-		return $_GET[$key] ?? false;
+		return $_GET[$key] ?? ($default ?? false);
 	}
 
 	/**
 	 * @param string|null $key
+	 * @param string      $default
+	 * @param bool        $trim
 	 * @return bool|mixed
 	 */
-	public function post($key = null) {
+	public function post($key = null, $default = '', $trim = true) {
 		if(is_null($key)) {
 			return $_POST;
 		}
-		return $_POST[$key] ?? false;
+		if($trim) $_POST[$key] = trim($_POST[$key]);
+		if(ctype_digit($_POST[$key])) $_POST[$key] = intval($_POST[$key]);
+		return $_POST[$key] ?? ($default ?? false);
 	}
 
 	/**

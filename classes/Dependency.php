@@ -17,6 +17,45 @@ class Dependency {
 	const FACTORY = false;
 	const NONE = null;
 
+	const CONTROLLER = 'controller';
+	const MODEL      = 'model';
+	const VIEW       = 'view';
+	const MANAGER    = 'manager';
+	const ENTITY     = 'entity';
+	const SERVICE    = 'service';
+	const ROUTER     = 'router';
+	const HELPERS    = 'helpers';
+	const COMMANDS   = 'commands';
+	const COMMAND    = 'command';
+
+	const ROUTES_CONTROLLER       = 'routes_controller';
+	const ROUTE_VIEW              = 'route_view';
+	const JSON_SERVICE            = 'service_json';
+	const ERROR_SERVICE           = 'service_error';
+	const LOGGER_SERVICE          = 'service_logger';
+	const ROUTE_SERVICE           = 'service_route';
+	const FILE_GENERATION_SERVICE = 'service_generation';
+	const SESSION_SERVICE         = 'service_session';
+	const TRANSLATION_SERVICE     = 'service_translation';
+	const FILE_SYSTEM_SERVICE     = 'service_fs';
+	const TRIGGER_SERVICE         = 'service_trigger';
+	const LOCK_SERVICE            = 'service_lock';
+	const URL_GENERATOR_SERVICE   = 'url_generator';
+
+	const PHP_DOC_PARSER = 'phpdoc_parser';
+	const QUEUE          = 'util_queue';
+	const QUEUE_LIST     = 'util_queue_list';
+
+	const HELP_COMMAND     = 'command_help';
+	const TEST_COMMAND     = 'command_test';
+	const GENERATE_COMMAND = 'command_generate';
+	const CLONE_COMMAND    = 'command_clone';
+	const INSTALL_COMMAND  = 'command_install';
+	const START_COMMAND    = 'command_start';
+
+	const CLASS_TRIGGERS = 'triggers';
+	const CLASS_REQUEST  = 'request';
+
 	protected static $base_dependencies = [
 		__DIR__.'/interfaces/Singleton.php',
 		__DIR__.'/WrapperFactory.php',
@@ -25,200 +64,200 @@ class Dependency {
 
 	private static $dependencies = [
 		'mvc_router\mvc\Controller' 			=> [
-			'name'         => 'controller',
+			'name'         => self::CONTROLLER,
 			'file'         => __DIR__.'/mvc/Controller.php',
 			'is_singleton' => false,
 		],
 		'mvc_router\mvc\Routes'     			=> [
-			'name'         => 'routes_controller',
+			'name'         => self::ROUTES_CONTROLLER,
 			'file'         => __DIR__.'/mvc/controllers/Routes.php',
 			'is_singleton' => false,
 			'parent'       => 'mvc_router\mvc\Controller'
 		],
 		'mvc_router\mvc\Model'      			=> [
-			'name'         => 'model',
+			'name'         => self::MODEL,
 			'file'         => __DIR__.'/mvc/Model.php',
 			'is_singleton' => false,
 		],
 		'mvc_router\mvc\View'       			=> [
-			'name'         => 'view',
+			'name'         => self::VIEW,
 			'file'         => __DIR__.'/mvc/View.php',
 			'is_singleton' => false
 		],
 
 		'mvc_router\mvc\views\Route' 			=> [
-			'name'         => 'route_view',
+			'name'         => self::ROUTE_VIEW,
 			'file'         => __DIR__.'/mvc/views/Route.php',
 			'is_singleton' => false,
 			'parent'       => 'mvc_router\mvc\View'
 		],
 
 		'mvc_router\data\gesture\Manager' 		=> [
-			'name'         => 'manager',
+			'name'         => self::MANAGER,
 			'file'         => __DIR__.'/data_gesture/Manager.php',
 			'is_singleton' => false,
 		],
 		'mvc_router\data\gesture\Entity'  		=> [
-			'name'         => 'entity',
+			'name'         => self::ENTITY,
 			'file'         => __DIR__.'/data_gesture/Entity.php',
 			'is_singleton' => false,
 		],
 
 		'mvc_router\services\Service'           => [
-			'name'         => 'service',
+			'name'         => self::SERVICE,
 			'file'         => __DIR__.'/utils/services/Service.php',
 			'is_singleton' => false,
 		],
 		'mvc_router\services\Json'              => [
-			'name'         => 'service_json',
+			'name'         => self::JSON_SERVICE,
 			'file'         => __DIR__.'/services/Json.php',
 			'is_singleton' => false,
 			'parent'       => 'mvc_router\services\Service',
 		],
 		'mvc_router\services\Error'             => [
-			'name'         => 'service_error',
+			'name'         => self::ERROR_SERVICE,
 			'file'         => __DIR__.'/services/Error.php',
 			'is_singleton' => false,
 			'parent'       => 'mvc_router\services\Service',
 		],
 		'mvc_router\services\Logger'            => [
-			'name'         => 'service_logger',
+			'name'         => self::LOGGER_SERVICE,
 			'file'         => __DIR__.'/services/Logger.php',
 			'is_singleton' => false,
 			'parent'       => 'mvc_router\services\Service',
 		],
 		'mvc_router\services\Route'             => [
-			'name'         => 'service_routes',
+			'name'         => self::ROUTE_SERVICE,
 			'file'         => __DIR__.'/services/Route.php',
 			'is_singleton' => false,
 			'parent'       => 'mvc_router\services\Service'
 		],
 		'mvc_router\services\FileGeneration'    => [
-			'name'         => 'service_generation',
+			'name'         => self::FILE_GENERATION_SERVICE,
 			'file'         => __DIR__.'/services/FileGeneration.php',
 			'is_singleton' => false,
 			'parent'       => 'mvc_router\services\Service',
 		],
 		'mvc_router\services\Session'           => [
-			'name'         => 'service_session',
+			'name'         => self::SESSION_SERVICE,
 			'file'         => __DIR__.'/services/Session.php',
 			'is_singleton' => true,
 			'parent'       => 'mvc_router\services\Service',
 		],
 		'mvc_router\services\Translate'         => [
-			'name'         => 'service_translation',
+			'name'         => self::TRANSLATION_SERVICE,
 			'file'         => __DIR__.'/services/Translate.php',
 			'is_singleton' => false,
 			'parent'       => 'mvc_router\services\Service',
 		],
 		'mvc_router\services\FileSystem'        => [
-			'name'         => 'service_fs',
+			'name'         => self::FILE_SYSTEM_SERVICE,
 			'file'         => __DIR__.'/services/FileSystem.php',
 			'is_singleton' => false,
 			'parent'       => 'mvc_router\services\Service',
 		],
 		'mvc_router\services\Trigger'           => [
-			'name'         => 'service_trigger',
+			'name'         => self::TRIGGER_SERVICE,
 			'file'         => __DIR__.'/services/Trigger.php',
 			'is_singleton' => false,
 			'parent'       => 'mvc_router\services\Service',
 		],
 		'mvc_router\services\TriggerRegisterer' => [
-			'name'         => 'triggers',
+			'name'         => self::CLASS_TRIGGERS,
 			'file'         => __DIR__.'/services/TriggerRegisterer.php',
 			'is_singleton' => false,
 			'parent'       => 'mvc_router\services\Service',
 		],
 		'mvc_router\services\Lock'              => [
-			'name'         => 'service_lock',
+			'name'         => self::LOCK_SERVICE,
 			'file'         => __DIR__.'/services/Lock.php',
 			'is_singleton' => false,
 			'parent'       => 'mvc_router\services\Service',
 		],
 		'mvc_router\services\UrlGenerator'      => [
-			'name'         => 'url_generator',
+			'name'         => self::URL_GENERATOR_SERVICE,
 			'file'         => __DIR__.'/services/UrlGenerator.php',
 			'is_singleton' => false,
 			'parent'       => 'mvc_router\services\Service',
 		],
 
 		'mvc_router\parser\PHPDocParser' 		=> [
-			'name'         => 'phpdoc_parser',
+			'name'         => self::PHP_DOC_PARSER,
 			'file'         => __DIR__.'/utils/parsers/PHPDocParser.php',
 			'is_singleton' => true
 		],
 		'mvc_router\queues\Queue'        		=> [
-			'name'         => 'util_queue',
+			'name'         => self::QUEUE,
 			'file'         => __DIR__.'/utils/queues/Queue.php',
 			'is_singleton' => false
 		],
 		'mvc_router\queues\QueueList'    		=> [
-			'name'         => 'util_queue_list',
+			'name'         => self::QUEUE_LIST,
 			'file'         => __DIR__.'/utils/queues/QueueList.php',
 			'is_singleton' => true
 		],
 
 		'mvc_router\router\Router' 				=> [
-			'name'         => 'router',
+			'name'         => self::ROUTER,
 			'file'         => __DIR__.'/mvc/Router.php',
 			'is_singleton' => true,
 		],
 
 		'mvc_router\helpers\Helpers' 			=> [
-			'name'         => 'helpers',
+			'name'         => self::HELPERS,
 			'file'         => __DIR__.'/utils/Helpers.php',
 			'is_singleton' => true,
 		],
 
 		'mvc_router\commands\Commands'        	=> [
-			'name'         => 'commands',
+			'name'         => self::COMMANDS,
 			'file'         => __DIR__.'/utils/commands/Commands.php',
 			'is_singleton' => true,
 		],
 		'mvc_router\commands\Command'         	=> [
-			'name'         => 'command',
+			'name'         => self::COMMAND,
 			'file'         => __DIR__.'/utils/commands/Command.php',
 			'is_singleton' => false,
 		],
-		'mvc_router\commands\HelpCommand'  	=> [
-			'name'         => 'command_help',
+		'mvc_router\commands\HelpCommand'  		=> [
+			'name'         => self::HELP_COMMAND,
 			'file'         => __DIR__.'/commands/HelpCommand.php',
 			'is_singleton' => false,
 			'parent'       => 'mvc_router\commands\Command',
 		],
 		'mvc_router\commands\TestCommand'     	=> [
-			'name'         => 'command_test',
+			'name'         => self::TEST_COMMAND,
 			'file'         => __DIR__.'/commands/TestCommand.php',
 			'is_singleton' => false,
 			'parent'       => 'mvc_router\commands\Command',
 		],
 		'mvc_router\commands\GenerateCommand' 	=> [
-			'name'         => 'command_generate',
+			'name'         => self::GENERATE_COMMAND,
 			'file'         => __DIR__.'/commands/GenerateCommand.php',
 			'is_singleton' => false,
 			'parent'       => 'mvc_router\commands\Command',
 		],
 		'mvc_router\commands\CloneCommand'    	=> [
-			'name'         => 'command_clone',
+			'name'         => self::CLONE_COMMAND,
 			'file'         => __DIR__.'/commands/CloneCommand.php',
 			'is_singleton' => false,
 			'parent'       => 'mvc_router\commands\Command',
 		],
 		'mvc_router\commands\InstallCommand'  	=> [
-			'name'         => 'command_install',
+			'name'         => self::INSTALL_COMMAND,
 			'file'         => __DIR__.'/commands/InstallCommand.php',
 			'is_singleton' => false,
 			'parent'       => 'mvc_router\commands\Command',
 		],
 		'mvc_router\commands\StartCommand'  	=> [
-			'name'         => 'command_start',
+			'name'         => self::START_COMMAND,
 			'file'         => __DIR__.'/commands/StartCommand.php',
 			'is_singleton' => false,
 			'parent'       => 'mvc_router\commands\Command',
 		],
 
 		'Curl\Curl' 							=> [
-			'name'         => 'request',
+			'name'         => self::CLASS_REQUEST,
 			'file'         => __DIR__.'/../vendor/autoload.php',
 			'is_singleton' => false,
 		],
