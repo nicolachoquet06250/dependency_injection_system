@@ -12,7 +12,7 @@ class Websocket extends Service {
 
 	protected $routes = [];
 
-	protected function route($path, ComponentInterface $controller, $allowed_origins = ['*'], $http_host = null) {
+	public function route($path, ComponentInterface $controller, $allowed_origins = ['*'], $http_host = null) {
 		$this->routes[] = [
 			'path'            => $path,
 			'controller'      => $controller,

@@ -57,6 +57,8 @@ class Dependency {
 	const CLASS_TRIGGERS = 'triggers';
 	const CLASS_REQUEST  = 'request';
 	const RATCHET_APP_WS = 'ratchet_app_ws';
+	
+	const WEBSOCKET_DEFAULT_CONTROLLER = 'websocket_default_controller';
 
 	protected static $base_dependencies = [
 		__DIR__.'/interfaces/Singleton.php',
@@ -68,131 +70,131 @@ class Dependency {
 		'mvc_router\mvc\Controller' 			=> [
 			'name'         => self::CONTROLLER,
 			'file'         => __DIR__.'/mvc/Controller.php',
-			'is_singleton' => false,
+			'is_singleton' => self::NONE,
 		],
 		'mvc_router\mvc\Routes'     			=> [
 			'name'         => self::ROUTES_CONTROLLER,
 			'file'         => __DIR__.'/mvc/controllers/Routes.php',
-			'is_singleton' => false,
+			'is_singleton' => self::NONE,
 			'parent'       => 'mvc_router\mvc\Controller'
 		],
 		'mvc_router\mvc\Model'      			=> [
 			'name'         => self::MODEL,
 			'file'         => __DIR__.'/mvc/Model.php',
-			'is_singleton' => false,
+			'is_singleton' => self::NONE,
 		],
 		'mvc_router\mvc\View'       			=> [
 			'name'         => self::VIEW,
 			'file'         => __DIR__.'/mvc/View.php',
-			'is_singleton' => false
+			'is_singleton' => self::NONE,
 		],
 
 		'mvc_router\mvc\views\Route' 			=> [
 			'name'         => self::ROUTE_VIEW,
 			'file'         => __DIR__.'/mvc/views/Route.php',
-			'is_singleton' => false,
+			'is_singleton' => self::NONE,
 			'parent'       => 'mvc_router\mvc\View'
 		],
 
 		'mvc_router\data\gesture\Manager' 		=> [
 			'name'         => self::MANAGER,
 			'file'         => __DIR__.'/data_gesture/Manager.php',
-			'is_singleton' => false,
+			'is_singleton' => self::NONE,
 		],
 		'mvc_router\data\gesture\Entity'  		=> [
 			'name'         => self::ENTITY,
 			'file'         => __DIR__.'/data_gesture/Entity.php',
-			'is_singleton' => false,
+			'is_singleton' => self::NONE,
 		],
 
 		'mvc_router\services\Service'           => [
 			'name'         => self::SERVICE,
 			'file'         => __DIR__.'/utils/services/Service.php',
-			'is_singleton' => false,
+			'is_singleton' => self::NONE,
 		],
 		'mvc_router\services\Json'              => [
 			'name'         => self::JSON_SERVICE,
 			'file'         => __DIR__.'/services/Json.php',
-			'is_singleton' => false,
+			'is_singleton' => self::NONE,
 			'parent'       => 'mvc_router\services\Service',
 		],
 		'mvc_router\services\Error'             => [
 			'name'         => self::ERROR_SERVICE,
 			'file'         => __DIR__.'/services/Error.php',
-			'is_singleton' => false,
+			'is_singleton' => self::NONE,
 			'parent'       => 'mvc_router\services\Service',
 		],
 		'mvc_router\services\Logger'            => [
 			'name'         => self::LOGGER_SERVICE,
 			'file'         => __DIR__.'/services/Logger.php',
-			'is_singleton' => false,
+			'is_singleton' => self::NONE,
 			'parent'       => 'mvc_router\services\Service',
 		],
 		'mvc_router\services\Route'             => [
 			'name'         => self::ROUTE_SERVICE,
 			'file'         => __DIR__.'/services/Route.php',
-			'is_singleton' => false,
+			'is_singleton' => self::NONE,
 			'parent'       => 'mvc_router\services\Service'
 		],
 		'mvc_router\services\FileGeneration'    => [
 			'name'         => self::FILE_GENERATION_SERVICE,
 			'file'         => __DIR__.'/services/FileGeneration.php',
-			'is_singleton' => false,
+			'is_singleton' => self::NONE,
 			'parent'       => 'mvc_router\services\Service',
 		],
 		'mvc_router\services\Session'           => [
 			'name'         => self::SESSION_SERVICE,
 			'file'         => __DIR__.'/services/Session.php',
-			'is_singleton' => true,
+			'is_singleton' => self::SINGLETON,
 			'parent'       => 'mvc_router\services\Service',
 		],
 		'mvc_router\services\Translate'         => [
 			'name'         => self::TRANSLATION_SERVICE,
 			'file'         => __DIR__.'/services/Translate.php',
-			'is_singleton' => false,
+			'is_singleton' => self::NONE,
 			'parent'       => 'mvc_router\services\Service',
 		],
 		'mvc_router\services\FileSystem'        => [
 			'name'         => self::FILE_SYSTEM_SERVICE,
 			'file'         => __DIR__.'/services/FileSystem.php',
-			'is_singleton' => false,
+			'is_singleton' => self::NONE,
 			'parent'       => 'mvc_router\services\Service',
 		],
 		'mvc_router\services\Trigger'           => [
 			'name'         => self::TRIGGER_SERVICE,
 			'file'         => __DIR__.'/services/Trigger.php',
-			'is_singleton' => false,
+			'is_singleton' => self::NONE,
 			'parent'       => 'mvc_router\services\Service',
 		],
 		'mvc_router\services\TriggerRegisterer' => [
 			'name'         => self::CLASS_TRIGGERS,
 			'file'         => __DIR__.'/services/TriggerRegisterer.php',
-			'is_singleton' => false,
+			'is_singleton' => self::NONE,
 			'parent'       => 'mvc_router\services\Service',
 		],
 		'mvc_router\services\Lock'              => [
 			'name'         => self::LOCK_SERVICE,
 			'file'         => __DIR__.'/services/Lock.php',
-			'is_singleton' => false,
+			'is_singleton' => self::NONE,
 			'parent'       => 'mvc_router\services\Service',
 		],
 		'mvc_router\services\UrlGenerator'      => [
 			'name'         => self::URL_GENERATOR_SERVICE,
 			'file'         => __DIR__.'/services/UrlGenerator.php',
-			'is_singleton' => false,
+			'is_singleton' => self::NONE,
 			'parent'       => 'mvc_router\services\Service',
 		],
 		'mvc_router\services\Websocket'      	=> [
 			'name'         => self::WEBSOCKET_SERVICE,
 			'file'         => __DIR__.'/services/Websocket.php',
-			'is_singleton' => false,
+			'is_singleton' => self::NONE,
 			'parent'       => 'mvc_router\services\Service',
 		],
 
 		'mvc_router\parser\PHPDocParser' 		=> [
 			'name'         => self::PHP_DOC_PARSER,
 			'file'         => __DIR__.'/utils/parsers/PHPDocParser.php',
-			'is_singleton' => true
+			'is_singleton' => self::SINGLETON,
 		],
 		'mvc_router\queues\Queue'        		=> [
 			'name'         => self::QUEUE,
@@ -202,77 +204,77 @@ class Dependency {
 		'mvc_router\queues\QueueList'    		=> [
 			'name'         => self::QUEUE_LIST,
 			'file'         => __DIR__.'/utils/queues/QueueList.php',
-			'is_singleton' => true
+			'is_singleton' => self::SINGLETON,
 		],
 
 		'mvc_router\router\Router' 				=> [
 			'name'         => self::ROUTER,
 			'file'         => __DIR__.'/mvc/Router.php',
-			'is_singleton' => true,
+			'is_singleton' => self::SINGLETON,
 		],
 
 		'mvc_router\helpers\Helpers' 			=> [
 			'name'         => self::HELPERS,
 			'file'         => __DIR__.'/utils/Helpers.php',
-			'is_singleton' => true,
+			'is_singleton' => self::SINGLETON,
 		],
 
 		'mvc_router\commands\Commands'        	=> [
 			'name'         => self::COMMANDS,
 			'file'         => __DIR__.'/utils/commands/Commands.php',
-			'is_singleton' => true,
+			'is_singleton' => self::SINGLETON,
 		],
 		'mvc_router\commands\Command'         	=> [
 			'name'         => self::COMMAND,
 			'file'         => __DIR__.'/utils/commands/Command.php',
-			'is_singleton' => false,
+			'is_singleton' => self::NONE,
 		],
 		'mvc_router\commands\HelpCommand'  		=> [
 			'name'         => self::HELP_COMMAND,
 			'file'         => __DIR__.'/commands/HelpCommand.php',
-			'is_singleton' => false,
+			'is_singleton' => self::NONE,
 			'parent'       => 'mvc_router\commands\Command',
 		],
 		'mvc_router\commands\TestCommand'     	=> [
 			'name'         => self::TEST_COMMAND,
 			'file'         => __DIR__.'/commands/TestCommand.php',
-			'is_singleton' => false,
+			'is_singleton' => self::NONE,
 			'parent'       => 'mvc_router\commands\Command',
 		],
 		'mvc_router\commands\GenerateCommand' 	=> [
 			'name'         => self::GENERATE_COMMAND,
 			'file'         => __DIR__.'/commands/GenerateCommand.php',
-			'is_singleton' => false,
+			'is_singleton' => self::NONE,
 			'parent'       => 'mvc_router\commands\Command',
 		],
 		'mvc_router\commands\CloneCommand'    	=> [
 			'name'         => self::CLONE_COMMAND,
 			'file'         => __DIR__.'/commands/CloneCommand.php',
-			'is_singleton' => false,
+			'is_singleton' => self::NONE,
 			'parent'       => 'mvc_router\commands\Command',
 		],
 		'mvc_router\commands\InstallCommand'  	=> [
 			'name'         => self::INSTALL_COMMAND,
 			'file'         => __DIR__.'/commands/InstallCommand.php',
-			'is_singleton' => false,
+			'is_singleton' => self::NONE,
 			'parent'       => 'mvc_router\commands\Command',
 		],
 		'mvc_router\commands\StartCommand'  	=> [
 			'name'         => self::START_COMMAND,
 			'file'         => __DIR__.'/commands/StartCommand.php',
-			'is_singleton' => false,
+			'is_singleton' => self::NONE,
 			'parent'       => 'mvc_router\commands\Command',
 		],
 
 		'Curl\Curl' 							=> [
 			'name'         => self::CLASS_REQUEST,
 			'file'         => __DIR__.'/../vendor/autoload.php',
-			'is_singleton' => false,
+			'is_singleton' => self::NONE,
 		],
 		'Ratchet\App' 							=> [
 			'name'         => self::RATCHET_APP_WS,
 			'file'         => __DIR__.'/../vendor/autoload.php',
-			'is_singleton' => false,
+			'is_singleton' => self::NONE,
 			'params' 	   => [
 				'host' => [
 					'type' => 'string',
@@ -290,6 +292,11 @@ class Dependency {
 					'default' => null
 				]
 			]
+		],
+		'Ratchet\Server\EchoServer'				=> [
+			'name' => self::WEBSOCKET_DEFAULT_CONTROLLER,
+			'file' => __DIR__.'/../vendor/autoload.php',
+			'is_singleton' => self::NONE,
 		],
 	];
 
@@ -454,7 +461,7 @@ class Dependency {
 			Dependency::$dependencies[$class] = [
 				'name' => $name,
 				'file' => $file,
-				'is_singleton' => false,
+				'is_singleton' => self::NONE,
 			];
 		}
 		else {
@@ -565,8 +572,7 @@ class Dependency {
 	public function __call($name, $arguments) {
 		if(substr($name, 0, 4) === 'get_') {
 			$name = substr($name, 4, strlen($name) - 4);
-			$dependency_class = null;
-			if(self::method_exists('get_'.$name)) {
+			if(self::method_exists('get_'.$name)) {;
 				return self::get_from_classname(self::get_class_from_method('get_'.$name), ...$arguments);
 			}
 			return null;
@@ -616,6 +622,11 @@ class Dependency {
 		foreach ($doc as $line) {
 			if($line !== '' && $line !== ' ' && substr($line, 0, 8) === '@method ') {
 				$_line = str_replace(['@method ', '()'], '', $line);
+				preg_match('/\([^\)]+\)/', $_line, $matches);
+				if(!empty($matches)) {
+					str_replace($matches[0], '', $_line);
+					$_line = explode('(', $_line)[0];
+				}
 				$method_name = explode(' ', $_line)[1];
 				$doc_tmp[] = $method_name;
 			}
@@ -712,6 +723,11 @@ class Dependency {
 		foreach ($doc as $line) {
 			if($line !== '' && $line !== ' ' && substr($line, 0, 8) === '@method ') {
 				$_line = str_replace(['@method ', '()'], '', $line);
+				preg_match('/\([^\)]+\)/', $_line, $matches);
+				if(!empty($matches)) {
+					str_replace($matches[0], '', $_line);
+					$_line = explode('(', $_line)[0];
+				}
 				$method_name = explode(' ', $_line);
 
 				if($method_name[1] === $method) {
