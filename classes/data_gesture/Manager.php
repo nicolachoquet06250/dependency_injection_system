@@ -17,6 +17,11 @@ abstract class Manager extends Base {
 	private $annotation_keys;
 	private $default_sql_type_sizes;
 
+	const SELECT = 0;
+	const DELETE = 1;
+	const UPDATE = 2;
+	const INSERT = 3;
+
 	public function after_construct() {
 		parent::after_construct();
 		$this->init_annotation_keys();
@@ -36,7 +41,11 @@ abstract class Manager extends Base {
 			'auto_increment' => function() {
 				return true;
 			},
+			'unsigned' => function() {
+				return true;
+			},
 			'sql_type' => null,
+			'default' => null,
 			'sql_type_size' => function($prop, $value) {
 				return (int)$value;
 			},
@@ -252,6 +261,26 @@ abstract class Manager extends Base {
 		return $mysql->fetch_object($this->get_entity_dependency_name());
 	}
 
+	protected final function is($method, int $request_type) {
+		switch ($request_type) {
+			case self::SELECT:
+				return substr($method, 0, strlen('get_')) === 'get_'
+					   || substr($method, 0, strlen('select_')) === 'select_'
+					   || substr($method, 0, strlen('find_')) === 'find_';
+			case self::DELETE:
+				return substr($method, 0, strlen('del_')) === 'del_'
+					   || substr($method, 0, strlen('delete_')) === 'delete_'
+					   || substr($method, 0, strlen('remove_')) === 'remove_';
+			case self::UPDATE:
+				return substr($method, 0, strlen('update_')) === 'update_';
+			case self::INSERT:
+				return substr($method, 0, strlen('insert_')) === 'insert_'
+					   || substr($method, 0, strlen('set_')) === 'set_';
+			default:
+				return false;
+		}
+	}
+
 	/**
 	 * @param string $method
 	 * @return bool
@@ -361,6 +390,9 @@ abstract class Manager extends Base {
 						$annotation_value = str_replace("@{$annotation_key} ", '', $line);
 						$prop_doc[$prop_name][$annotation_key] = !is_null($callback) ? $callback($prop_name, $annotation_value) : $annotation_value;
 					}
+					if(!is_null($this->get($prop_name))) {
+						$prop_doc[$prop_name]['default'] = $this->get($prop_name);
+					}
 				}
 			}
 		}
@@ -374,7 +406,10 @@ abstract class Manager extends Base {
 			$create_str[] = "`{$prop_name}` "
 							.$type
 							.($size ? "({$size})" : '')
+							.(!empty($prop_details['unsigned']) ? ' UNSIGNED' : '')
 							.(empty($prop_details['nullable']) ?' NOT NULL' :  '')
+							.(!empty($prop_details['default']) ? ' DEFAULT '.(is_string($prop_details['default'])
+								? "'{$prop_details['default']}'" : $prop_details['default']) : '')
 							.(!empty($prop_details['primary_key']) ? ' PRIMARY KEY' : '')
 							.(!empty($prop_details['auto_increment']) ? ' AUTO_INCREMENT' : '');
 		}
@@ -409,9 +444,9 @@ abstract class Manager extends Base {
 			throw new Exception($this->inject->get_service_translation()
 											 ->__(get_class($this).'::'.$method_name.'() requis '.count($method_params).' et vous en avez renseigné '.count($arguments)));
 		}
-		if($this->is_select($name)) return $this->select($method_name, ...$arguments);
-		elseif ($this->is_delete($name)) return $this->delete($name, ...$arguments);
-		elseif ($this->is_update($name)) return $this->update($name, ...$arguments);
+		if($this->is($name, self::SELECT)) return $this->select($method_name, ...$arguments);
+		elseif ($this->is($name, self::DELETE)) return $this->delete($name, ...$arguments);
+		elseif ($this->is($name, self::UPDATE)) return $this->update($name, ...$arguments);
 		elseif ($this->is_insert($name)) return $this->insert($name, ...$arguments);
 		return null;
 	}

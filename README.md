@@ -5,3 +5,5 @@ repo : https://github.com/nicolachoquet06250/dependency_injection_system.git
        - https://packagist.org/packages/cboden/ratchet
        - https://github.com/ratchetphp/Ratchet
      - Wrench doc : https://github.com/varspool/Wrench
+     
+ - OAuth 2 tuto : https://www.sitepoint.com/creating-a-php-oauth-server/

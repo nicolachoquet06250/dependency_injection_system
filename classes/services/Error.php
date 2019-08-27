@@ -65,4 +65,14 @@ class Error extends Service {
 	</body>
 </html>');
 	}
+
+	public function redirect301($url) {
+		header("Status: 301 Moved Permanently", false, 301);
+		return $this->redirect302($url);
+	}
+
+	public function redirect302($url) {
+		header("Location: {$url}");
+		return;
+	}
 }
