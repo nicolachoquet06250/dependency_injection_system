@@ -73,9 +73,13 @@ class Logger extends Service {
 
 	public function log($message) {
 		if(is_array($message)) {
-			foreach ($message as $item) {
-				$this->log($item);
-				return;
+			foreach ($message as $item => $value) {
+				if(is_int($item)) {
+					$this->log($value);
+				} else {
+					$this->log("{$item} => {$value}");
+				}
+				return null;
 			}
 		}
 		$message = $this->format_header_log(true).$message;

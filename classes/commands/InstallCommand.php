@@ -17,7 +17,22 @@ class InstallCommand extends Command {
 	}
 
 	private function run_framework_commands(array $cmds, Logger $logger, Commands $commands) {
-		foreach ($cmds as $command_to_run) $logger->log('command: '.$command_to_run)->log($commands->run($command_to_run))->log_separator();
+		foreach ($cmds as $command_to_run) {
+			$command_result = $commands->run($command_to_run);
+			$logger->log('command: '.$command_to_run);
+			if(is_array($command_result)) {
+				foreach ($command_result as $i => $k) {
+					if(is_int($i)) {
+						$message = $k;
+					} else {
+						$message = "{$i} => {$k}";
+					}
+					$logger->log($message);
+				}
+			} else $logger->log($command_result);
+			$logger->log_separator();
+
+		}
 	}
 
 	private function run_system_command(string $cmd, Logger $logger, Commands $commands) {
@@ -89,8 +104,10 @@ class InstallCommand extends Command {
 	 */
 	public function databases() {
 		$managers = Dependency::get_managers();
+		$result = [];
 		foreach ($managers as $manager_name => $manager) {
-			$manager->create_table();
+			$result[$manager_name] = $manager->create_table();
 		}
+		return $result;
 	}
 }

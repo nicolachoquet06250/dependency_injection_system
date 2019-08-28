@@ -7,10 +7,10 @@ namespace mvc_router\mvc;
 use mvc_router\Base;
 
 class Controller extends Base {
-	const JSON = 1;
-	const XML = 2;
-	const HTML = 3;
-	const TEXT = 4;
+	const JSON = 0;
+	const XML = 1;
+	const HTML = 2;
+	const TEXT = 3;
 
 	private $content_types = [
 		self::JSON => 'application/json',

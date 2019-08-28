@@ -3,6 +3,8 @@
         "php-curl-class/php-curl-class": "^8.6",
         "cboden/ratchet": "^0.4.1",
 		"ext-pdo": "*",
-		"ext-oauth": "*"
+		"ext-oauth": "*",
+        "firebase/php-jwt": "^5.0",
+		"ext-ctype": "*"
 	}
 }

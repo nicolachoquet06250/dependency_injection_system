@@ -136,14 +136,18 @@ class Router extends Base implements Singleton {
 	 * @return mixed
 	 * @throws Exception
 	 */
-	public function run_controller($type, $ctrl, $method, $regex_parameter) {
+	public function run_controller($type, $ctrl, $method, $regex_parameter = []) {
 		$get_ctrl_method = 'get_'.$ctrl;
 		/** @var Controller $controller */
 		$controller = $this->inject->$get_ctrl_method();
-		if($type === self::REGEX) {
-			$controller->add_parameters($regex_parameter);
+		$ref_object = new ReflectionClass($controller->get_class());
+		if($ref_object->hasMethod($method)) {
+			if ($type === self::REGEX) {
+				$controller->add_parameters($regex_parameter);
+			}
+			return $controller->$method(...$controller->get_parameters_table($method));
 		}
-		return $controller->$method(...$controller->get_parameters_table($method));
+		return $this->inject->get_service_error()->error404();
 	}
 
 	/**
@@ -226,9 +230,12 @@ class Router extends Base implements Singleton {
 		if(is_null($key)) {
 			return $_POST;
 		}
+		if(!isset($_POST[$key])) {
+			return $default ?? false;
+		}
 		if($trim) $_POST[$key] = trim($_POST[$key]);
 		if(ctype_digit($_POST[$key])) $_POST[$key] = intval($_POST[$key]);
-		return $_POST[$key] ?? ($default ?? false);
+		return $_POST[$key];
 	}
 
 	/**

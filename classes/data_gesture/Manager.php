@@ -143,8 +143,8 @@ abstract class Manager extends Base {
 	protected function get_from(array $keys, array $values) {
 		$mysqli = $this->get_mysql();
 		$keys = $this->associate_keys_and_values($keys, $values);
-		return $mysqli->query('SELECT * FROM `'.$this->get_table().'` WHERE '.implode(' AND ', $this->get_sql_string_from_array($keys)))
-			->fetch_object(Dependency::get_name_from_class($this->get_entity()->get_class()));
+		$mysqli->query('SELECT * FROM `'.$this->get_table().'` WHERE '.implode(' AND ', $this->get_sql_string_from_array($keys)));
+		return $mysqli->fetch_object(Dependency::get_name_from_class($this->get_entity()->get_class()));
 	}
 
 	/**
@@ -442,12 +442,20 @@ abstract class Manager extends Base {
 		$method_params = $current_method['params_type'];
 		if(count($arguments) < count($method_params)) {
 			throw new Exception($this->inject->get_service_translation()
-											 ->__(get_class($this).'::'.$method_name.'() requis '.count($method_params).' et vous en avez renseigné '.count($arguments)));
+											 ->__('%1 requis %2 et vous en avez renseigné %3', [
+											 	get_class($this).'::'.$method_name.'()',
+												count($method_params),
+												count($arguments)
+											 ]));
 		}
-		if($this->is($name, self::SELECT)) return $this->select($method_name, ...$arguments);
-		elseif ($this->is($name, self::DELETE)) return $this->delete($name, ...$arguments);
-		elseif ($this->is($name, self::UPDATE)) return $this->update($name, ...$arguments);
-		elseif ($this->is_insert($name)) return $this->insert($name, ...$arguments);
+		if($this->is($name, self::SELECT))
+			return $this->select($method_name, ...$arguments);
+		elseif ($this->is($name, self::DELETE))
+			return $this->delete($name, ...$arguments);
+		elseif ($this->is($name, self::UPDATE))
+			return $this->update($name, ...$arguments);
+		elseif ($this->is($name, self::INSERT))
+			return $this->insert($name, ...$arguments);
 		return null;
 	}
 }

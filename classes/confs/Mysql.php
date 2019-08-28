@@ -6,6 +6,7 @@ namespace mvc_router\confs;
 
 use Exception;
 use mvc_router\Base;
+use mvc_router\data\gesture\Entity;
 use mvc_router\dependencies\Dependency;
 use PDO;
 use PDOStatement;
@@ -55,7 +56,7 @@ class Mysql extends Base {
 										   .'dbname='.($this->db_prefix ? $this->db_prefix.'_' : '').$this->db_name.'',
 										   ($this->user_prefix ? $this->user_prefix.'_' : '').$this->user,
 										   $this->pass);
-				$this->is_connected = $this->connector->errorCode() ? false : true;
+				$this->is_connected = $this->connector && $this->connector->errorCode() ? false : true;
 			}
 		}
 		catch (Exception $e) {
@@ -87,14 +88,21 @@ class Mysql extends Base {
 		return null;
 	}
 
+	/**
+	 * @param null $fetch_style
+	 * @return array|mixed
+	 */
 	private function count_rows($fetch_style = null) {
-		$fetch_result = $fetch_style === self::FETCH_ARRAY ? $this->last_result()->fetch() : $this->last_result()->fetchAll($fetch_style);
+		$fetch_result = $fetch_style === self::FETCH_ARRAY ? $this->last_result()->fetch() : (!is_bool($this->last_result()) ? $this->last_result()->fetchAll($fetch_style) : []);
 		$this->num_rows = count($fetch_result);
 		return $fetch_result;
 	}
 
+	/**
+	 * @return bool
+	 */
 	private function is_in_error() {
-		$error_code = $this->last_result()->errorCode();
+		$error_code = $this->last_result() && !is_bool($this->last_result()) ? $this->last_result()->errorCode() : null;
 		return !is_null($error_code) && $error_code !== '00000';
 	}
 
@@ -141,7 +149,7 @@ class Mysql extends Base {
 			$obj = Dependency::get_from_name($class_dependency_name);
 			if($obj) {
 				foreach ($item as $key => $value) {
-					$obj->set($key, $value, true);
+					$obj instanceof Entity ? $obj->set($key, $value, true) : $obj->set($key, $value);
 				}
 				$results[] = $obj;
 			}
