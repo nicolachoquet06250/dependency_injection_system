@@ -19,6 +19,43 @@ class Controller extends Base {
 		self::TEXT => 'plain/text',
 	];
 
+	private $parameters = [];
+
+	/**
+	 * @route_disabled
+	 * @param mixed $value
+	 * @return Controller
+	 */
+	public final function add_parameter($value) {
+		$this->parameters[] = $value;
+		return $this;
+	}
+
+	/**
+	 * @route_disabled
+	 * @param array $parameters
+	 * @return Controller
+	 */
+	public final function add_parameters(array $parameters) {
+		$this->parameters = $parameters;
+		return $this;
+	}
+
+	/**
+	 * @return array
+	 */
+	protected final function params() {
+		return $this->parameters;
+	}
+
+	/**
+	 * @param $key
+	 * @return mixed|null
+	 */
+	protected final function param($key) {
+		return isset($this->parameters[$key]) ? $this->parameters[$key] : null;
+	}
+
 	private function define_content_type($type) {
 		header('Content-Type: '.$this->content_types[$type].';charset=utf-8');
 	}

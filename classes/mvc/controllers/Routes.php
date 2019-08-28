@@ -15,22 +15,19 @@ class Routes extends Controller {
 	public $translation;
 
 	/**
-	 * @route \/routes\/?(stats)?
+	 * @route \/routes\/?(?<stats>stats)?
 	 * @param views\Route $route_view
 	 * @param Router      $router
 	 * @param Route       $service_route
-	 * @param string|null $stats
 	 * @return views\Route
 	 */
-	public function index(views\Route $route_view, Router $router, Route $service_route, $stats = null) {
+	public function index(views\Route $route_view, Router $router, Route $service_route) {
 		$route_view->assign('translation', $this->translation);
 		$route_view->assign('service_route', $service_route);
 		$route_view->assign('router', $router);
-		$route_view->assign('stats', $router->get('stats') === true || $router->get('stats') === 1 || !is_null($stats));
+		$route_view->assign('stats', $this->param('stats') !== null);
 
-		if($lang = $router->get('lang')) {
-			$this->translation->set_default_language($lang);
-		}
+		if($lang = $router->get('lang')) $this->translation->set_default_language($lang);
 
 		$route_view->assign('lang', $this->translation->get_default_language());
 

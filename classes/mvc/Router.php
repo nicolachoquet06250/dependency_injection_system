@@ -82,7 +82,7 @@ class Router extends Base implements Singleton {
 	/**
 	 * @param $route
 	 * @return mixed|string
-	 * @throws ReflectionException
+	 * @throws Exception
 	 */
 	public function execute($route) {
 		if(strstr($route, '?')) {
@@ -112,7 +112,16 @@ class Router extends Base implements Singleton {
 				if(!empty($matches)) {
 					array_shift($matches);
 					self::$CURRENT_ROUTE = [$route => $_route];
-					return $this->run_controller(self::REGEX, $_route['controller'], $_route['method'], ...$matches);
+					foreach ($matches as $key => $match) {
+						if(is_int($key)) {
+							unset($matches[$key]);
+						} else {
+							if(is_array($match)) {
+								$matches[$key] = $match[0];
+							}
+						}
+					}
+					return $this->run_controller(self::REGEX, $_route['controller'], $_route['method'], $matches);
 				}
 			}
 		}
@@ -125,34 +134,16 @@ class Router extends Base implements Singleton {
 	 * @param string $method
 	 * @param array  ...$regex_parameter
 	 * @return mixed
-	 * @throws ReflectionException
 	 * @throws Exception
 	 */
-	public function run_controller($type, $ctrl, $method, ...$regex_parameter) {
+	public function run_controller($type, $ctrl, $method, $regex_parameter) {
 		$get_ctrl_method = 'get_'.$ctrl;
 		/** @var Controller $controller */
 		$controller = $this->inject->$get_ctrl_method();
-		$method_ref = new ReflectionMethod(get_class($controller), $method);
-		$nb_parameters = count($method_ref->getParameters());
 		if($type === self::REGEX) {
-			if(count($regex_parameter) > $nb_parameters) {
-				$this->inject->get_service_error()->error404();
-			}
-			elseif (count($regex_parameter) < $nb_parameters) {
-				for($i = 0; $i < $nb_parameters; $i++) {
-					$regex_parameter[] = null;
-				}
-			}
-			$tmp = [];
-			foreach ($regex_parameter as $item) {
-				if($item !== '') {
-					$tmp[] = $item;
-				}
-			}
-			$regex_parameter = $tmp;
-			$regex_parameter = $this->inject->get_helpers()->array_flatten($regex_parameter);
+			$controller->add_parameters($regex_parameter);
 		}
-		return $controller->$method(...$controller->get_parameters_table($method), ...$regex_parameter);
+		return $controller->$method(...$controller->get_parameters_table($method));
 	}
 
 	/**

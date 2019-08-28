@@ -88,7 +88,7 @@ class View extends Base {
 		$this->vars[$var] = $value;
 	}
 
-	final protected function get($var) {
+	final public function get($var) {
 		return isset($this->vars[$var]) ? $this->vars[$var] : null;
 	}
 
