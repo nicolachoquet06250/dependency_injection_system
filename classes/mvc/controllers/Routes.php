@@ -22,7 +22,6 @@ class Routes extends Controller {
 	 * @return views\Route
 	 */
 	public function index(views\Route $route_view, Router $router, Route $service_route) {
-		$route_view->assign('translation', $this->translation);
 		$route_view->assign('service_route', $service_route);
 		$route_view->assign('router', $router);
 		$route_view->assign('stats', $this->param('stats') !== null);
