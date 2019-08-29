@@ -31,6 +31,17 @@ class Session extends Service implements Singleton {
 		$_SESSION[$key] = $value;
 	}
 
+	public function unset($key) {
+		if($this->has($key)) {
+			unset($_SESSION[$key]);
+		}
+		return !$this->has($key);
+	}
+
+	public function destroy() {
+		return session_destroy();
+	}
+
 	public function has($key) {
 		return isset($_SESSION[$key]);
 	}
