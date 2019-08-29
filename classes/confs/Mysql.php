@@ -75,7 +75,7 @@ class Mysql extends Base {
 				return false;
 			}
 			$this->last_query = $query;
-			if (substr($query, 0, strlen('SELECT ')) !== 'SELECT ') {
+			if (substr($query, 0, strlen('SELECT ')) !== 'SELECT ' && substr($query, 0, strlen('SHOW ')) !== 'SHOW ') {
 				$_query = $this->connector->prepare($query);
 				$this->last_result = $_query->execute($vars);
 				return $this;

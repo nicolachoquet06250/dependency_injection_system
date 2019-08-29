@@ -3,6 +3,11 @@
 	use mvc_router\confs\Conf;
 	use mvc_router\dependencies\Dependency;
 
+	require_once __DIR__.'/classes/exceptions/http_errors/Exception400.php';
+	require_once __DIR__.'/classes/exceptions/http_errors/Exception401.php';
+	require_once __DIR__.'/classes/exceptions/http_errors/Exception404.php';
+	require_once __DIR__.'/classes/exceptions/http_errors/Exception500.php';
+
 	require_once __DIR__.'/classes/Dependency.php';
 	require_once __DIR__.'/classes/Conf.php';
 

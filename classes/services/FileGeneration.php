@@ -13,7 +13,6 @@ class FileGeneration extends Service {
 use mvc_router\dependencies\Dependency;
 
 require_once \''.(realpath(__DIR__.'/../../')).'/'.$custom_dir.'/autoload.php\';
-require_once \''.(realpath(__DIR__.'/../../')).'/'.$custom_dir.'/update_dependencies.php\';
 require_once \''.(realpath(__DIR__.'/../../')).'/'.$custom_dir.'/htaccess.php\';
 
 $dw = Dependency::get_wrapper_factory()->get_dependency_wrapper();
@@ -47,6 +46,18 @@ catch (Exception $e) {
 }
 catch (Error $e) {
 	$dw->get_service_error()->error500($e->getMessage());
+}
+catch (Exception400 $e) {
+	$dw->get_service_error()->error400($e->getMessage(), $e->getReturnType());
+}
+catch (Exception401 $e) {
+	$dw->get_service_error()->error401($e->getMessage(), $e->getReturnType());
+}
+catch (Exception404 $e) {
+	$dw->get_service_error()->error401($e->getMessage(), $e->getReturnType());
+}
+catch (Exception500 $e) {
+	$dw->get_service_error()->error401($e->getMessage(), $e->getReturnType());
 }
 ';
 

@@ -42,7 +42,6 @@ class Dependency {
 	const LOCK_SERVICE            = 'service_lock';
 	const URL_GENERATOR_SERVICE   = 'url_generator';
 	const WEBSOCKET_SERVICE   	  = 'service_websocket';
-	const OAUTH_SERVICE			  = 'service_oauth';
 
 	const PHP_DOC_PARSER = 'phpdoc_parser';
 	const QUEUE          = 'util_queue';
@@ -188,12 +187,6 @@ class Dependency {
 		'mvc_router\services\Websocket'      	=> [
 			'name'         => self::WEBSOCKET_SERVICE,
 			'file'         => __DIR__.'/services/Websocket.php',
-			'is_singleton' => self::NONE,
-			'parent'       => 'mvc_router\services\Service',
-		],
-		'mvc_router\services\Oauth'      	=> [
-			'name'         => self::OAUTH_SERVICE,
-			'file'         => __DIR__.'/services/OAuth.php',
 			'is_singleton' => self::NONE,
 			'parent'       => 'mvc_router\services\Service',
 		],
