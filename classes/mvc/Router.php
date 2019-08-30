@@ -227,15 +227,21 @@ class Router extends Base implements Singleton {
 	 * @return bool|mixed
 	 */
 	public function post($key = null, $default = '', $trim = true) {
+		$json = $this->inject->get_service_json();
+		$request_body = file_get_contents('php://input');
+		if($request_body) {
+			$request_body = $json->decode($request_body, true);
+		} else $request_body = [];
+		$post = array_merge($_POST, $request_body);
 		if(is_null($key)) {
-			return $_POST;
+			return $post;
 		}
-		if(!isset($_POST[$key])) {
+		if(!isset($post[$key])) {
 			return $default ?? false;
 		}
-		if($trim) $_POST[$key] = trim($_POST[$key]);
-		if(ctype_digit($_POST[$key])) $_POST[$key] = intval($_POST[$key]);
-		return $_POST[$key];
+		if($trim) $post[$key] = trim($post[$key]);
+		if(ctype_digit($post[$key])) $post[$key] = intval($post[$key]);
+		return $post[$key];
 	}
 
 	/**

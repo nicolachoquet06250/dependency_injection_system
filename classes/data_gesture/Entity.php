@@ -109,10 +109,17 @@ class Entity extends Base {
 		return $this;
 	}
 
+	/**
+	 * @param string $property
+	 * @return bool
+	 */
 	protected function is_property_updated($property) {
 		return in_array($property, $this->updated_fields);
 	}
 
+	/**
+	 * @return array|bool|\mvc_router\confs\Mysql
+	 */
 	public function save() {
 		$mysql = $this->confs->get_mysql();
 		$updated = [];
@@ -133,12 +140,22 @@ class Entity extends Base {
 		return true;
 	}
 
-	public function __debugInfo() {
+	/**
+	 * @return array
+	 */
+	public function to_json() {
 		$fields = $this->get_table_fields();
 		foreach ($fields as $i => $field) {
 			$fields[$field] = $this->get($field);
 			unset($fields[$i]);
 		}
 		return $fields;
+	}
+
+	/**
+	 * @return array
+	 */
+	public function __debugInfo() {
+		return $this->to_json();
 	}
 }

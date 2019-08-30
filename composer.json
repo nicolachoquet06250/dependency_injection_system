@@ -5,6 +5,7 @@
 		"ext-pdo": "*",
 		"ext-oauth": "*",
         "firebase/php-jwt": "^5.0",
-		"ext-ctype": "*"
+		"ext-ctype": "*",
+		"ext-http": "*"
 	}
 }
