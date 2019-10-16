@@ -65,20 +65,24 @@ class FileSystem extends Service {
 	 * @param string   $path
 	 */
 	public function browse_dir(callable $callback, bool $recursive = false, string $path = __DIR__.'/../..') {
+		$slash = $this->inject->get_helpers()->get_slash();
+		if($slash !== '/') {
+			$path = str_replace( '/', '\\', $path );
+		}
 		$directory = realpath($path);
 		$dir = opendir($directory);
 		while (($elem = readdir($dir)) !== false) {
 			if($elem !== '.' && $elem !== '..' && substr($elem, 0, 1) !== '.' && $elem !== 'vendor') {
 				if($recursive) {
-					if (is_dir($path.'/'.$elem)) {
-						$this->browse_dir($callback, $recursive, $path.'/'.$elem);
-					} elseif (is_file($path.'/'.$elem)) {
-						$callback($path.'/'.$elem);
+					if (is_dir($path.$slash.$elem)) {
+						$this->browse_dir($callback, $recursive, $path.$slash.$elem);
+					} elseif (is_file($path.$slash.$elem)) {
+						$callback($path.$slash.$elem);
 					}
 				}
 				else {
-					if(is_file($path.'/'.$elem)) {
-						$callback($path.'/'.$elem);
+					if(is_file($path.$slash.$elem)) {
+						$callback($path.$slash.$elem);
 					}
 				}
 			}
@@ -86,13 +90,14 @@ class FileSystem extends Service {
 	}
 
 	public function list_directories($path = __DIR__.'/../../', $complete_path = true) {
+		$slash = $this->inject->get_helpers()->get_slash();
 		$directory = realpath($path);
 		$dir = opendir($directory);
 		$dirs = [];
 		while (($elem = readdir($dir)) !== false) {
 			if($elem !== '.' && $elem !== '..' && substr($elem, 0, 1) !== '.' && $elem !== 'vendor') {
-				if(is_dir($path.'/'.$elem)) {
-					$dirs[] = ($complete_path ? $path.'/' : '').$elem;
+				if(is_dir($path.$slash.$elem)) {
+					$dirs[] = ($complete_path ? $path.$slash : '').$elem;
 				}
 			}
 		}
@@ -106,7 +111,8 @@ class FileSystem extends Service {
 	 * @throws Exception
 	 */
 	public function create_dir(string $path, string $dir_name) {
-		$path_end = substr($path, strlen($path) - 1, 1) === '/' ? '' : '/';
+		$slash = $this->inject->get_helpers()->get_slash();
+		$path_end = substr($path, strlen($path) - 1, 1) === $slash ? '' : $slash;
 		if(realpath($path)) {
 			return mkdir($path.$path_end.$dir_name, 0777, true);
 		}
@@ -123,6 +129,7 @@ class FileSystem extends Service {
 	 * @throws Exception
 	 */
 	public function create_file(string $path, string $file_name, int $type = self::TEXT, string $namespace = null, $default_content = '') {
+		$slash = $this->inject->get_helpers()->get_slash();
 		if(in_array($type, array_keys(self::EXTENSIONS))) {
 			switch ($type) {
 				case self::TEXT:
@@ -265,7 +272,7 @@ class FileSystem extends Service {
 				}
 			}
 			$dir_name = $dir_name ?? '';
-			return file_put_contents($path.'/'.$dir_name.$file_name.self::EXTENSIONS[$type], $content);
+			return file_put_contents($path.$slash.$dir_name.$file_name.self::EXTENSIONS[$type], $content);
 		} else throw new Exception('Le type de fichier choisis n\'est pas disponible');
 	}
 

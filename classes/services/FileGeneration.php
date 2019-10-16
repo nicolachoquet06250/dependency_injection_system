@@ -7,13 +7,18 @@ namespace mvc_router\services;
 use Exception;
 
 class FileGeneration extends Service {
+	/** @var \mvc_router\helpers\Helpers $helpers */
+	public $helpers;
+	
 	public function generate_index($custom_dir) {
+		$slash = $this->helpers->get_slash();
+		$root_path = (realpath(__DIR__.$slash.'..'.$slash.'..'.$slash)).$slash.$custom_dir.$slash;
 		$index = '<?php
 
 use mvc_router\dependencies\Dependency;
 
-require_once \''.(realpath(__DIR__.'/../../')).'/'.$custom_dir.'/autoload.php\';
-require_once \''.(realpath(__DIR__.'/../../')).'/'.$custom_dir.'/htaccess.php\';
+require_once \''.$root_path.'autoload.php\';
+require_once \''.$root_path.'htaccess.php\';
 
 $dw = Dependency::get_wrapper_factory()->get_dependency_wrapper();
 try {
@@ -61,9 +66,10 @@ catch (Exception500 $e) {
 }
 ';
 
-		file_put_contents(__DIR__.'/../../'.$custom_dir.'/index.php', $index);
+		file_put_contents(($this->helpers->is_unix() ? __DIR__.$slash.'..'.$slash.'..'.$slash : '').$custom_dir.$slash.'index.php', $index);
 	}
 	public function generate_base_htaccess($custom_dir) {
+		$slash = $this->helpers->get_slash();
 		$htaccess_php = '<?php
 
 mvc_router\dependencies\Dependency::get_wrapper_factory()->get_dependency_wrapper()->get_router()
@@ -73,14 +79,15 @@ mvc_router\dependencies\Dependency::get_wrapper_factory()->get_dependency_wrappe
 
 RewriteRule ^([^\.]+)$ /index.php?q=$0 [QSA,L]
 ';
-		if(!is_file(__DIR__.'/../../'.$custom_dir.'/.htaccess')) {
-			file_put_contents(__DIR__.'/../../'.$custom_dir.'/.htaccess', $htaccess_apache);
+		if(!is_file(($this->helpers->is_unix() ? __DIR__.$slash.'..'.$slash.'..'.$slash : '').$custom_dir.$slash.'.htaccess')) {
+			file_put_contents(($this->helpers->is_unix() ? __DIR__.$slash.'..'.$slash.'..'.$slash : '').$custom_dir.$slash.'.htaccess', $htaccess_apache);
 		}
-		if(!is_file(__DIR__.'/../../'.$custom_dir.'/htaccess.php')) {
-			file_put_contents(__DIR__.'/../../'.$custom_dir.'/htaccess.php', $htaccess_php);
+		if(!is_file(($this->helpers->is_unix() ? __DIR__.$slash.'..'.$slash.'..'.$slash : '').$custom_dir.$slash.'htaccess.php')) {
+			file_put_contents(($this->helpers->is_unix() ? __DIR__.$slash.'..'.$slash.'..'.$slash : '').$custom_dir.$slash.'htaccess.php', $htaccess_php);
 		}
 	}
 	public function generate_update_dependencies($custom_dir) {
+		$slash = $this->helpers->get_slash();
 		$ud = '<?php
 
 	use mvc_router\confs\Conf;
@@ -98,11 +105,12 @@ RewriteRule ^([^\.]+)$ /index.php?q=$0 [QSA,L]
 	Conf::extend_confs();
 ';
 
-		if(!is_file(__DIR__.'/../../'.$custom_dir.'/update_dependencies.php')) {
-			file_put_contents(__DIR__.'/../../'.$custom_dir.'/update_dependencies.php', $ud);
+		if(!is_file(($this->helpers->is_unix() ? __DIR__.$slash.'..'.$slash.'..'.$slash : '').$custom_dir.$slash.'update_dependencies.php')) {
+			file_put_contents(($this->helpers->is_unix() ? __DIR__.$slash.'..'.$slash.'..'.$slash : '').$custom_dir.$slash.'update_dependencies.php', $ud);
 		}
 	}
 	public function generate_custom_autoload($custom_dir) {
+		$slash = $this->helpers->get_slash();
 		$autoload = '<?php
 
 use mvc_router\dependencies\Dependency;
@@ -113,15 +121,16 @@ require_once __DIR__.\'/update_dependencies.php\';
 Dependency::get_wrapper_factory()->get_dependency_wrapper()->get_triggers()->initialize();
 ';
 
-		file_put_contents(__DIR__.'/../../'.$custom_dir.'/autoload.php', $autoload);
+		file_put_contents(($this->helpers->is_unix() ? __DIR__.$slash.'..'.$slash.'..'.$slash : '').$custom_dir.$slash.'autoload.php', $autoload);
 	}
 	public function generate_gitignore($custom_dir) {
+		$slash = $this->helpers->get_slash();
 		$gitingore = '.htaccess
 autoload.php
 htaccess.php
 index.php';
-		if(!realpath(__DIR__.'/../../'.$custom_dir.'/.gitignore')) {
-			file_put_contents(realpath(__DIR__.'/../../'.$custom_dir).'/.gitignore', $gitingore);
+		if(!realpath(($this->helpers->is_unix() ? __DIR__.$slash.'..'.$slash.'..'.$slash : '').$custom_dir.$slash.'.gitignore')) {
+			file_put_contents(realpath(($this->helpers->is_unix() ? __DIR__.$slash.'..'.$slash.'..'.$slash : '').$custom_dir).$slash.'.gitignore', $gitingore);
 		}
 	}
 	/**
@@ -130,9 +139,10 @@ index.php';
 	 */
 	public function generate_mysql_conf_file($custom_dir) {
 		$fs = $this->inject->get_service_fs();
+		$slash = $this->helpers->get_slash();
 
-		if(!is_file(__DIR__."/../../{$custom_dir}/classes/confs/mysql.json")) {
-			$fs->create_file(__DIR__."/../../{$custom_dir}/classes/confs", 'mysql', FileSystem::JSON, null, [
+		if(!is_file(($this->helpers->is_unix() ? __DIR__."{$slash}..{$slash}..{$slash}" : '')."{$custom_dir}{$slash}classes{$slash}confs{$slash}mysql.json")) {
+			$fs->create_file(($this->helpers->is_unix() ? __DIR__."{$slash}..{$slash}..{$slash}" : '')."{$custom_dir}{$slash}classes{$slash}confs", 'mysql', FileSystem::JSON, null, [
 				"host" => '',
 				"user" => '',
 				"pass" => "",

@@ -41,4 +41,16 @@ class Helpers extends Base implements Singleton {
 	public function is_cgi() {
 		return substr(PHP_SAPI, 0, 3) === 'cgi';
 	}
+	
+	public function is_unix() {
+		return PHP_OS_FAMILY === 'Linux';
+	}
+	
+	public function is_windows() {
+		return PHP_OS_FAMILY === 'Windows';
+	}
+	
+	public function get_slash() {
+		return $this->is_unix() ? '/' : '\\';
+	}
 }

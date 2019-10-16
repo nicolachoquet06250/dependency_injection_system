@@ -788,7 +788,7 @@ class Dependency {
 	public static function get_managers() {
 		$managers_class = [];
 		foreach (self::$dependencies as $dependency) {
-			if(isset($dependency['parent']) && $dependency['parent'] === 'mvc_router\data\gesture\Manager') {
+			if(isset($dependency['parent']) && ($dependency['parent'] === 'mvc_router\data\gesture\Manager' || $dependency['parent'] === '\mvc_router\data\gesture\Manager')) {
 				$managers_class[str_replace([__SITE_NAME__.'_', '_manager'], '', $dependency['name'])] = self::get_wrapper_factory()->get_dependency_wrapper()->{"get_{$dependency['name']}"}();
 			}
 		}

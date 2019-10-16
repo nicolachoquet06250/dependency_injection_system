@@ -45,6 +45,8 @@ class InstallCommand extends Command {
 	}
 
 	/**
+	 * @syntax install:install -p [dir=<value>?demo] [repo=<value>?https://github.com/nicolachoquet06250/mvc_router_demo.git]
+	 *
 	 * @param Commands $commands
 	 * @param Logger   $logger
 	 */
@@ -67,6 +69,8 @@ class InstallCommand extends Command {
 	}
 
 	/**
+	 * @syntax install:update
+	 *
 	 * @param Commands   $commands
 	 * @param Logger     $logger
 	 * @param FileSystem $fs

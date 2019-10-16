@@ -7,16 +7,22 @@ namespace mvc_router\commands;
 use Exception;
 use mvc_router\confs\Conf;
 use mvc_router\dependencies\Dependency;
+use mvc_router\helpers\Helpers;
 use mvc_router\services\Translate;
 
 class GenerateCommand extends Command {
-	public function dependencies() {
+	/**
+	 * @param Helpers $helpers
+	 * @return string
+	 */
+	public function dependencies(Helpers $helpers) {
+		$slash = $helpers->get_slash();
 		if($this->param('custom-file') && is_file($this->param('custom-file'))) {
-			require_once __DIR__.'/../../'.$this->param('custom-file');
+			require_once ($helpers->is_unix() ? __DIR__.$slash.'..'.$slash.'..'.$slash : '').$this->param('custom-file');
 		}
 		else {
 			$this->inject->get_service_logger()
-						 ->log('WARNING: file '.realpath(__DIR__.'/../../'.$this->param('custom-file')).' not found !');
+						 ->log('WARNING: file '.realpath(__DIR__.$slash.'..'.$slash.'..'.$slash.$this->param('custom-file')).' not found !');
 		}
 
 		Dependency::require_dependency_wrapper();
@@ -43,10 +49,11 @@ class GenerateCommand extends Command {
 		return 'All default files has been generated ! Don\'t forget to fill the classes/confs/mysql.json file';
 	}
 
-	public function translations(Translate $translation) {
+	public function translations(Translate $translation, Helpers $helpers) {
 		$translation->initialize_translation_files();
+		$slash = $helpers->get_slash();
 
-		$this->parcoure_dir(realpath(__DIR__.'/../../'), $translation);
+		$this->parcoure_dir(realpath(__DIR__.$slash.'..'.$slash.'..'.$slash), $translation, $helpers);
 
 		$languages = $translation->get_languages();
 		$languages_imploded = implode(', ', array_keys($languages));
@@ -58,12 +65,12 @@ class GenerateCommand extends Command {
 		}
 	}
 
-	private function parcoure_dir($directory, Translate $translation) {
+	private function parcoure_dir($directory, Translate $translation, Helpers $helpers) {
 		$dir = opendir($directory);
 
 		while (($elem = readdir($dir)) !== false) {
 			if($elem !== '.' && $elem !== '..' && substr($elem, 0, 1) !== '.') {
-				if(is_file($directory.'/'.$elem)) {
+				if(is_file($directory.$helpers->get_slash().$elem)) {
 					$file_content = file_get_contents($directory.'/'.$elem);
 					if(strstr($file_content, '->__(')) {
 						preg_match_all('/\-\>\_\_\([\'|"](.+)[\'|"](, ?\[.*\])?\)[,|, ]?/m', $file_content, $matches);
@@ -73,10 +80,26 @@ class GenerateCommand extends Command {
 						}
 					}
 				}
-				elseif (is_dir($directory.'/'.$elem)) {
-					$this->parcoure_dir($directory.'/'.$elem, $translation);
+				elseif (is_dir($directory.$helpers->get_slash().$elem)) {
+					$this->parcoure_dir($directory.'/'.$elem, $translation, $this->inject->get_helpers());
 				}
 			}
 		}
+	}
+	
+	public function service(Helpers $helpers) {
+		$class = $this->param('name');
+		
+		$service = '<?php
+		
+	namespace mvc_router\services;
+	
+	class '.ucfirst($class).' extends Service {}
+	';
+		
+		$path = __DIR__.$helpers->get_slash().ucfirst($class).'Command.php';
+		file_put_contents($path, $service);
+		
+		return 'Le service '.$class.' à été généré avec succès !';
 	}
 }

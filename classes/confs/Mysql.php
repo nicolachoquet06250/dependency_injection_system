@@ -37,7 +37,6 @@ class Mysql extends Base {
 	protected $num_rows = 0;
 
 	/**
-	 * @throws ReflectionException
 	 * @throws Exception
 	 */
 	public function after_construct() {
@@ -168,7 +167,7 @@ class Mysql extends Base {
 	}
 
 	/**
-	 * @return PDOStatement
+	 * @return array|PDOStatement
 	 */
 	public function last_result() {
 		return $this->last_result;

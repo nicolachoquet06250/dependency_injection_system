@@ -5,13 +5,26 @@ namespace mvc_router\parser;
 
 
 use mvc_router\Base;
+use mvc_router\commands\Command;
+use mvc_router\data\gesture\Entity;
+use mvc_router\data\gesture\Manager;
 use mvc_router\dependencies\Dependency;
 use mvc_router\interfaces\Singleton;
+use mvc_router\mvc\Controller;
 use mvc_router\router\Router;
+use mvc_router\services\Service;
 use ReflectionClass;
 use ReflectionMethod;
+use ReflectionException;
 
 class PHPDocParser extends Base implements Singleton {
+	
+	const COMMAND       = 0;
+	const SERVICE       = 1;
+	const CONTROLLER    = 2;
+	const ENTITY        = 3;
+	const MANAGER       = 4;
+	
 	private static $instance = null;
 
 	public static function create() {
@@ -46,7 +59,13 @@ class PHPDocParser extends Base implements Singleton {
 		}
 		return $route;
 	}
-
+	
+	/**
+	 * @param $class
+	 * @param $method
+	 * @return array|mixed
+	 * @throws ReflectionException
+	 */
 	public function get_method_doc($class, $method) {
 		if(is_object($class)) {
 			$class = get_class($class);
@@ -88,7 +107,12 @@ class PHPDocParser extends Base implements Singleton {
 		}
 		return [];
 	}
-
+	
+	/**
+	 * @param $class
+	 * @return array|mixed
+	 * @throws ReflectionException
+	 */
 	public function get_class_doc($class) {
 		if(is_object($class)) {
 			$class = get_class($class);
@@ -125,6 +149,69 @@ class PHPDocParser extends Base implements Singleton {
 			unset($doc['description']);
 		}
 		return $doc;
+	}
+	
+	/**
+	 * @param object|string $class
+	 * @param integer $class_type
+	 * @return array|ReflectionMethod[]
+	 * @throws ReflectionException
+	 */
+	public function get_class_methods($class, $class_type) {
+		if(is_object($class)) {
+			$class = get_class($class);
+		}
+		$base = $class === Base::class;
+		$ref = new ReflectionClass($class);
+		$methods = $ref->getMethods(ReflectionMethod::IS_PUBLIC);
+		$methods = array_map(function(ReflectionMethod $method) {
+			return $method->getName();
+		}, $methods);
+		
+		if(!$base) {
+			$base_ref = new ReflectionClass(Base::class);
+			$base_methods = $base_ref->getMethods();
+			switch($class_type) {
+				case self::COMMAND:
+					$class_base = Command::class;
+					break;
+				case self::SERVICE:
+					$class_base = Service::class;
+					break;
+				case self::CONTROLLER:
+					$class_base = Controller::class;
+					break;
+				case self::ENTITY:
+					$class_base = Entity::class;
+					break;
+				case self::MANAGER:
+					$class_base = Manager::class;
+					break;
+				default:
+					$class_base = Base::class;
+			}
+			$class_base_ref = new ReflectionClass($class_base);
+			$class_base_methods = $class_base_ref->getMethods();
+			foreach($base_methods as $method) {
+				if(in_array($method->getName(), $methods)) {
+					foreach($methods as $i => $_method) {
+						if($method->getName() === $_method) {
+							unset($methods[$i]);
+						}
+					}
+				}
+			}
+			foreach($class_base_methods as $method) {
+				if(in_array($method->getName(), $methods)) {
+					foreach($methods as $i => $_method) {
+						if($method->getName() === $_method) {
+							unset($methods[$i]);
+						}
+					}
+				}
+			}
+		}
+		return $methods;
 	}
 
 	protected function get_http_method($doc) {

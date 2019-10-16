@@ -345,10 +345,11 @@ abstract class Manager extends Base {
 		if($dependency_name) return $this->inject->{'get_'.$dependency_name}();
 		throw new Exception($this->inject->get_service_translation()->__("L'entité %1 n'à pas été reconnu !", [$this->get_entity_class()]));
 	}
-
+	
 	/**
 	 * @return Base|Base[]|Entity|Entity[]
 	 * @throws ReflectionException
+	 * @throws Exception
 	 */
 	public function get_all() {
 		$mysqli = $this->confs->get_mysql();
@@ -398,31 +399,34 @@ abstract class Manager extends Base {
 		}
 
 		$create_str = [];
+		
 		foreach ($prop_doc as $prop_name => $prop_details) {
 			$type = strtoupper(!empty($prop_details['sql_type'])
 								   ? $prop_details['sql_type'] : $prop_details['var']);
-			$size = !empty($prop_details['sql_type_size'])
+			$type = trim($type);
+			
+			$size = isset($prop_details['sql_type_size']) && !empty($prop_details['sql_type_size']) && !is_null($prop_details['sql_type_size'])
 				? $prop_details['sql_type_size'] : (!empty($this->default_sql_type_sizes[strtolower($type)]) ? $this->default_sql_type_sizes[strtolower($type)] : null);
-			$create_str[] = "`{$prop_name}` "
-							.$type
-							.($size ? "({$size})" : '')
-							.(!empty($prop_details['unsigned']) ? ' UNSIGNED' : '')
-							.(empty($prop_details['nullable']) ?' NOT NULL' :  '')
-							.(!empty($prop_details['default']) ? ' DEFAULT '.(is_string($prop_details['default'])
-								? "'{$prop_details['default']}'" : $prop_details['default']) : '')
-							.(!empty($prop_details['primary_key']) ? ' PRIMARY KEY' : '')
-							.(!empty($prop_details['auto_increment']) ? ' AUTO_INCREMENT' : '');
+			
+			$size_str = $size ? "({$size})" : '';
+			$unsigned_str = !empty($prop_details['unsigned']) ? ' UNSIGNED' : '';
+			$not_null_str = empty($prop_details['nullable']) ?' NOT NULL' :  '';
+			$default_str = !empty($prop_details['default']) ? ' DEFAULT '.(is_string($prop_details['default'])
+					? "'{$prop_details['default']}'" : $prop_details['default']) : '';
+			$primary_key_str = !empty($prop_details['primary_key']) ? ' PRIMARY KEY' : '';
+			$auto_inc_str = !empty($prop_details['auto_increment']) ? ' AUTO_INCREMENT' : '';
+			
+			$create_str[] = "`{$prop_name}` {$type} {$size_str} {$unsigned_str} {$not_null_str} {$default_str} {$primary_key_str} {$auto_inc_str}";
 		}
 		$create_str = implode(",\n\t", $create_str);
-
+		
 		$mysql = $this->get_mysql();
 		$if_not_exists = $force ? '' : 'IF NOT EXISTS ';
 		if($force) {
 			$mysql->query("DROP TABLE `{$this->get_table()}`");
 		}
-		$mysql->query("CREATE TABLE {$if_not_exists}`{$this->get_table()}` (
-	{$create_str}
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4");
+		
+		$mysql->query("CREATE TABLE {$if_not_exists}`{$this->get_table()}` ({$create_str}) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4");
 		return $mysql->last_result() ? 'true' : 'false';
 	}
 

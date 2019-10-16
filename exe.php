@@ -20,7 +20,15 @@ try {
 			break;
 		case 'array':
 			foreach ($result as $key => $value) {
-				$logger->log("{$key} => {$value}");
+				if(is_array($value)) {
+					$logger->log("{$key} => ");
+					foreach( $value as $v ) {
+						$logger->log($v);
+					}
+				}
+				else {
+					$logger->log( ( is_integer( $key ) ? "{$value}" : "{$key} => {$value}" ) );
+				}
 			}
 			break;
 		case 'integer':

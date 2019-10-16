@@ -49,6 +49,9 @@ class Commands extends Base implements Singleton {
 	 * @throws Exception
 	 */
 	public function run(string $command) {
+		if(strstr($command, '--help')) {
+			$command = 'help:index';
+		}
 		if(!strstr(explode(' ', $command)[0], ':')) {
 			exec($command, $output, $return);
 			return [

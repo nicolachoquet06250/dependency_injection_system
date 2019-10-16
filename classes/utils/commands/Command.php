@@ -56,7 +56,6 @@ class Command extends Base {
 	}
 
 	/**
-	 * @param string $class_name
 	 * @param string $method
 	 * @param mixed  ...$parameters
 	 * @return mixed|null
