@@ -60,6 +60,10 @@ class PHPDocParser extends Base implements Singleton {
 		return $route;
 	}
 	
+	protected function doc2array($doc) {
+		return explode(["\n", "\r"], $doc);
+	}
+	
 	/**
 	 * @param $class
 	 * @param $method

@@ -4,6 +4,7 @@
         "cboden/ratchet": "^0.4.1",
 		"ext-pdo": "*",
         "firebase/php-jwt": "^5.0",
-		"ext-ctype": "*"
+		"ext-ctype": "*",
+        "symfony/yaml": "v4.3.5"
 	}
 }

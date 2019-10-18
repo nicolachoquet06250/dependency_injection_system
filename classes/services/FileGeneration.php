@@ -12,7 +12,7 @@ class FileGeneration extends Service {
 	
 	public function generate_index($custom_dir) {
 		$slash = $this->helpers->get_slash();
-		$root_path = (realpath(__DIR__.$slash.'..'.$slash.'..'.$slash)).$slash.$custom_dir.$slash;
+		$root_path = ($this->helpers->is_unix() ? realpath(__DIR__.$slash.'..'.$slash.'..'.$slash).$slash : '').$custom_dir.$slash;
 		$index = '<?php
 
 use mvc_router\dependencies\Dependency;
@@ -52,16 +52,16 @@ catch (Exception $e) {
 catch (Error $e) {
 	$dw->get_service_error()->error500($e->getMessage());
 }
-catch (Exception400 $e) {
+catch (\mvc_router\http\errors\Exception400 $e) {
 	$dw->get_service_error()->error400($e->getMessage(), $e->getReturnType());
 }
-catch (Exception401 $e) {
+catch (\mvc_router\http\errors\Exception401 $e) {
 	$dw->get_service_error()->error401($e->getMessage(), $e->getReturnType());
 }
-catch (Exception404 $e) {
+catch (\mvc_router\http\errors\Exception404 $e) {
 	$dw->get_service_error()->error401($e->getMessage(), $e->getReturnType());
 }
-catch (Exception500 $e) {
+catch (\mvc_router\http\errors\Exception500 $e) {
 	$dw->get_service_error()->error401($e->getMessage(), $e->getReturnType());
 }
 ';
@@ -95,14 +95,113 @@ RewriteRule ^([^\.]+)$ /index.php?q=$0 [QSA,L]
 
 	require_once __DIR__.\'/../autoload.php\';
 
-	// parameters are arrays
-	Dependency::add_custom_controllers();
-	
-	// parameters are arrays
-	Dependencies::add_custom_dependencies();
-	
-	// parameters are arrays
-	Conf::extend_confs();
+	try {
+		$yaml = Dependency::get_wrapper_factory()->get_dependency_wrapper()->get_yaml();
+		$dependencies = $yaml->parseFile(__DIR__.\'/dependencies.yaml\');
+		
+		$dependency = [];
+		$conf = [];
+		foreach( $dependencies as $type => $_dependencies ) {
+			switch($type) {
+				case \'add\':
+					foreach( $_dependencies as $dependency_type => $modules ) {
+						switch($dependency_type) {
+							case \'view\':
+								if(!isset($dependency[\'add_custom_views\'])) {
+									$dependency[ \'add_custom_views\' ] = [];
+								}
+								foreach( $modules as $module_class => $module ) {
+									$dependency[\'add_custom_views\'][] = array_merge(
+										$module, [\'class\' => $module_class],
+										(isset($module[\'parent\'])
+											? [] : [\'parent\' => \'\mvc_router\mvc\View\'])
+									);
+								}
+								break;
+							case \'data_models\':
+								if(!isset($dependency[ \'add_custom_data_models\' ])) {
+									$dependency[ \'add_custom_data_models\' ] = [];
+								}
+								foreach( $modules as $module_class => $module ) {
+									$dependency[ \'add_custom_data_models\' ][] = array_merge([
+										\'class\' => [
+											\'name\' => $module_class,
+											\'type\' => $module[\'type\']
+										],
+										\'name\' => $module[\'name\'],
+										\'file\' => $module[\'file\'],
+									], (isset($module[\'parent\'])
+										? [] : ($module[\'type\'] === \'entity\'
+											? [\'parent\' => \'\mvc_router\data\gesture\Entity\']
+												: [\'parent\' => \'\mvc_router\data\gesture\Manager\'])));
+								}
+								break;
+							case \'controllers\':
+								if(!isset($dependency[ \'add_custom_controllers\' ])) {
+									$dependency[ \'add_custom_controllers\' ] = [];
+								}
+								foreach( $modules as $module_class => $module ) {
+									$dependency[ \'add_custom_controllers\' ][] = array_merge(
+										[ \'class\' => $module_class ], $module,
+										(isset($module[\'parent\'])
+											? [] : [\'parent\' => \'\mvc_router\mvc\Controller\'])
+									);
+								}
+								break;
+							case \'ws_controllers\':
+								if(!isset($dependency[ \'add_custom_ws_controllers\' ])) {
+									$dependency[ \'add_custom_ws_controllers\' ] = [];
+								}
+								foreach( $modules as $module_class => $module ) {
+									$dependency[ \'add_custom_ws_controllers\' ][] = array_merge(
+										[ \'class\' => $module_class ],
+										$module,
+										(isset($module[\'parent\'])
+											? [] : [\'parent\' => \'\mvc_router\websockets\MessageComponent\'])
+									);
+								}
+								break;
+							case \'confs\':
+								if(!isset($conf[ \'add_custom_conf\' ])) {
+									$conf[ \'add_custom_conf\' ] = [];
+								}
+								foreach( $modules as $module_class => $module ) {
+									$conf[ \'add_custom_conf\' ][] = array_merge( [ \'class\' => $module_class ], $module );
+								}
+								break;
+							default: break;
+						}
+					}
+					break;
+				case \'extends\':
+					foreach( $_dependencies as $dependency_type => $modules ) {
+						switch($dependency_type) {
+							case \'confs\':
+								if( !isset($conf[ \'extend_confs\' ]) ) {
+									$conf[ \'extend_confs\' ] = [];
+								}
+								foreach( $modules as $module_class => $module ) {
+									$conf[ \'extend_confs\' ][] = $module;
+								}
+								break;
+							default: break;
+						}
+					}
+					break;
+				default: break;
+			}
+		}
+		
+		foreach( $dependency as $method => $modules ) {
+			Dependency::$method(...$modules);
+		}
+		foreach( $conf as $method => $modules ) {
+			Conf::$method(...$modules);
+		}
+		
+	} catch( Exception $e ) {
+		exit($e->getMessage());
+	}
 ';
 
 		if(!is_file(($this->helpers->is_unix() ? __DIR__.$slash.'..'.$slash.'..'.$slash : '').$custom_dir.$slash.'update_dependencies.php')) {
@@ -128,7 +227,8 @@ Dependency::get_wrapper_factory()->get_dependency_wrapper()->get_triggers()->ini
 		$gitingore = '.htaccess
 autoload.php
 htaccess.php
-index.php';
+index.php
+update_dependencies.php';
 		if(!realpath(($this->helpers->is_unix() ? __DIR__.$slash.'..'.$slash.'..'.$slash : '').$custom_dir.$slash.'.gitignore')) {
 			file_put_contents(realpath(($this->helpers->is_unix() ? __DIR__.$slash.'..'.$slash.'..'.$slash : '').$custom_dir).$slash.'.gitignore', $gitingore);
 		}

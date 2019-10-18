@@ -29,7 +29,7 @@ class Base {
 	 *
 	 * @throws ReflectionException
 	 */
-	public final function __construct() {
+	public function __construct() {
 		$this->before_construct();
 		$this->after_construct();
 	}
