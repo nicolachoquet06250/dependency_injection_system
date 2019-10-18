@@ -26,7 +26,7 @@ class Mysql extends Base {
 	/** @var PDO $connector */
 	protected $connector;
 	/** @var bool $is_connected */
-	private $is_connected;
+	private $is_connected = false;
 	/** @var mixed $last_insert_id */
 	private $last_insert_id;
 	/** @var array $last_result */
@@ -41,20 +41,27 @@ class Mysql extends Base {
 	 */
 	public function after_construct() {
 		parent::after_construct();
+		$this->connect();
+	}
+	
+	/**
+	 * @throws Exception
+	 */
+	public function connect() {
 		if(!in_array('\PDO', get_declared_classes()) && !in_array('PDO', get_declared_classes())) {
 			throw new Exception(
 				$this->inject->get_service_translation()
-							 ->__("L'extension php-mysql doit être installée et activée pour pouvoir utiliser les configurations Mysql !")
+					->__("L'extension php-mysql doit être installée et activée pour pouvoir utiliser les configurations Mysql !")
 			);
 		}
 		try {
 			/** @var PDO connector */
 			if($this->host && $this->user && $this->pass) {
 				$this->connector = new PDO('mysql:host='.$this->host.';'
-										   .($this->port ? 'port='.$this->port.';' : '')
-										   .'dbname='.($this->db_prefix ? $this->db_prefix.'_' : '').$this->db_name.'',
-										   ($this->user_prefix ? $this->user_prefix.'_' : '').$this->user,
-										   $this->pass);
+				                           .($this->port ? 'port='.$this->port.';' : '')
+				                           .'dbname='.($this->db_prefix ? $this->db_prefix.'_' : '').$this->db_name.'',
+				                           ($this->user_prefix ? $this->user_prefix.'_' : '').$this->user,
+				                           $this->pass);
 				$this->is_connected = $this->connector && $this->connector->errorCode() ? false : true;
 			}
 		}
@@ -192,5 +199,10 @@ class Mysql extends Base {
 	 */
 	public function get_num_rows() {
 		return $this->num_rows;
+	}
+	
+	public function close() {
+		$this->connector = null;
+		$this->is_connected = false;
 	}
 }

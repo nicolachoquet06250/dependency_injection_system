@@ -4,13 +4,15 @@
 	namespace mvc_router\websockets;
 	
 	
+	use mvc_router\Base;
 	use Ratchet\ConnectionInterface;
 	use Ratchet\MessageComponentInterface;
 	
-	abstract class MessageComponent implements MessageComponentInterface {
+	abstract class MessageComponent extends Base implements MessageComponentInterface {
 		protected $clients;
 		
 		public function __construct() {
+			parent::__construct();
 			$this->clients = new \SplObjectStorage;
 		}
 		

@@ -95,7 +95,7 @@ class InstallCommand extends Command {
 			$base_dir = explode('/', $_dir)[count(explode('/', $_dir)) - 1];
 			return $base_dir === $root_dir ? 'git pull' : "git -C {$_dir} pull";
 		}, $pulls);
-		$pulls[] = 'composer '.(is_dir(__DIR__.'/vendor') ? 'update' : 'install');
+		$pulls[] = 'composer '.(is_file(__DIR__.'/../../composer.lock') ? 'update' : 'install');
 		$generates[] = 'generate:translations';
 		$generates[] = 'install:databases';
 

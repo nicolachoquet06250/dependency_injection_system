@@ -3,7 +3,7 @@
 namespace mvc_router\mvc;
 
 use Exception;
-use mvc_router\data\gesture\pizzygo\managers\User;
+use mvc_router\data\gesture\custom\managers\User;
 use mvc_router\router\Router;
 use mvc_router\services\FileSystem;
 use mvc_router\services\Route;
@@ -42,19 +42,6 @@ class Routes extends Controller {
 	 */
 	public function url_generator(UrlGenerator $urlGenerator, FileSystem $fileSystem) {
 		$before_links = '';
-		/*$before_links = $fileSystem->create_file(__DIR__, 'Test', FileSystem::CONTROLLER)
-			? '<span style="color: green;">Le controlleur à bien été créé !</span>'
-			: '<span style="color: red;">Une erreur est survenue lors de la création du controlleur !</span>';
-		$before_links .= '<br>'.($fileSystem->create_file(__DIR__.'/../views', 'Test', FileSystem::VIEW)
-			? '<span style="color: green;">La vue à bien été créée !</span>'
-			: '<span style="color: red;">Une erreur est survenue lors de la création de la vue !</span>');
-		$before_links .= '<br>'.($fileSystem->create_file(__DIR__.'/../../services', 'Test', FileSystem::SERVICE)
-			? '<span style="color: green;">Le service à bien été créé !</span>'
-			: '<span style="color: red;">Une erreur est survenue lors de la création du service !</span>');
-		$before_links .= '<br>'.($fileSystem->create_file(__DIR__.'/../../commands', 'Test2Command', FileSystem::COMMAND)
-			? '<span style="color: green;">La commande à bien été créée !</span>'
-			: '<span style="color: red;">Une erreur est survenue lors de la création de la commande !</span>');*/
-
 		$link_with_stats = '<a href="'.$urlGenerator->get_url_from_ctrl_and_method($this, 'index', 'stats').'">
 	Aller aux routes avec stats
 </a>';
@@ -66,7 +53,7 @@ class Routes extends Controller {
 </a>';
 		return $before_links.'<br>'.$link_with_stats.'<br>'.$link_without_stats.'<br>'.$link_refresh;
 	}
-
+	
 	/**
 	 * @param User $user_manager
 	 * @return false|string
