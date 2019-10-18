@@ -95,6 +95,9 @@ class Commands extends Base implements Singleton {
 			$get_command = 'get_command_'.$command_class;
 			/** @var Command $_command */
 			$_command = $this->inject->$get_command();
+			if(!$_command->has_method($command_method)) {
+				throw new Exception("ERREUR: La commande `{$this->get( 'command')}:{$this->get( 'method')}` n'existe pas !");
+			}
 			foreach ($params as $key => $value) {
 				$_command->add_param($key, $value);
 			}

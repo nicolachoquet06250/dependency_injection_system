@@ -360,7 +360,7 @@ class Dependency {
 			$deps = array_values(self::$dependencies);
 			return array_merge(...$deps);
 		}
-		return self::$dependencies[ $type];
+		return self::$dependencies[$type];
 	}
 	
 	/**
@@ -554,7 +554,7 @@ class Dependency {
 			];
 		}
 		if(!is_null($parent)) {
-			Dependency::get_dependencies($dependency_type)[$class]['parent'] = $parent;
+			self::$dependencies[$dependency_type][$class]['parent'] = $parent;
 		}
 		if(!is_file(__DIR__.'/DependencyWrapper.php')
 		   || (is_file(__DIR__.'/DependencyWrapper.php')

@@ -6,6 +6,8 @@ namespace mvc_router\commands;
 
 use Exception;
 use mvc_router\Base;
+use ReflectionClass;
+use ReflectionException;
 use ReflectionMethod;
 use ReflectionObject;
 
@@ -53,6 +55,17 @@ class Command extends Base {
 
 	protected function params() {
 		return $this->params;
+	}
+	
+	/**
+	 * @param $name
+	 * @return bool
+	 * @throws ReflectionException
+	 */
+	public function has_method($name) {
+		$class = get_class($this);
+		$ref = new ReflectionClass($class);
+		return $ref->hasMethod($name);
 	}
 
 	/**
