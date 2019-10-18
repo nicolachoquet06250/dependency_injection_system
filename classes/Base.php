@@ -144,7 +144,12 @@ class Base {
 			if($method->getName() === $name) {
 				$parameters = [];
 				foreach ($method->getParameters() as $parameter) {
-					$parameters[] = Dependency::get_from_classname($parameter->getClass());
+					if(Dependency::is_in($parameter->getClass())) {
+						$parameters[] = Dependency::get_from_classname( $parameter->getClass() );
+					}
+					elseif(Conf::is_in($parameter->getClass())) {
+						$parameters[] = Conf::get_from_classname( $parameter->getClass() );
+					}
 				}
 				$method_return = null;
 				eval('$method_return = $this->'.$name.'(...$parameters);');

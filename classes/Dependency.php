@@ -412,11 +412,13 @@ class Dependency {
 					if(substr($parent, 0, 1) === '\\') {
 						$parent = substr($parent, 1, strlen($parent) - 1);
 					}
-					if(isset($deps[$parent])) {
+					if(isset($deps[$parent]) && strstr($deps[$parent]['file'], '.')) {
 						require_once realpath($deps[$parent]['file']);
 					}
 				}
-				require_once realpath($deps[$classname]['file']);
+				if(realpath($deps[$classname]['file']) && strstr($deps[$classname]['file'], '.')) {
+					require_once realpath( $deps[ $classname ][ 'file' ] );
+				}
 			}
 			if(isset($deps[$classname]['is_abstract']) && $deps[$classname]['is_abstract']) {
 				return null;
@@ -898,11 +900,11 @@ class Dependency {
 	 * @throws Exception
 	 */
 	public static function autoload($class) {
-		if(Dependency::is_in($class)) {
-			Dependency::get_from_classname($class);
-		}
-		elseif (Conf::is_in($class)) {
+		if (Conf::is_in($class)) {
 			Conf::get_from_classname($class);
+		}
+		elseif(Dependency::is_in($class)) {
+			Dependency::get_from_classname($class);
 		}
 	}
 

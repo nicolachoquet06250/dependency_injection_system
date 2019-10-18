@@ -77,10 +77,10 @@ class Commands extends Base implements Singleton {
 		if(!defined('CURRENT_USED_SITE')) {
 			$directories       = $this->inject->get_service_fs()->list_directories(__DIR__.'/../../..', false);
 			$current_used_site = end($directories);
-
+			
 			define('CURRENT_USED_SITE', $current_used_site);
 		}
-
+		
 		if(defined('CURRENT_USED_SITE')) {
 			if(is_file(__DIR__.'/../../../'.CURRENT_USED_SITE.'/autoload.php')) {
 				require_once __DIR__.'/../../../'.CURRENT_USED_SITE.'/autoload.php';

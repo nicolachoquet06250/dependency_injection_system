@@ -97,7 +97,7 @@ RewriteRule ^([^\.]+)$ /index.php?q=$0 [QSA,L]
 
 	try {
 		$yaml = Dependency::get_wrapper_factory()->get_dependency_wrapper()->get_yaml();
-		$dependencies = $yaml->parseFile(__DIR__.\'/dependencies.yaml\');
+		$dependencies = $yaml->parseFile(__DIR__.\'/dependencies.yaml\')->properties;
 		
 		$dependency = [];
 		$conf = [];
@@ -106,11 +106,12 @@ RewriteRule ^([^\.]+)$ /index.php?q=$0 [QSA,L]
 				case \'add\':
 					foreach( $_dependencies as $dependency_type => $modules ) {
 						switch($dependency_type) {
-							case \'view\':
+							case \'views\':
 								if(!isset($dependency[\'add_custom_views\'])) {
 									$dependency[ \'add_custom_views\' ] = [];
 								}
 								foreach( $modules as $module_class => $module ) {
+									$module[\'file\'] = str_replace(\'__DIR__\', __DIR__, $module[\'file\']);
 									$dependency[\'add_custom_views\'][] = array_merge(
 										$module, [\'class\' => $module_class],
 										(isset($module[\'parent\'])
@@ -123,6 +124,7 @@ RewriteRule ^([^\.]+)$ /index.php?q=$0 [QSA,L]
 									$dependency[ \'add_custom_data_models\' ] = [];
 								}
 								foreach( $modules as $module_class => $module ) {
+									$module[\'file\'] = str_replace(\'__DIR__\', __DIR__, $module[\'file\']);
 									$dependency[ \'add_custom_data_models\' ][] = array_merge([
 										\'class\' => [
 											\'name\' => $module_class,
@@ -141,6 +143,7 @@ RewriteRule ^([^\.]+)$ /index.php?q=$0 [QSA,L]
 									$dependency[ \'add_custom_controllers\' ] = [];
 								}
 								foreach( $modules as $module_class => $module ) {
+									$module[\'file\'] = str_replace(\'__DIR__\', __DIR__, $module[\'file\']);
 									$dependency[ \'add_custom_controllers\' ][] = array_merge(
 										[ \'class\' => $module_class ], $module,
 										(isset($module[\'parent\'])
@@ -153,6 +156,7 @@ RewriteRule ^([^\.]+)$ /index.php?q=$0 [QSA,L]
 									$dependency[ \'add_custom_ws_controllers\' ] = [];
 								}
 								foreach( $modules as $module_class => $module ) {
+									$module[\'file\'] = str_replace(\'__DIR__\', __DIR__, $module[\'file\']);
 									$dependency[ \'add_custom_ws_controllers\' ][] = array_merge(
 										[ \'class\' => $module_class ],
 										$module,
@@ -162,11 +166,12 @@ RewriteRule ^([^\.]+)$ /index.php?q=$0 [QSA,L]
 								}
 								break;
 							case \'confs\':
-								if(!isset($conf[ \'add_custom_conf\' ])) {
-									$conf[ \'add_custom_conf\' ] = [];
+								if(!isset($conf[ \'add_custom_confs\' ])) {
+									$conf[ \'add_custom_confs\' ] = [];
 								}
 								foreach( $modules as $module_class => $module ) {
-									$conf[ \'add_custom_conf\' ][] = array_merge( [ \'class\' => $module_class ], $module );
+									$module[\'file\'] = str_replace(\'__DIR__\', __DIR__, $module[\'file\']);
+									$conf[ \'add_custom_confs\' ][] = array_merge( [ \'class\' => $module_class ], $module );
 								}
 								break;
 							default: break;
@@ -181,6 +186,7 @@ RewriteRule ^([^\.]+)$ /index.php?q=$0 [QSA,L]
 									$conf[ \'extend_confs\' ] = [];
 								}
 								foreach( $modules as $module_class => $module ) {
+									$module[\'file\'] = str_replace(\'__DIR__\', __DIR__, $module[\'file\']);
 									$conf[ \'extend_confs\' ][] = $module;
 								}
 								break;
@@ -215,7 +221,9 @@ RewriteRule ^([^\.]+)$ /index.php?q=$0 [QSA,L]
 use mvc_router\dependencies\Dependency;
 
 const __SITE_NAME__ = \''.$custom_dir.'\';
-require_once __DIR__.\'/update_dependencies.php\';
+if(is_file(__DIR__.\'/update_dependencies.php\')) {
+	require_once __DIR__.\'/update_dependencies.php\';
+}
 
 Dependency::get_wrapper_factory()->get_dependency_wrapper()->get_triggers()->initialize();
 ';
