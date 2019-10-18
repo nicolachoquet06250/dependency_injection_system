@@ -110,7 +110,9 @@ class InstallCommand extends Command {
 		$managers = Dependency::get_managers();
 		$result = [];
 		foreach ($managers as $manager_name => $manager) {
-			$result[$manager_name] = $manager->create_table();
+			if(!is_null($manager)) {
+				$result[ $manager_name ] = $manager->create_table();
+			}
 		}
 		return $result;
 	}

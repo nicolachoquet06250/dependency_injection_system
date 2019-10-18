@@ -42,7 +42,12 @@ class HelpCommand extends Command {
 					$tmp[] = '|= Aucune methode dans cette commande';
 				}
 				foreach($values as $value) {
-					$tmp[] = '|= '.$value;
+					$doc = $parser->get_method_doc($this->inject->{'get_command_'.$key}(), $value);
+					$syntaxes = (isset($doc['syntax']) ? $doc['syntax'] : $key.':'.$value);
+					if(is_array($syntaxes)) {
+						$syntaxes = implode(', ', $syntaxes);
+					}
+					$tmp[] = "|= {$value} -> php exe.php {$syntaxes}";
 				}
 			}
 			return $tmp;
