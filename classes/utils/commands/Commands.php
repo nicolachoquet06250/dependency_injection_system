@@ -11,6 +11,8 @@ use mvc_router\interfaces\Singleton;
 
 class Commands extends Base implements Singleton {
 	private static $instance = null;
+	protected $command = null;
+	protected $method = null;
 
 	public static function create() {
 		if(is_null(self::$instance)) {
@@ -65,7 +67,9 @@ class Commands extends Base implements Singleton {
 		$command_base = explode(':', $command_base);
 
 		$command_class = array_shift($command_base);
+		$this->command = $command_class;
 		$command_method = array_shift($command_base);
+		$this->method = $command_method;
 
 		if(in_array('-p', $command)) {
 			array_shift($command);

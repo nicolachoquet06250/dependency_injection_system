@@ -35,7 +35,8 @@ try {
 			$logger->log('program was exited with code '.$result);
 			break;
 		default:
-			break;
+		$logger->log( "ERREUR: La commande `{$dw->get_commands()->get( 'command')}:{$dw->get_commands()->get( 'method')}` n'existe pas !");
+		break;
 	}
 } catch (Exception $e) {
 	echo $e->getMessage()."\n";

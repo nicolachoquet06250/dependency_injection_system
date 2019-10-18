@@ -10,24 +10,6 @@ use mvc_router\services\Trigger;
 
 class TestCommand extends Command {
 	/**
-	 * @param Commands $commands
-	 * @throws Exception
-	 */
-	public function server(Commands $commands) {
-		$port = '2107';
-		$directory = __DIR__.'/../../';
-		if($this->param('port')) {
-			$port = $this->param('port');
-		}
-
-		if($this->param('directory')) {
-			$directory .= $this->param('directory');
-		}
-		$directory = realpath($directory);
-		$commands->run('php -S localhost:'.$port.' -t '.$directory);
-	}
-
-	/**
 	 * @param Trigger $triggers
 	 */
 	public function helper_is_cli(Trigger $triggers) {

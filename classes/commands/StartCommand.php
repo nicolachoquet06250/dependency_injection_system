@@ -4,7 +4,7 @@
 namespace mvc_router\commands;
 
 
-use mvc_router\confs\custom\WebSocket;
+use Exception;
 use mvc_router\services\Logger;
 
 class StartCommand extends Command {
@@ -25,5 +25,23 @@ class StartCommand extends Command {
 		}
 		$logger->log( "Serveur de websokets lancé sur l'url ws://{$host}:{$port} ou ws://{$address}:{$port}");
 		$app->run();
+	}
+	
+	/**
+	 * @param Commands $commands
+	 * @throws Exception
+	 */
+	public function server(Commands $commands) {
+		$port = '8080';
+		$directory = __DIR__.'/../../';
+		if($this->param('port')) {
+			$port = $this->param('port');
+		}
+		
+		if($this->param('directory')) {
+			$directory .= $this->param('directory');
+		}
+		$directory = realpath($directory);
+		$commands->run('php -S localhost:'.$port.' -t '.$directory);
 	}
 }
