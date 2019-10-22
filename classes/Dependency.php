@@ -30,6 +30,7 @@ class Dependency {
 
 	const ROUTES_CONTROLLER       = 'routes_controller';
 	const ROUTE_VIEW              = 'route_view';
+	const LAYOUT_VIEW             = 'layout_view';
 	const JSON_SERVICE            = 'service_json';
 	const YAML_SERVICE            = 'service_yaml';
 	const ERROR_SERVICE           = 'service_error';
@@ -132,6 +133,12 @@ class Dependency {
 			],
 		],
 		self::VIEW_DEPENDENCY => [
+			'mvc_router\mvc\views\Layout' 			=> [
+				'name'         => self::LAYOUT_VIEW,
+				'file'         => __DIR__.'/mvc/views/Layout.php',
+				'is_singleton' => self::NONE,
+				'parent'       => 'mvc_router\mvc\View'
+			],
 			'mvc_router\mvc\views\Route' 			=> [
 				'name'         => self::ROUTE_VIEW,
 				'file'         => __DIR__.'/mvc/views/Route.php',
