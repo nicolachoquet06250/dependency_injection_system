@@ -110,7 +110,7 @@
 		/**
 		 * @return string
 		 */
-		public function head(): string {
+		protected function head(): string {
 			$responsive_tag = $this->get( 'is_responsive' ) ? $this->responsive_meta_tag() : '';
 			$icons = $this->get( 'font_icons' ) ? $this->font_icons( $this->get( 'font_icons' ) ) : '';
 			$framework = $this->get( 'framework' );
@@ -134,6 +134,10 @@
 	{$scripts}";
 		}
 		
+		/**
+		 * @param string $position
+		 * @return string
+		 */
 		private function get_js($position = 'top') {
 			$framework = $this->get( 'framework' )."\n";
 			if($position === 'top' && $this->get('js_at_the_top') && !$this->get('js_at_the_bottom')) {
@@ -161,21 +165,21 @@
 		/**
 		 * @return string
 		 */
-		public function page_header(): string {
+		protected function page_header(): string {
 			return '';
 		}
 		
 		/**
 		 * @return string
 		 */
-		public function body(): string {
+		protected function body(): string {
 			return '';
 		}
 		
 		/**
 		 * @return string
 		 */
-		public function footer(): string {
+		protected function footer(): string {
 			return '';
 		}
 		
@@ -198,11 +202,19 @@
 					<main class='{$this->get('main_class')}'>
 						{$this->body()}
 					</main>
+					{$this->loader()}
 					{$_footer}
 					{$this->get_js('bottom')}
 				</body>
 			</html>
 		";
+		}
+		
+		/**
+		 * @return string
+		 */
+		protected function loader(): string {
+			return '';
 		}
 		
 		/**
