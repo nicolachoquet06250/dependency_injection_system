@@ -55,7 +55,10 @@
 		public function js( $framework = self::FROM_SCRATCH, $jquery = false, $script_name = null ): string {
 			switch( $framework ) {
 				case self::FROM_SCRATCH:
-					return "<script src='/static/js/{$script_name}'></script>";
+					if(substr($script_name, 0, strlen('http://')) !== 'http://' && substr($script_name, 0, strlen('https://')) !== 'https://') {
+						$script_name = "/static/js/{$script_name}";
+					}
+					return "<script src='{$script_name}'></script>";
 				case self::BOOTSTRAP:
 					$jquery_str = '';
 					if( $jquery ) {
@@ -91,7 +94,10 @@
 		public function css( $framework = self::FROM_SCRATCH, $stylesheet_name = null ) {
 			switch( $framework ) {
 				case self::FROM_SCRATCH:
-					return "<link rel='stylesheet' href='/static/css/{$stylesheet_name}' />";
+					if(substr($stylesheet_name, 0, strlen('http://')) !== 'http://' && substr($stylesheet_name, 0, strlen('https://')) !== 'https://') {
+						$stylesheet_name = "/static/css/{$stylesheet_name}";
+					}
+					return "<link rel='stylesheet' href='{$stylesheet_name}' />";
 				case self::BOOTSTRAP:
 					return "<link rel='stylesheet' href='https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css'
 							  integrity='sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T'
