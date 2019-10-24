@@ -67,4 +67,9 @@ class UrlGenerator extends Service {
 		}
 		return null;
 	}
+	
+	public function get_static_url($directory, $name, $with_base = true) {
+		$base = $with_base ? $this->get_base_url() : '';
+		return "{$base}/static/{$directory}/{$name}";
+	}
 }

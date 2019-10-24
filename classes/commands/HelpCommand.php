@@ -63,13 +63,4 @@ class HelpCommand extends Command {
 		}
 		return 'help';
 	}
-	
-	/**
-	 * @param PHPDocParser $PHPDocParser
-	 * @return array|mixed
-	 * @throws ReflectionException
-	 */
-	public function home(PHPDocParser $PHPDocParser) {
-		return $this->var_dump($PHPDocParser->get_method_doc($this->get_class(), 'home'));
-	}
 }
