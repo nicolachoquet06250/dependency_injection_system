@@ -775,6 +775,52 @@ class Dependency {
 		}
 		self::require_dependency_wrapper();
 	}
+	
+	/**
+	 * @param $class
+	 * @param $name
+	 * @param $file
+	 * @param null $parent
+	 * @param null $type
+	 */
+	public static function add_custom_service($class, $name, $file, $parent = '\mvc_router\services\Service', $type = self::NONE) {
+		self::add_custom_dependency($class, $name, $file, $parent, self::SERVICE_DEPENDENCY, $type);
+	}
+	
+	/**
+	 * @param $old_class
+	 * @param $new_class
+	 * @param $name
+	 * @param $file
+	 * @param null $type
+	 */
+	public static function extend_service($old_class, $new_class, $name, $file, $type = self::NONE) {
+		self::$dependencies[self::SERVICE_DEPENDENCY][$old_class]['name'] = '_'.self::$dependencies[self::SERVICE_DEPENDENCY][$old_class]['name'];
+		self::add_custom_service($new_class, $name, $file, $old_class, $type);
+	}
+	
+	/**
+	 * @param array[] ...$services
+	 */
+	public static function extend_services(...$services) {
+		foreach( $services as $service ) {
+			$type = isset($service['type']) ? $service['type'] : self::NONE;
+			self::extend_service($services['class']['old'], $services['class']['new'], $services['name'], $services['file'], $type);
+		}
+		self::require_dependency_wrapper();
+	}
+	
+	/**
+	 * @param array[] ...$services
+	 */
+	public static function add_custom_services(...$services) {
+		foreach ($services as $service_details) {
+			$type = isset($service_details['type']) ? $service_details['type'] : self::NONE;
+			self::add_custom_service($service_details['class'], $service_details['name'], $service_details['file'],
+			                         '\mvc_router\services\Service', $type);
+		}
+		self::require_dependency_wrapper();
+	}
 
 	/**
 	 * @param $name

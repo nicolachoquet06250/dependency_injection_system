@@ -9,6 +9,7 @@ use mvc_router\confs\Conf;
 use mvc_router\dependencies\Dependency;
 use mvc_router\helpers\Helpers;
 use mvc_router\services\Translate;
+use mvc_router\services\Yaml;
 
 class GenerateCommand extends Command {
 	/**
@@ -87,19 +88,119 @@ class GenerateCommand extends Command {
 		}
 	}
 	
-	public function service(Helpers $helpers) {
+	public function service(Helpers $helpers, Yaml $yaml) {
 		$class = $this->param('name');
+		$site = $this->param('site');
+		$singleton = $this->param('is_singleton');
+		
+		$slash = $helpers->get_slash();
+		
+		$yaml_dependencies_path = __DIR__.$slash.'..'.$slash.'..'.$slash.$site.$slash.'dependencies.yaml';
+		
+		$yaml_dependencies = $yaml->decode_from_file($yaml_dependencies_path);
+		
+		if(!isset($yaml_dependencies['add'])) {
+			$yaml_dependencies['add'] = [];
+		}
+		if(!isset($yaml_dependencies['add']['services'])) {
+			$yaml_dependencies['add']['services'] = [];
+		}
+		
+		$yaml_dependencies['add']['services']["\mvc_router\services\\".ucfirst($class)] = [
+			'name' => "service_{$class}",
+			'file' => "__DIR__{$slash}..{$slash}..{$slash}{$site}{$slash}classes{$slash}services{$slash}".ucfirst($class).".php",
+			'is_singleton' => $singleton,
+			'parent' => '\mvc_router\services\Service'
+		];
 		
 		$service = '<?php
 		
 	namespace mvc_router\services;
+	'.($singleton ? "\n\tuse \mvc_router\interfaces\Singleton;" : '').'
 	
-	class '.ucfirst($class).' extends Service {}
+	class '.ucfirst($class).' extends Service'.($singleton ? ' implements Singleton' : '').' {';
+	if($singleton) {
+		$service .= '
+		private static $instance;
+	
+		public static function create() {
+			if(is_null(self::$instance)) {
+				self::$instance = new '.ucfirst($class).'();
+			}
+			return self::$instance;
+		}
+	
+	';
+	}
+	$service .= '}
 	';
 		
-		$path = __DIR__.$helpers->get_slash().ucfirst($class).'Command.php';
+		$path = __DIR__.$slash.'..'.$slash.'..'.$slash.$site.$slash.'classes'.$slash.'services'.$slash.ucfirst($class).'.php';
 		file_put_contents($path, $service);
+		file_put_contents($yaml_dependencies_path, $yaml->encode($yaml_dependencies));
 		
-		return 'Le service '.$class.' à été généré avec succès !';
+		$this->inject->get_commands()->run('install:update');
+		
+		return 'Le service '.$class.' à été généré et intégré dans dependencies.yaml avec succès !';
+	}
+	
+	public function customized_service(Helpers $helpers, Yaml $yaml) {
+		$name = $this->param('name');
+		$site = $this->param('site');
+		$singleton = $this->param('is_singleton');
+		
+		$slash = $helpers->get_slash();
+		
+		$yaml_dependencies_path = __DIR__.$slash.'..'.$slash.'..'.$slash.$site.$slash.'dependencies.yaml';
+		
+		$yaml_dependencies = $yaml->decode_from_file($yaml_dependencies_path);
+		
+		if(!isset($yaml_dependencies['extends']['services'])) {
+			$yaml_dependencies['extends']['services'] = [];
+		}
+		
+		$old_class = $this->inject::get_class_from_name($name);
+		$class_base = explode('\\', $old_class)[count(explode('\\', $old_class)) - 1];
+		
+		$yaml_dependencies['extends']['services'][$old_class] = [
+			'class' => [
+				'old' => $old_class,
+				'new' => '\mvc_router\services\custom\\'.$class_base,
+			],
+			'name' => $name,
+			'file' => "__DIR__{$slash}{$site}{$slash}classes{$slash}services{$slash}".$class_base.".php",
+			'is_singleton' => $singleton,
+		];
+		
+		$service = '<?php
+		
+	namespace mvc_router\services\custom;
+	'.($singleton ? "\n\tuse \mvc_router\interfaces\Singleton;" : '').'
+	
+	class '.$class_base.' extends \\'.$old_class.($singleton ? ' implements Singleton' : '').' {';
+		if($singleton) {
+			$service .= '
+		private static $instance;
+	
+		public static function create() {
+			if(is_null(self::$instance)) {
+				self::$instance = new '.$class_base.'();
+			}
+			return self::$instance;
+		}
+	
+	';
+		}
+		$service .= '}
+	';
+		
+		$path = __DIR__.$slash.'..'.$slash.'..'.$slash.$site.$slash.'classes'.$slash.'services'.$slash.$class_base.'.php';
+		file_put_contents($path, $service);
+		file_put_contents($yaml_dependencies_path, $yaml->encode($yaml_dependencies));
+		
+		$this->inject->get_commands()->run('install:update');
+		
+		return 'Le service '.$name.' à été généré en extension du service de base et intégré dans dependencies.yaml avec succès !';
+		
 	}
 }

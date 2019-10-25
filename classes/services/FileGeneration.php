@@ -179,6 +179,19 @@ RewriteRule ^([^\.]+)$ /index.php?q=$0 [QSA,L]
 									$conf[ \'add_custom_confs\' ][] = array_merge( [ \'class\' => $module_class ], $module );
 								}
 								break;
+							case \'services\':
+								if(!isset($dependency[ \'add_custom_controllers\' ])) {
+									$dependency[ \'add_custom_services\' ] = [];
+								}
+								foreach( $modules as $module_class => $module ) {
+									$module[\'file\'] = str_replace(\'__DIR__\', __DIR__, $module[\'file\']);
+									$dependency[ \'add_custom_services\' ][] = array_merge(
+										[ \'class\' => $module_class ], $module,
+										(isset($module[\'parent\'])
+											? [] : [\'parent\' => \'\mvc_router\services\Service\'])
+									);
+								}
+								break;
 							default: break;
 						}
 					}
@@ -193,6 +206,15 @@ RewriteRule ^([^\.]+)$ /index.php?q=$0 [QSA,L]
 								foreach( $modules as $module_class => $module ) {
 									$module[\'file\'] = str_replace(\'__DIR__\', __DIR__, $module[\'file\']);
 									$conf[ \'extend_confs\' ][] = $module;
+								}
+								break;
+							case \'services\':
+								if( !isset($conf[ \'extend_services\' ]) ) {
+									$dependencies[ \'extend_services\' ] = [];
+								}
+								foreach( $modules as $module_class => $module ) {
+									$module[\'file\'] = str_replace(\'__DIR__\', __DIR__, $module[\'file\']);
+									$dependencies[ \'extend_services\' ][] = $module;
 								}
 								break;
 							default: break;

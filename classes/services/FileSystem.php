@@ -7,7 +7,7 @@ namespace mvc_router\services;
 use Exception;
 
 /**
- * Comptient des fonctions pour pouvoir parcourir le système de fichier de votre système d'exploitation
+ * Comptient des fonctions pour pouvoir parcourir le système de fichier de votre OS
  *
  * @package mvc_router\services
  */
