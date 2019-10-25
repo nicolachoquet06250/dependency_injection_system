@@ -3,7 +3,11 @@
 
 namespace mvc_router\services;
 
-
+/**
+ * Gère les erreurs HTTP en donnant des pages personnalisés
+ *
+ * @package mvc_router\services
+ */
 class Error extends Service {
 
 	const JSON = 1;

@@ -4,6 +4,9 @@
 namespace mvc_router\services;
 
 
+/**
+ * @package mvc_router\services
+ */
 class Logger extends Service {
 	const CONSOLE = 1;
 	const FILE = 2;

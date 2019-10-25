@@ -10,6 +10,9 @@ use ReflectionException;
 use ReflectionObject;
 use ReflectionParameter;
 
+/**
+ * @package mvc_router\services
+ */
 class Trigger extends Service {
 	protected static $triggers = [];
 

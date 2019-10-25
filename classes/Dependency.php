@@ -354,6 +354,37 @@ class Dependency {
 		self::WEBSOCKET_DEPENDENCY => []
 	];
 	
+	public function get_bases() {
+		return self::$dependencies[self::BASE_DEPENDENCY];
+	}
+	public function get_controllers() {
+		return self::$dependencies[self::CONTROLLER_DEPENDENCY];
+	}
+	public function get_views() {
+		return self::$dependencies[self::VIEW_DEPENDENCY];
+	}
+	public function get_data_models() {
+		return self::$dependencies[self::DATA_MODELS_DEPENDENCY];
+	}
+	public function get_services() {
+		return self::$dependencies[self::SERVICE_DEPENDENCY];
+	}
+	public function get_helping() {
+		return self::$dependencies[self::HELPER_DEPENDENCY];
+	}
+	public function get_routing() {
+		return self::$dependencies[self::ROUTER_DEPENDENCY];
+	}
+	public function get_commanders() {
+		return self::$dependencies[self::CONTROLLER_DEPENDENCY];
+	}
+	public function get_composers() {
+		return self::$dependencies[self::COMPOSER_DEPENDENCY];
+	}
+	public function get_websockets() {
+		return self::$dependencies[self::WEBSOCKET_DEPENDENCY];
+	}
+	
 	/**
 	 * @param null|integer $type
 	 * @param bool $flat
@@ -851,7 +882,11 @@ class Dependency {
 		}
 		return false;
 	}
-
+	
+	/**
+	 * @param $elem
+	 * @return bool
+	 */
 	public static function is_view($elem) {
 		foreach (self::get_dependencies(self::VIEW_DEPENDENCY) as $class => $dependency) {
 			if($dependency['name'] === $elem) {
@@ -860,7 +895,11 @@ class Dependency {
 		}
 		return false;
 	}
-
+	
+	/**
+	 * @param $elem
+	 * @return bool
+	 */
 	public static function is_composer($elem) {
 		foreach (self::get_dependencies(self::COMPOSER_DEPENDENCY) as $class => $dependency) {
 			if($dependency['name'] === $elem) {

@@ -140,11 +140,12 @@ class PHPDocParser extends Base implements Singleton {
 				} else {
 					$_doc[$key] = implode(' ', $line);
 				}
+				$_doc[$key] = trim($_doc[$key]);
 			} else {
 				if(!isset($_doc['description'])) {
 					$_doc['description'] = $line;
 				} else {
-					$_doc['description'] .= "\n".$line;
+					$_doc[ 'description' ] .= "\n".(is_array($line) ? implode("\n", $line) : $line);
 				}
 			}
 		}

@@ -4,6 +4,12 @@
 namespace mvc_router\services;
 
 
+/**
+ * Permet de bloquer l'écriture d'un fichier ou d'un répertoire jusqu'à ce qu'il soit débloqué.
+ * Ce service peux servire pour l'utilisation de Queues par example
+ *
+ * @package mvc_router\services
+ */
 class Lock extends Service {
 	protected $lock_dir = __DIR__.'/../../classes/lock';
 	protected $lock_extension = '.lock';
@@ -75,7 +81,7 @@ class Lock extends Service {
 	 * @return bool
 	 */
 	public function is_locked($element) {
-		list($type, $key) = $this->get_type_and_key($element);
+		[$type, $key] = $this->get_type_and_key($element);
 		$old_content = $this->get_lock_file($type);
 		if(!($type && $key) || !isset($old_content[$key])) {
 			return false;
@@ -88,7 +94,7 @@ class Lock extends Service {
 	 * @return bool
 	 */
 	public function lock($element) {
-		list($type, $key) = $this->get_type_and_key($element);
+		[$type, $key] = $this->get_type_and_key($element);
 		$old_content = $this->get_lock_file($type);
 		if(!($type && $key)) {
 			return false;
@@ -103,7 +109,7 @@ class Lock extends Service {
 	 * @return bool
 	 */
 	public function unlock($element) {
-		list($type, $key) = $this->get_type_and_key($element);
+		[$type, $key] = $this->get_type_and_key($element);
 		$old_content = $this->get_lock_file($type);
 		if(!($type && $key)) {
 			return false;

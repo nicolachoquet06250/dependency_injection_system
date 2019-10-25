@@ -6,6 +6,10 @@ namespace mvc_router\services;
 
 use Ratchet\ComponentInterface;
 
+/**
+ * Permet de créer plusieurs routes pour votre serveur de websockets
+ * @package mvc_router\services
+ */
 class Websocket extends Service {
 	protected $host = 'localhost';
 	protected $port = 2108;

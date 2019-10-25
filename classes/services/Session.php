@@ -6,6 +6,9 @@ namespace mvc_router\services;
 
 use mvc_router\interfaces\Singleton;
 
+/**
+ * @package mvc_router\services
+ */
 class Session extends Service implements Singleton {
 	private static $instance = null;
 	protected $session_id;

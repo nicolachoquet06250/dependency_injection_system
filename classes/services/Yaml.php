@@ -6,6 +6,11 @@
 	
 	use mvc_router\interfaces\Encoder;
 	
+	/**
+	 * Simple parseur Yaml
+	 *
+	 * @package mvc_router\services
+	 */
 	class Yaml extends Service implements Encoder {
 		
 		/**

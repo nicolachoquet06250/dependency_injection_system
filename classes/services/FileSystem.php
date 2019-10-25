@@ -6,6 +6,11 @@ namespace mvc_router\services;
 
 use Exception;
 
+/**
+ * Comptient des fonctions pour pouvoir parcourir le système de fichier de votre système d'exploitation
+ *
+ * @package mvc_router\services
+ */
 class FileSystem extends Service {
 
 	const TEXT        = 0;

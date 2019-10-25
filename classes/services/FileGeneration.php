@@ -6,6 +6,11 @@ namespace mvc_router\services;
 
 use Exception;
 
+/**
+ * Permet de regénérer les fichiers non versionnés à leur version d'origine si vous l'avez modifié
+ *
+ * @package mvc_router\services
+ */
 class FileGeneration extends Service {
 	/** @var \mvc_router\helpers\Helpers $helpers */
 	public $helpers;

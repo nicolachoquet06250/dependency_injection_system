@@ -8,6 +8,12 @@ use mvc_router\dependencies\Dependency;
 use mvc_router\mvc\Controller;
 use mvc_router\router\Router;
 
+/**
+ * Génère des urls en fonctions des routes configurés dans les controlleurs
+ * et du chemins des fichiers statics
+ *
+ * @package mvc_router\services
+ */
 class UrlGenerator extends Service {
 	/** @var \mvc_router\router\Router $router */
 	public $router;

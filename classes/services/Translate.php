@@ -4,6 +4,11 @@
 namespace mvc_router\services;
 
 
+/**
+ * Gère le système de traduction
+ *
+ * @package mvc_router\services
+ */
 class Translate extends Service {
 	const FR = 'fr-FR';
 	const EN = 'en-GB';
