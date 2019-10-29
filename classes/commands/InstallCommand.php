@@ -64,10 +64,10 @@ class InstallCommand extends Command {
 				'composer '.(is_file(__DIR__.'/../../composer.lock') ? 'update' : 'install'),
 				'generate:base_files -p custom-dir='.$dir,
 				'generate:dependencies -p custom-file='.$dir.'/update_dependencies.php',
+				'generate:translations',
+				'install:databases',
 				'generate:base_files -p custom-dir='.$dir,
 				'generate:dependencies -p custom-file='.$dir.'/update_dependencies.php',
-				'generate:translations',
-				'install:databases'
 			],
 			$logger, $commands);
 	}
@@ -91,8 +91,8 @@ class InstallCommand extends Command {
 			if($path && !in_array(realpath(dirname($file)), $pulls)) {
 				$dir_name = explode('/', dirname($path))[count(explode('/', dirname($path))) - 1];
 				if($dir_name !== $root_dir) {
-					$generates[] = 'generate:dependencies -p custom-file='.$dir_name.'/update_dependencies.php';
 					$generates[] = 'generate:base_files -p custom-dir='.$dir_name;
+					$generates[] = 'generate:dependencies -p custom-file='.$dir_name.'/update_dependencies.php';
 				}
 				$pulls[] = realpath(dirname($file));
 			}
@@ -102,9 +102,10 @@ class InstallCommand extends Command {
 			$base_dir = explode('/', $_dir)[count(explode('/', $_dir)) - 1];
 			return $base_dir === $root_dir ? 'git pull' : "git -C {$_dir} pull";
 		}, $pulls));
-		$generates[] = 'generate:base_files -p custom-dir='.$custom_dir;
 		$generates[] = 'generate:translations';
 		$generates[] = 'install:databases';
+		$generates[] = 'generate:base_files -p custom-dir='.$custom_dir;
+		$generates[] = 'generate:dependencies -p custom-file='.$custom_dir.'/update_dependencies.php';
 
 		$this->run_system_commands($pulls, $logger, $commands);
 		$this->run_framework_commands($generates, $logger, $commands);
