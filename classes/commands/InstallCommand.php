@@ -94,8 +94,7 @@ class InstallCommand extends Command {
 			}
 		}, true);
 		
-		$pulls[] = 'composer '.(is_file(__DIR__.'/../../composer.lock') ? 'update' : 'install');
-		$pulls = array_merge($pulls, array_map(function ($_dir) use ($root_dir) {
+		$pulls = array_merge(['composer '.(is_file(__DIR__.'/../../composer.lock') ? 'update' : 'install')], array_map(function ($_dir) use ($root_dir) {
 			$base_dir = explode('/', $_dir)[count(explode('/', $_dir)) - 1];
 			return $base_dir === $root_dir ? 'git pull' : "git -C {$_dir} pull";
 		}, $pulls));
