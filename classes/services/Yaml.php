@@ -17,14 +17,20 @@
 		 * @inheritDoc
 		 */
 		public function encode( $object ): string {
-			return \Symfony\Component\Yaml\Yaml::dump($object);
+			if(class_exists('\Symfony\Component\Yaml\Yaml')) {
+				return \Symfony\Component\Yaml\Yaml::dump( $object );
+			}
+			return '';
 		}
 		
 		/**
 		 * @inheritDoc
 		 */
 		public function decode( $string ): array {
-			return \Symfony\Component\Yaml\Yaml::parse($string);
+			if(class_exists('\Symfony\Component\Yaml\Yaml')) {
+				return \Symfony\Component\Yaml\Yaml::parse( $string );
+			}
+			return [];
 		}
 		
 		/**
@@ -32,7 +38,10 @@
 		 * @return mixed
 		 */
 		public function decode_from_file($path) {
-			return \Symfony\Component\Yaml\Yaml::parseFile($path);
+			if(class_exists('\Symfony\Component\Yaml\Yaml')) {
+				return \Symfony\Component\Yaml\Yaml::parseFile( $path );
+			}
+			return [];
 		}
 		
 		/**
@@ -47,10 +56,13 @@
 		/**
 		 * @param $path
 		 * @param $object
-		 * @return mixed
+		 * @return string
 		 */
 		public function encode_to_file($path, $object) {
 			$path_content = file_get_contents($path);
-			return \Symfony\Component\Yaml\Yaml::dump($path_content);
+			if(class_exists('\Symfony\Component\Yaml\Yaml')) {
+				return \Symfony\Component\Yaml\Yaml::dump( $path_content );
+			}
+			return '';
 		}
 	}
