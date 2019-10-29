@@ -17,7 +17,7 @@ class Mysql extends Base {
 	protected 	$user_prefix = '';
 	protected  	$user;
 	protected  	$pass;
-	protected  	$db_prefix = 'mvc_router_';
+	protected  	$db_prefix = '';
 	protected  	$db_name;
 	protected  	$port = 3306;
 
