@@ -25,6 +25,7 @@ class InstallCommand extends Command {
 					if(is_int($i)) {
 						$message = $k;
 					} else {
+						$k = is_array($k) ? implode("\n", $k) : $k;
 						$message = "{$i} => {$k}";
 					}
 					$logger->log($message);
