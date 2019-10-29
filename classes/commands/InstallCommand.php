@@ -78,6 +78,8 @@ class InstallCommand extends Command {
 	 * @param FileSystem $fs
 	 */
 	public function update(Commands $commands, Logger $logger, FileSystem $fs) {
+		$custom_dir = $this->param('dir');
+		$custom_dir = $custom_dir ?? 'demo';
 		$this->init_logger($logger);
 		$pulls = [];
 		$generates = [];
@@ -98,6 +100,7 @@ class InstallCommand extends Command {
 			$base_dir = explode('/', $_dir)[count(explode('/', $_dir)) - 1];
 			return $base_dir === $root_dir ? 'git pull' : "git -C {$_dir} pull";
 		}, $pulls));
+		$generates[] = 'generate:base_files -p custom-dir='.$custom_dir;
 		$generates[] = 'generate:translations';
 		$generates[] = 'install:databases';
 

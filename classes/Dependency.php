@@ -805,7 +805,7 @@ class Dependency {
 	public static function extend_services(...$services) {
 		foreach( $services as $service ) {
 			$type = isset($service['type']) ? $service['type'] : self::NONE;
-			self::extend_service($services['class']['old'], $services['class']['new'], $services['name'], $services['file'], $type);
+			self::extend_service($service['class']['old'], $service['class']['new'], $service['name'], $service['file'], $type);
 		}
 		self::require_dependency_wrapper();
 	}
