@@ -76,9 +76,13 @@ catch (\mvc_router\http\errors\Exception500 $e) {
 	public function generate_base_htaccess($custom_dir) {
 		$slash = $this->helpers->get_slash();
 		$htaccess_php = '<?php
-
-mvc_router\dependencies\Dependency::get_wrapper_factory()->get_dependency_wrapper()->get_router()
-	->root_route(\'routes_controller\')->inspect_controllers();
+try {
+	mvc_router\dependencies\Dependency::get_wrapper_factory()->get_dependency_wrapper()->get_router()
+		->root_route(\'routes_controller\')->inspect_controllers();
+}
+catch(Exception $e) {
+	exit($e->getMessage());
+}
 ';
 		$htaccess_apache = 'RewriteEngine on
 
