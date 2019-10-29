@@ -57,7 +57,7 @@ class Logger extends Service {
 	}
 
 	protected function format_header_log($with_user_name = false) {
-		return ($with_user_name ? get_current_user().'@'.gethostname().'~' : '').date('Y-m-d_H:i:s').' | ';
+		return ($with_user_name ? $this->get_username().'@'.$this->get_hostname().'~' : '').date('Y-m-d_H:i:s').' | ';
 	}
 
 	protected function log_file($message) {

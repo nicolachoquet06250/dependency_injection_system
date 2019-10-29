@@ -232,6 +232,14 @@ class Base {
 	public function get($key) {
 		return isset($this->$key) ? $this->$key : null;
 	}
+	
+	protected function get_username() {
+		return get_current_user();
+	}
+	
+	protected function get_hostname() {
+		return gethostname();
+	}
 
 	/**
 	 * @param string $key

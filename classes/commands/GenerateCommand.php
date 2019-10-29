@@ -32,6 +32,8 @@ class GenerateCommand extends Command {
 	}
 
 	/**
+	 * @syntax generate:base_files -p [custom-dir=<value>]
+	 *
 	 * @return string
 	 * @throws Exception
 	 */
@@ -49,7 +51,14 @@ class GenerateCommand extends Command {
 		$generation->generate_mysql_conf_file($custom_dir);
 		return 'All default files has been generated ! Don\'t forget to fill the classes/confs/mysql.json file';
 	}
-
+	
+	/**
+	 * @syntax generate:translations
+	 *
+	 * @param Translate $translation
+	 * @param Helpers $helpers
+	 * @return mixed|string
+	 */
 	public function translations(Translate $translation, Helpers $helpers) {
 		$translation->initialize_translation_files();
 		$slash = $helpers->get_slash();
@@ -65,7 +74,12 @@ class GenerateCommand extends Command {
 			return $translation->__('La langue %1 à bien été généré', [$languages_imploded]);
 		}
 	}
-
+	
+	/**
+	 * @param $directory
+	 * @param Translate $translation
+	 * @param Helpers $helpers
+	 */
 	private function parcoure_dir($directory, Translate $translation, Helpers $helpers) {
 		$dir = opendir($directory);
 
@@ -88,6 +102,14 @@ class GenerateCommand extends Command {
 		}
 	}
 	
+	/**
+	 * @syntax generate:service -p [name=<value>] [site=<value>] [is_singleton=<value>?]
+	 *
+	 * @param Helpers $helpers
+	 * @param Yaml $yaml
+	 * @return string
+	 * @throws Exception
+	 */
 	public function service(Helpers $helpers, Yaml $yaml) {
 		$class = $this->param('name');
 		$site = $this->param('site');
@@ -144,6 +166,14 @@ class GenerateCommand extends Command {
 		return 'Le service '.$class.' à été généré et intégré dans dependencies.yaml avec succès !';
 	}
 	
+	/**
+	 * @syntax generate:customized_service -p [name=<value>] [site=<value>] [is_singleton=<value>?]
+	 *
+	 * @param Helpers $helpers
+	 * @param Yaml $yaml
+	 * @return string
+	 * @throws Exception
+	 */
 	public function customized_service(Helpers $helpers, Yaml $yaml) {
 		$name = $this->param('name');
 		$site = $this->param('site');

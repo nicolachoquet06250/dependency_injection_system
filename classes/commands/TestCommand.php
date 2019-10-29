@@ -4,7 +4,6 @@
 namespace mvc_router\commands;
 
 
-use Exception;
 use mvc_router\services\FileSystem;
 use mvc_router\services\Trigger;
 
