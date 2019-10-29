@@ -213,12 +213,12 @@ RewriteRule ^([^\.]+)$ /index.php?q=$0 [QSA,L]
 								}
 								break;
 							case \'services\':
-								if( !isset($conf[ \'extend_services\' ]) ) {
-									$dependencies[ \'extend_services\' ] = [];
+								if( !isset($dependency[ \'extend_services\' ]) ) {
+									$dependency[ \'extend_services\' ] = [];
 								}
 								foreach( $modules as $module_class => $module ) {
 									$module[\'file\'] = str_replace(\'__DIR__\', __DIR__, $module[\'file\']);
-									$dependencies[ \'extend_services\' ][] = $module;
+									$dependency[ \'extend_services\' ][] = $module;
 								}
 								break;
 							default: break;
