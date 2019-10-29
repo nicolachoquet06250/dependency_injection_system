@@ -62,6 +62,7 @@ class InstallCommand extends Command {
 			[
 				'clone:repo -p repo='.$repo.' dest='.$dir,
 				'composer '.(is_file(__DIR__.'/../../composer.lock') ? 'update' : 'install'),
+				'generate:dependencies -p custom-file='.$dir.'/update_dependencies.php',
 				'generate:base_files -p custom-dir='.$dir,
 				'generate:dependencies -p custom-file='.$dir.'/update_dependencies.php',
 				'generate:base_files -p custom-dir='.$dir,
