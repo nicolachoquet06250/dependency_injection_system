@@ -29,9 +29,8 @@ class Lock extends Service {
 	private function get_lock_file_path($type) {
 		return $this->lock_dir.'/'.$this->{'lock_'.$type.'_file'}.$this->lock_extension;
 	}
-
-	public function after_construct() {
-		parent::after_construct();
+	
+	protected function create_lock_dir_if_not_exists() {
 		if(!realpath($this->lock_dir)) {
 			mkdir($this->lock_dir, 0777, true);
 		}
@@ -94,6 +93,7 @@ class Lock extends Service {
 	 * @return bool
 	 */
 	public function lock($element) {
+		$this->create_lock_dir_if_not_exists();
 		[$type, $key] = $this->get_type_and_key($element);
 		$old_content = $this->get_lock_file($type);
 		if(!($type && $key)) {
@@ -109,6 +109,7 @@ class Lock extends Service {
 	 * @return bool
 	 */
 	public function unlock($element) {
+		$this->create_lock_dir_if_not_exists();
 		[$type, $key] = $this->get_type_and_key($element);
 		$old_content = $this->get_lock_file($type);
 		if(!($type && $key)) {
