@@ -66,8 +66,7 @@ class InstallCommand extends Command {
 				'generate:dependencies -p custom-file='.$dir.'/update_dependencies.php',
 				'generate:translations',
 				'install:databases',
-				'generate:base_files -p custom-dir='.$dir,
-				'generate:dependencies -p custom-file='.$dir.'/update_dependencies.php',
+				'install:update dir='.$dir,
 			],
 			$logger, $commands);
 	}
