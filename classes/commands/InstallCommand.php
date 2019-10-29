@@ -60,6 +60,7 @@ class InstallCommand extends Command {
 		$this->run_framework_commands(
 			[
 				'clone:repo -p repo='.$repo.' dest='.$dir,
+				'composer '.(is_file(__DIR__.'/../../composer.lock') ? 'update' : 'install'),
 				'generate:dependencies -p custom-file='.$dir.'/update_dependencies.php',
 				'generate:base_files -p custom-dir='.$dir,
 				'generate:translations',
@@ -91,11 +92,12 @@ class InstallCommand extends Command {
 				$pulls[] = realpath(dirname($file));
 			}
 		}, true);
-		$pulls = array_map(function ($_dir) use ($root_dir) {
+		
+		$pulls[] = 'composer '.(is_file(__DIR__.'/../../composer.lock') ? 'update' : 'install');
+		$pulls = array_merge($pulls, array_map(function ($_dir) use ($root_dir) {
 			$base_dir = explode('/', $_dir)[count(explode('/', $_dir)) - 1];
 			return $base_dir === $root_dir ? 'git pull' : "git -C {$_dir} pull";
-		}, $pulls);
-		$pulls[] = 'composer '.(is_file(__DIR__.'/../../composer.lock') ? 'update' : 'install');
+		}, $pulls));
 		$generates[] = 'generate:translations';
 		$generates[] = 'install:databases';
 
