@@ -17,13 +17,12 @@ class FileGeneration extends Service {
 	
 	public function generate_index($custom_dir) {
 		$slash = $this->helpers->get_slash();
-		$root_path = ($this->helpers->is_unix() ? realpath(__DIR__.$slash.'..'.$slash.'..'.$slash).$slash : '').$custom_dir.$slash;
 		$index = '<?php
 
 use mvc_router\dependencies\Dependency;
 
-require_once \''.$root_path.'autoload.php\';
-require_once \''.$root_path.'htaccess.php\';
+require_once __DIR__.\'/autoload.php\';
+require_once __DIR__.\'/htaccess.php\';
 
 $dw = Dependency::get_wrapper_factory()->get_dependency_wrapper();
 try {
