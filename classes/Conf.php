@@ -39,13 +39,13 @@ class Conf {
 	 * @return bool
 	 */
 	private static function conf_wrapper_exists() {
-		return file_exists(__DIR__.'/ConfWrapper.php');
+		return file_exists(__DIR__.'/'.__SITE_NAME__.'/ConfWrapper.php');
 	}
 
 	private static function generate_conf_wrapper() {
 		$class_start = "<?php
 		
-\tnamespace mvc_router\confs;
+\tnamespace mvc_router\\".__SITE_NAME__."\confs;
 \t/**
 \t * Get all methods for conf injection
 \t *
@@ -65,14 +65,14 @@ class Conf {
 		}
 		$final_class .= $class_end;
 
-		file_put_contents(__DIR__.'/ConfWrapper.php', $final_class);
+		file_put_contents(__DIR__.'/'.__SITE_NAME__.'/ConfWrapper.php', $final_class);
 	}
 
 	public static function require_conf_wrapper() {
 		if(!self::conf_wrapper_exists()) {
 			self::generate_conf_wrapper();
 		}
-		require_once __DIR__.'/ConfWrapper.php';
+		require_once __DIR__.'/'.__SITE_NAME__.'/ConfWrapper.php';
 	}
 
 	/**
@@ -103,9 +103,9 @@ class Conf {
 		if(!is_null($parent)) {
 			Conf::$confs[$class]['parent'] = $parent;
 		}
-		if(!is_file(__DIR__.'/ConfWrapper.php')
-		   || (is_file(__DIR__.'/ConfWrapper.php')
-			   && !strstr('get_'.$name, file_get_contents(__DIR__.'/ConfWrapper.php')))) {
+		if(!is_file(__DIR__.'/'.__SITE_NAME__.'/ConfWrapper.php')
+		   || (is_file(__DIR__.'/'.__SITE_NAME__.'/ConfWrapper.php')
+			   && !strstr('get_'.$name, file_get_contents(__DIR__.'/'.__SITE_NAME__.'/ConfWrapper.php')))) {
 			self::delete_conf_wrapper();
 			self::require_conf_wrapper();
 		}
@@ -135,8 +135,8 @@ class Conf {
 	}
 
 	public static function delete_conf_wrapper() {
-		if(is_file(__DIR__.'/ConfWrapper.php')) {
-			unlink(__DIR__.'/ConfWrapper.php');
+		if(is_file(__DIR__.'/'.__SITE_NAME__.'/ConfWrapper.php')) {
+			unlink(__DIR__.'/'.__SITE_NAME__.'/ConfWrapper.php');
 		}
 	}
 
@@ -146,7 +146,7 @@ class Conf {
 	 * @throws ReflectionException
 	 */
 	private static function method_exists($method) {
-		$rc = new ReflectionClass(ConfWrapper::class);
+		$rc = new ReflectionClass( '\mvc_router\\'.__SITE_NAME__.'\confs\ConfWrapper');
 		$doc = $rc->getDocComment();
 		$doc = str_replace(["\t", '/**', '**/', ' * ', ' *'], '', $doc);
 
@@ -189,7 +189,7 @@ class Conf {
 	 * @throws ReflectionException
 	 */
 	private static function get_class_from_method($method) {
-		$rc = new ReflectionClass(ConfWrapper::class);
+		$rc = new ReflectionClass('\mvc_router\\'.__SITE_NAME__.'\confs\ConfWrapper');
 		$doc = $rc->getDocComment();
 		$doc = str_replace(["\t", '/**', '**/', ' * ', ' *'], '', $doc);
 

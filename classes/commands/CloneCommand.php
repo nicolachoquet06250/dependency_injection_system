@@ -20,8 +20,7 @@ class CloneCommand extends Command {
 
 		$repo = $this->param('repo');
 		$root = realpath(__DIR__.'/../../').'/';
-		$command = "git clone {$repo}".(($dest = $this->param('dest')) || ($dest = $this->param('destination'))
-			? " {$root}{$dest}" : '');
+		$command = "git clone {$repo} {$root}".__SITE_NAME__;
 		$this->inject->get_commands()->run($command);
 
 		$log = "Repository {$repo} has normally been cloned";

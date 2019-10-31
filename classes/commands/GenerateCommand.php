@@ -13,18 +13,17 @@ use mvc_router\services\Yaml;
 
 class GenerateCommand extends Command {
 	/**
+	 * @syntax [site] generate:dependencies
+	 *
 	 * @param Helpers $helpers
 	 * @return string
 	 */
 	public function dependencies(Helpers $helpers) {
 		$slash = $helpers->get_slash();
-		if($this->param('custom-file') && is_file($this->param('custom-file'))) {
-			require_once ($helpers->is_unix() ? __DIR__.$slash.'..'.$slash.'..'.$slash : '').$this->param('custom-file');
-		}
-		else {
-			$this->inject->get_service_logger()
-						 ->log('WARNING: file '.realpath(__DIR__.$slash.'..'.$slash.'..'.$slash.$this->param('custom-file')).' not found !');
-		}
+		$update_dependencies_path = ($helpers->is_unix() ? __DIR__.$slash.'..'.$slash.'..'.$slash : '').__SITE_NAME__.'/update_dependencies.php';
+		if(is_file($update_dependencies_path)) require_once $update_dependencies_path;
+		else $this->inject->get_service_logger()
+			->log('WARNING: file '.$update_dependencies_path.' not found !');
 
 		Dependency::require_dependency_wrapper();
 		Conf::require_conf_wrapper();
@@ -32,23 +31,19 @@ class GenerateCommand extends Command {
 	}
 
 	/**
-	 * @syntax generate:base_files -p [custom-dir=<value>]
+	 * @syntax [custom-dir] generate:base_files
 	 *
 	 * @return string
 	 * @throws Exception
 	 */
 	public function base_files() {
 		$generation = $this->inject->get_service_generation();
-		if(!$this->param('custom-dir')) {
-			$this->add_param('custom-dir', '');
-		}
-		$custom_dir = $this->param('custom-dir');
-		$generation->generate_base_htaccess($custom_dir);
-		$generation->generate_index($custom_dir);
-		$generation->generate_update_dependencies($custom_dir);
-		$generation->generate_custom_autoload($custom_dir);
-		$generation->generate_gitignore($custom_dir);
-		$generation->generate_mysql_conf_file($custom_dir);
+		$generation->generate_base_htaccess();
+		$generation->generate_index();
+		$generation->generate_update_dependencies();
+		$generation->generate_custom_autoload();
+		$generation->generate_gitignore();
+		$generation->generate_mysql_conf_file();
 		return 'All default files has been generated ! Don\'t forget to fill the classes/confs/mysql.json file';
 	}
 	
@@ -103,7 +98,7 @@ class GenerateCommand extends Command {
 	}
 	
 	/**
-	 * @syntax generate:service -p [name=<value>] [site=<value>] [is_singleton=<value>?]
+	 * @syntax [site] generate:service -p [name=<value>] [is_singleton=<value>?]
 	 *
 	 * @param Helpers $helpers
 	 * @param Yaml $yaml
@@ -112,7 +107,7 @@ class GenerateCommand extends Command {
 	 */
 	public function service(Helpers $helpers, Yaml $yaml) {
 		$class = $this->param('name');
-		$site = $this->param('site');
+		$site = __SITE_NAME__;
 		$singleton = $this->param('is_singleton');
 		
 		$slash = $helpers->get_slash();
@@ -167,7 +162,7 @@ class GenerateCommand extends Command {
 	}
 	
 	/**
-	 * @syntax generate:customized_service -p [name=<value>] [site=<value>] [is_singleton=<value>?]
+	 * @syntax [site] generate:customized_service -p [name=<value>] [is_singleton=<value>?]
 	 *
 	 * @param Helpers $helpers
 	 * @param Yaml $yaml
@@ -176,7 +171,7 @@ class GenerateCommand extends Command {
 	 */
 	public function customized_service(Helpers $helpers, Yaml $yaml) {
 		$name = $this->param('name');
-		$site = $this->param('site');
+		$site = __SITE_NAME__;
 		$singleton = $this->param('is_singleton');
 		
 		$slash = $helpers->get_slash();

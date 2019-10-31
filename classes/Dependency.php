@@ -513,7 +513,7 @@ class Dependency {
 	private static function generate_dependency_wrapper() {
 		$class_start = "<?php
 		
-\tnamespace mvc_router\dependencies;
+\tnamespace mvc_router\\".__SITE_NAME__."\dependencies;
 \t/**
 \t * Get all methods for dependency injection
 \t *
@@ -538,21 +538,21 @@ class Dependency {
 		}
 		$final_class .= $class_end;
 
-		file_put_contents(__DIR__.'/DependencyWrapper.php', $final_class);
+		file_put_contents(__DIR__.'/'.__SITE_NAME__.'/DependencyWrapper.php', $final_class);
 	}
 
 	/**
 	 * @return bool
 	 */
 	private static function dependency_wrapper_exists() {
-		return file_exists(__DIR__.'/DependencyWrapper.php');
+		return file_exists(__DIR__.'/'.__SITE_NAME__.'/DependencyWrapper.php');
 	}
 	
 	/**
 	 * @return void
 	 */
 	private static function delete_dependency_wrapper() {
-		unlink(__DIR__.'/DependencyWrapper.php');
+		unlink(__DIR__.'/'.__SITE_NAME__.'/DependencyWrapper.php');
 	}
 	
 	/**
@@ -562,7 +562,7 @@ class Dependency {
 		if(!self::dependency_wrapper_exists()) {
 			self::generate_dependency_wrapper();
 		}
-		require_once __DIR__.'/DependencyWrapper.php';
+		require_once __DIR__.'/'.__SITE_NAME__.'/DependencyWrapper.php';
 	}
 	
 	/**
@@ -594,9 +594,9 @@ class Dependency {
 		if(!is_null($parent)) {
 			self::$dependencies[$dependency_type][$class]['parent'] = $parent;
 		}
-		if(!is_file(__DIR__.'/DependencyWrapper.php')
-		   || (is_file(__DIR__.'/DependencyWrapper.php')
-			   && !strstr('get_'.$name, file_get_contents(__DIR__.'/DependencyWrapper.php')))) {
+		if(!is_file(__DIR__.'/'.__SITE_NAME__.'/DependencyWrapper.php')
+		   || (is_file(__DIR__.'/'.__SITE_NAME__.'/DependencyWrapper.php')
+			   && !strstr('get_'.$name, file_get_contents(__DIR__.'/'.__SITE_NAME__.'/DependencyWrapper.php')))) {
 			self::delete_dependency_wrapper();
 			self::require_dependency_wrapper();
 		}
@@ -780,7 +780,7 @@ class Dependency {
 	 * @param $class
 	 * @param $name
 	 * @param $file
-	 * @param null $parent
+	 * @param string $parent
 	 * @param null $type
 	 */
 	public static function add_custom_service($class, $name, $file, $parent = '\mvc_router\services\Service', $type = self::NONE) {
@@ -867,7 +867,7 @@ class Dependency {
 	 * @throws ReflectionException
 	 */
 	private static function method_exists($method) {
-		$rc = new ReflectionClass(DependencyWrapper::class);
+		$rc = new ReflectionClass('\mvc_router\\'.__SITE_NAME__.'\dependencies\DependencyWrapper');
 		$doc = $rc->getDocComment();
 		$doc = str_replace(["\t", '/**', '**/', ' * ', ' *'], '', $doc);
 
@@ -963,7 +963,7 @@ class Dependency {
 	 * @throws ReflectionException
 	 */
 	private static function get_class_from_method($method) {
-		$rc = new ReflectionClass(DependencyWrapper::class);
+		$rc = new ReflectionClass('\mvc_router\\'.__SITE_NAME__.'\dependencies\DependencyWrapper');
 		$doc = $rc->getDocComment();
 		$doc = str_replace(["\t", '/**', '**/', ' * ', ' *'], '', $doc);
 

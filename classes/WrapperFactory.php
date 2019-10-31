@@ -15,12 +15,10 @@ class WrapperFactory implements Singleton {
 
 	private function __construct() {}
 
-	/** @return DependencyWrapper */
 	public function get_dependency_wrapper() {
 		return self::dependencies();
 	}
 
-	/** @return ConfWrapper */
 	public function get_conf_wrapper() {
 		return self::confs();
 	}
@@ -32,18 +30,18 @@ class WrapperFactory implements Singleton {
 		return self::$instance;
 	}
 
-	/** @return DependencyWrapper */
 	public static function dependencies() {
 		if(is_null(WrapperFactory::$dependency_wrapper)) {
-			WrapperFactory::$dependency_wrapper = new DependencyWrapper();
+			$class = '\mvc_router\\'.__SITE_NAME__.'\dependencies\DependencyWrapper';
+			WrapperFactory::$dependency_wrapper = new $class();
 		}
 		return WrapperFactory::$dependency_wrapper;
 	}
 
-	/** @return ConfWrapper */
 	public static function confs() {
 		if(is_null(self::$conf_wrapper)) {
-			self::$conf_wrapper = new ConfWrapper();
+			$class = '\mvc_router\\'.__SITE_NAME__.'\confs\ConfWrapper';
+			self::$conf_wrapper = new $class();
 		}
 		return self::$conf_wrapper;
 	}

@@ -28,7 +28,7 @@ class Translate extends Service {
 
 	protected static $default_language = self::FR;
 
-	protected $file_tpl = '%__DIR__%/../translations/translation_%lang%.json';
+	protected $file_tpl = '%__DIR__%/../../'.__SITE_NAME__.'/translations/translation_%lang%.json';
 
 	protected function encode_text($text) {
 		return base64_encode($text);
@@ -129,8 +129,8 @@ class Translate extends Service {
 	}
 
 	public function get_array($lang = self::FR) {
-		if(!is_dir(__DIR__.'/../translations')) {
-			mkdir(__DIR__.'/../translations', 0777, true);
+		if(!is_dir(__DIR__.'/../../'.__SITE_NAME__.'/translations')) {
+			mkdir(__DIR__.'/../../'.__SITE_NAME__.'/translations', 0777, true);
 		}
 		$file_path = $this->get_file_path($lang);
 		if(!is_file($file_path)) {
