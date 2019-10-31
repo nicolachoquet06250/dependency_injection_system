@@ -56,7 +56,7 @@ class UrlGenerator extends Service {
 			$current_ctrl_class = Dependency::get_class_from_name($route_detail['controller']);
 			if($ctrl_class === $current_ctrl_class && $method === $route_detail['method']) {
 				if($route_detail['type'] === Router::STRING) {
-					return $base.$route;
+					return trim($base.$route);
 				}
 				preg_match_all('/((\/\?)?\([^\)\(]+\)\??)/', $route, $matches);
 				array_shift($matches);
@@ -68,7 +68,7 @@ class UrlGenerator extends Service {
 				if(substr($route, strlen($route) - 1, 1) === '\\') {
 					$route = substr($route, 0, strlen($route) - 1);
 				}
-				return $base.$route;
+				return trim($base.$route);
 			}
 		}
 		return null;

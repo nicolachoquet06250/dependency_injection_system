@@ -91,8 +91,9 @@ class Router extends Base implements Singleton {
 			$route = $route[0];
 		}
 		foreach (self::$routes as $route_str => $_route) {
-			$route_str = str_replace(["\n", "\r"], '', $route_str);
+			$route_str = trim($route_str);
 			if($_route['type'] === self::STRING) {
+				$_route['http_method'] = trim($_route['http_method']);
 				if($route === $route_str) {
 					if($_route['http_method'] !== 'both' && ($_route['http_method'] === 'get' && $_SERVER['REQUEST_METHOD'] !== 'GET')
 					   || ($_route['http_method'] === 'post' && $_SERVER['REQUEST_METHOD'] === 'GET')) {
@@ -108,7 +109,7 @@ class Router extends Base implements Singleton {
 		
 		foreach (self::$routes as $route_str => $_route) {
 			if($_route['type'] === self::REGEX) {
-				$regex = '/'.str_replace(["\n", "\r"], '', $route_str).'$/AD';
+				$regex = '/'.trim($route_str).'$/AD';
 				preg_match($regex, $route, $matches, PREG_OFFSET_CAPTURE, 0);
 				if(!empty($matches)) {
 					array_shift($matches);

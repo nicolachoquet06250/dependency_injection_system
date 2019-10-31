@@ -50,23 +50,23 @@ try {
 		echo $router_return;
 	}
 }
-catch (Exception $e) {
-	$dw->get_service_error()->error500($e->getMessage());
-}
-catch (Error $e) {
-	$dw->get_service_error()->error500($e->getMessage());
-}
 catch (\mvc_router\http\errors\Exception400 $e) {
-	$dw->get_service_error()->error400($e->getMessage(), $e->getReturnType());
+	exit($dw->get_service_error()->error400($e->getMessage(), $e->getReturnType()));
 }
 catch (\mvc_router\http\errors\Exception401 $e) {
-	$dw->get_service_error()->error401($e->getMessage(), $e->getReturnType());
+	exit($dw->get_service_error()->error401($e->getMessage(), $e->getReturnType()));
 }
 catch (\mvc_router\http\errors\Exception404 $e) {
-	$dw->get_service_error()->error401($e->getMessage(), $e->getReturnType());
+	exit($dw->get_service_error()->error404($e->getMessage(), $e->getReturnType()));
 }
 catch (\mvc_router\http\errors\Exception500 $e) {
-	$dw->get_service_error()->error401($e->getMessage(), $e->getReturnType());
+	exit($dw->get_service_error()->error500($e->getMessage(), $e->getReturnType()));
+}
+catch (Exception $e) {
+	exit($dw->get_service_error()->error500($e->getMessage()));
+}
+catch (Error $e) {
+	exit($dw->get_service_error()->error500($e->getMessage()));
 }
 ';
 

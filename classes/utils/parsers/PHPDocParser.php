@@ -4,6 +4,7 @@
 namespace mvc_router\parser;
 
 
+use Exception;
 use mvc_router\Base;
 use mvc_router\commands\Command;
 use mvc_router\data\gesture\Entity;
@@ -241,7 +242,13 @@ class PHPDocParser extends Base implements Singleton {
 		}
 		return $http_method;
 	}
-
+	
+	/**
+	 * @param Router $router
+	 * @param string $class
+	 * @param ReflectionMethod $method
+	 * @throws Exception
+	 */
 	public function get_method_route(Router $router, string $class, ReflectionMethod $method) {
 		if($method->getDeclaringClass()->getName() === $class
 		   && $method->getName() !== '__construct' && $method->getName() !== '__call'

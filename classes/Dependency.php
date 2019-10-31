@@ -29,8 +29,13 @@ class Dependency {
 	const WEBSOCKET  = 'websocket';
 
 	const ROUTES_CONTROLLER       = 'routes_controller';
+	const ERRORS_CONTROLLER       = 'errors_controller';
 	const ROUTE_VIEW              = 'route_view';
 	const LAYOUT_VIEW             = 'layout_view';
+	const ERROR400_VIEW           = 'error_400_view';
+	const ERROR401_VIEW           = 'error_401_view';
+	const ERROR404_VIEW           = 'error_404_view';
+	const ERROR500_VIEW           = 'error_500_view';
 	const JSON_SERVICE            = 'service_json';
 	const YAML_SERVICE            = 'service_yaml';
 	const ERROR_SERVICE           = 'service_error';
@@ -125,6 +130,12 @@ class Dependency {
 			],
 		],
 		self::CONTROLLER_DEPENDENCY => [
+			'mvc_router\mvc\controllers\errors\Errors'     			=> [
+				'name'         => self::ERRORS_CONTROLLER,
+				'file'         => __DIR__.'/mvc/controllers/errors/Errors.php',
+				'is_singleton' => self::NONE,
+				'parent'       => 'mvc_router\mvc\Controller'
+			],
 			'mvc_router\mvc\Routes'     			=> [
 				'name'         => self::ROUTES_CONTROLLER,
 				'file'         => __DIR__.'/mvc/controllers/Routes.php',
@@ -136,6 +147,30 @@ class Dependency {
 			'mvc_router\mvc\views\Layout' 			=> [
 				'name'         => self::LAYOUT_VIEW,
 				'file'         => __DIR__.'/mvc/views/Layout.php',
+				'is_singleton' => self::NONE,
+				'parent'       => 'mvc_router\mvc\View'
+			],
+			'mvc_router\mvc\views\errors\Error400' 			=> [
+				'name'         => self::ERROR400_VIEW,
+				'file'         => __DIR__.'/mvc/views/errors/Error400.php',
+				'is_singleton' => self::NONE,
+				'parent'       => 'mvc_router\mvc\View'
+			],
+			'mvc_router\mvc\views\errors\Error401' 			=> [
+				'name'         => self::ERROR401_VIEW,
+				'file'         => __DIR__.'/mvc/views/errors/Error401.php',
+				'is_singleton' => self::NONE,
+				'parent'       => 'mvc_router\mvc\View'
+			],
+			'mvc_router\mvc\views\errors\Error404' 			=> [
+				'name'         => self::ERROR404_VIEW,
+				'file'         => __DIR__.'/mvc/views/errors/Error404.php',
+				'is_singleton' => self::NONE,
+				'parent'       => 'mvc_router\mvc\View'
+			],
+			'mvc_router\mvc\views\errors\Error500' 			=> [
+				'name'         => self::ERROR500_VIEW,
+				'file'         => __DIR__.'/mvc/views/errors/Error500.php',
 				'is_singleton' => self::NONE,
 				'parent'       => 'mvc_router\mvc\View'
 			],
