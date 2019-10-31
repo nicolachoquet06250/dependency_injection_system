@@ -15,71 +15,68 @@ class FileGeneration extends Service {
 	/** @var \mvc_router\helpers\Helpers $helpers */
 	public $helpers;
 	
-	public function generate_index() {
+	public function generate_index($custom_dir) {
 		$slash = $this->helpers->get_slash();
-		$index = "<?php
+		$index = '<?php
 
 use mvc_router\dependencies\Dependency;
 
-require_once __DIR__.'/autoload.php';
-require_once __DIR__.'/htaccess.php';
+require_once __DIR__.\'/autoload.php\';
+require_once __DIR__.\'/htaccess.php\';
 
-/** @var \mvc_router\dependencies\\".__SITE_NAME__."\DependencyWrapper \$dw */
-\$dw = Dependency::get_wrapper_factory()->get_dependency_wrapper();
+$dw = Dependency::get_wrapper_factory()->get_dependency_wrapper();
 try {
-	\$request_uri = isset(\$_GET['q']) ?
-		(substr(\$_GET['q'], 0, 1) !== '/' ? '/'.\$_GET['q'] : \$_GET['q'])
-		: \$_SERVER['REQUEST_URI'];
-	if(substr(\$request_uri, 0, 10) === '/index.php') {
-		\$request_uri = str_replace('/index.php', '', \$request_uri);
+	$request_uri = isset($_GET[\'q\']) ?
+		(substr($_GET[\'q\'], 0, 1) !== \'/\' ? \'/\'.$_GET[\'q\'] : $_GET[\'q\'])
+		: $_SERVER[\'REQUEST_URI\'];
+	if(substr($request_uri, 0, 10) === \'/index.php\') {
+		$request_uri = str_replace(\'/index.php\', \'\', $request_uri);
 	}
 
-	\$router_return = \$dw->get_router()->execute(\$request_uri);
-	if(gettype(\$router_return) === 'object') {
-		if(Dependency::is_view(Dependency::get_name_from_class(get_class(\$router_return)))) echo \$router_return;
+	$router_return = $dw->get_router()->execute($request_uri);
+	if(gettype($router_return) === \'object\') {
+		if(Dependency::is_view(Dependency::get_name_from_class(get_class($router_return)))) echo $router_return;
 		else {
-			\$errors = \$dw->get_service_error();
-			\$translation = \$dw->get_service_translation();
-			\$errors->error404(
-				\$translation->__('La vue %1 n\'à pas été reconnu !', [
-					Dependency::get_name_from_class(get_class(\$router_return))
+			$errors = $dw->get_service_error();
+			$translation = $dw->get_service_translation();
+			$errors->error404(
+				$translation->__(\'La vue %1 n\\\'à pas été reconnu !\', [
+					Dependency::get_name_from_class(get_class($router_return))
 				])
 			);
 		}
 	}
 	else {
-		echo \$router_return;
+		echo $router_return;
 	}
 }
-catch (Exception \$e) {
-	\$dw->get_service_error()->error500(\$e->getMessage());
+catch (Exception $e) {
+	$dw->get_service_error()->error500($e->getMessage());
 }
-catch (Error \$e) {
-	\$dw->get_service_error()->error500(\$e->getMessage());
+catch (Error $e) {
+	$dw->get_service_error()->error500($e->getMessage());
 }
-catch (\mvc_router\http\errors\Exception400 \$e) {
-	\$dw->get_service_error()->error400(\$e->getMessage(), \$e->getReturnType());
+catch (\mvc_router\http\errors\Exception400 $e) {
+	$dw->get_service_error()->error400($e->getMessage(), $e->getReturnType());
 }
-catch (\mvc_router\http\errors\Exception401 \$e) {
-	\$dw->get_service_error()->error401(\$e->getMessage(), \$e->getReturnType());
+catch (\mvc_router\http\errors\Exception401 $e) {
+	$dw->get_service_error()->error401($e->getMessage(), $e->getReturnType());
 }
-catch (\mvc_router\http\errors\Exception404 \$e) {
-	\$dw->get_service_error()->error401(\$e->getMessage(), \$e->getReturnType());
+catch (\mvc_router\http\errors\Exception404 $e) {
+	$dw->get_service_error()->error401($e->getMessage(), $e->getReturnType());
 }
-catch (\mvc_router\http\errors\Exception500 \$e) {
-	\$dw->get_service_error()->error401(\$e->getMessage(), \$e->getReturnType());
+catch (\mvc_router\http\errors\Exception500 $e) {
+	$dw->get_service_error()->error401($e->getMessage(), $e->getReturnType());
 }
-";
+';
 
-		file_put_contents(($this->helpers->is_unix() ? __DIR__.$slash.'..'.$slash.'..'.$slash : '').__SITE_NAME__.$slash.'index.php', $index);
+		file_put_contents(($this->helpers->is_unix() ? __DIR__.$slash.'..'.$slash.'..'.$slash : '').$custom_dir.$slash.'index.php', $index);
 	}
-	public function generate_base_htaccess() {
+	public function generate_base_htaccess($custom_dir) {
 		$slash = $this->helpers->get_slash();
 		$htaccess_php = '<?php
 try {
-	/** @var \mvc_router\dependencies\\'.__SITE_NAME__.'\DependencyWrapper $dw */
-	$dw = mvc_router\dependencies\Dependency::get_wrapper_factory()->get_dependency_wrapper();
-	$dw->get_router()
+	mvc_router\dependencies\Dependency::get_wrapper_factory()->get_dependency_wrapper()->get_router()
 		->root_route(\'routes_controller\')->inspect_controllers();
 }
 catch(Exception $e) {
@@ -90,14 +87,14 @@ catch(Exception $e) {
 
 RewriteRule ^([^\.]+)$ /index.php?q=$0 [QSA,L]
 ';
-		if(!is_file(($this->helpers->is_unix() ? __DIR__.$slash.'..'.$slash.'..'.$slash : '').__SITE_NAME__.$slash.'.htaccess')) {
-			file_put_contents(($this->helpers->is_unix() ? __DIR__.$slash.'..'.$slash.'..'.$slash : '').__SITE_NAME__.$slash.'.htaccess', $htaccess_apache);
+		if(!is_file(($this->helpers->is_unix() ? __DIR__.$slash.'..'.$slash.'..'.$slash : '').$custom_dir.$slash.'.htaccess')) {
+			file_put_contents(($this->helpers->is_unix() ? __DIR__.$slash.'..'.$slash.'..'.$slash : '').$custom_dir.$slash.'.htaccess', $htaccess_apache);
 		}
-		if(!is_file(($this->helpers->is_unix() ? __DIR__.$slash.'..'.$slash.'..'.$slash : '').__SITE_NAME__.$slash.'htaccess.php')) {
-			file_put_contents(($this->helpers->is_unix() ? __DIR__.$slash.'..'.$slash.'..'.$slash : '').__SITE_NAME__.$slash.'htaccess.php', $htaccess_php);
+		if(!is_file(($this->helpers->is_unix() ? __DIR__.$slash.'..'.$slash.'..'.$slash : '').$custom_dir.$slash.'htaccess.php')) {
+			file_put_contents(($this->helpers->is_unix() ? __DIR__.$slash.'..'.$slash.'..'.$slash : '').$custom_dir.$slash.'htaccess.php', $htaccess_php);
 		}
 	}
-	public function generate_update_dependencies() {
+	public function generate_update_dependencies($custom_dir) {
 		$slash = $this->helpers->get_slash();
 		$ud = '<?php
 
@@ -107,9 +104,7 @@ RewriteRule ^([^\.]+)$ /index.php?q=$0 [QSA,L]
 	require_once __DIR__.\'/../autoload.php\';
 
 	try {
-		/** @var \mvc_router\dependencies\\'.__SITE_NAME__.'\DependencyWrapper $dw */
-		$dw = Dependency::get_wrapper_factory()->get_dependency_wrapper();
-		$yaml = $dw->get_yaml();
+		$yaml = Dependency::get_wrapper_factory()->get_dependency_wrapper()->get_yaml();
 		$dependencies = $yaml->parseFile(__DIR__.\'/dependencies.yaml\')->properties;
 		
 		$dependency = [];
@@ -245,53 +240,47 @@ RewriteRule ^([^\.]+)$ /index.php?q=$0 [QSA,L]
 	}
 ';
 
-		if(!is_file(($this->helpers->is_unix() ? __DIR__.$slash.'..'.$slash.'..'.$slash : '').__SITE_NAME__.$slash.'update_dependencies.php')) {
-			file_put_contents(($this->helpers->is_unix() ? __DIR__.$slash.'..'.$slash.'..'.$slash : '').__SITE_NAME__.$slash.'update_dependencies.php', $ud);
+		if(!is_file(($this->helpers->is_unix() ? __DIR__.$slash.'..'.$slash.'..'.$slash : '').$custom_dir.$slash.'update_dependencies.php')) {
+			file_put_contents(($this->helpers->is_unix() ? __DIR__.$slash.'..'.$slash.'..'.$slash : '').$custom_dir.$slash.'update_dependencies.php', $ud);
 		}
 	}
-	public function generate_custom_autoload() {
+	public function generate_custom_autoload($custom_dir) {
 		$slash = $this->helpers->get_slash();
 		$autoload = '<?php
 
 use mvc_router\dependencies\Dependency;
 
-const __SITE_NAME__ = \''.__SITE_NAME__.'\';
+const __SITE_NAME__ = \''.$custom_dir.'\';
 if(is_file(__DIR__.\'/update_dependencies.php\')) {
 	require_once __DIR__.\'/update_dependencies.php\';
 }
 
-/** @var \mvc_router\dependencies\\'.__SITE_NAME__.'\DependencyWrapper $dw */
-$dw = Dependency::get_wrapper_factory()->get_dependency_wrapper();
-$dw->get_triggers()->initialize();
+Dependency::get_wrapper_factory()->get_dependency_wrapper()->get_triggers()->initialize();
 ';
 
-		file_put_contents(($this->helpers->is_unix() ? __DIR__.$slash.'..'.$slash.'..'.$slash : '').__SITE_NAME__.$slash.'autoload.php', $autoload);
+		file_put_contents(($this->helpers->is_unix() ? __DIR__.$slash.'..'.$slash.'..'.$slash : '').$custom_dir.$slash.'autoload.php', $autoload);
 	}
-	public function generate_gitignore() {
+	public function generate_gitignore($custom_dir) {
 		$slash = $this->helpers->get_slash();
 		$gitingore = '.htaccess
 autoload.php
 htaccess.php
 index.php
-update_dependencies.php
-
-DependencyWrapper.php
-ConfWrapper.php
-
-translations';
-		if(!realpath(($this->helpers->is_unix() ? __DIR__.$slash.'..'.$slash.'..'.$slash : '').__SITE_NAME__.$slash.'.gitignore')) {
-			file_put_contents(realpath(($this->helpers->is_unix() ? __DIR__.$slash.'..'.$slash.'..'.$slash : '').__SITE_NAME__).$slash.'.gitignore', $gitingore);
+update_dependencies.php';
+		if(!realpath(($this->helpers->is_unix() ? __DIR__.$slash.'..'.$slash.'..'.$slash : '').$custom_dir.$slash.'.gitignore')) {
+			file_put_contents(realpath(($this->helpers->is_unix() ? __DIR__.$slash.'..'.$slash.'..'.$slash : '').$custom_dir).$slash.'.gitignore', $gitingore);
 		}
 	}
 	/**
+	 * @param $custom_dir
 	 * @throws Exception
 	 */
-	public function generate_mysql_conf_file() {
+	public function generate_mysql_conf_file($custom_dir) {
 		$fs = $this->inject->get_service_fs();
 		$slash = $this->helpers->get_slash();
 
-		if(!is_file(($this->helpers->is_unix() ? __DIR__."{$slash}..{$slash}..{$slash}" : '').__SITE_NAME__."{$slash}classes{$slash}confs{$slash}mysql.json")) {
-			$fs->create_file(($this->helpers->is_unix() ? __DIR__."{$slash}..{$slash}..{$slash}" : '').__SITE_NAME__."{$slash}classes{$slash}confs", 'mysql', FileSystem::JSON, null, [
+		if(!is_file(($this->helpers->is_unix() ? __DIR__."{$slash}..{$slash}..{$slash}" : '')."{$custom_dir}{$slash}classes{$slash}confs{$slash}mysql.json")) {
+			$fs->create_file(($this->helpers->is_unix() ? __DIR__."{$slash}..{$slash}..{$slash}" : '')."{$custom_dir}{$slash}classes{$slash}confs", 'mysql', FileSystem::JSON, null, [
 				"host" => '',
 				"user" => '',
 				"pass" => "",

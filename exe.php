@@ -8,14 +8,6 @@ require_once __DIR__.'/autoload.php';
 try {
 	array_shift($argv);
 	$argv = str_replace('\ ', '%20%', implode(' ', $argv));
-	$argv = explode(' ', $argv);
-	$site = array_shift($argv);
-	$argv = implode(' ', $argv);
-	if(strstr($site, '--') || strstr($site, ':')) {
-		$argv = $site;
-		$site = 'demo';
-	}
-	define('__SITE_NAME__', $site);
 	$dw = Dependency::get_wrapper_factory()->get_dependency_wrapper();
 	$logger = $dw->get_service_logger()->types(Logger::CONSOLE);
 	$result = $dw->get_commands()->run($argv);

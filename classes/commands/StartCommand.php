@@ -9,7 +9,7 @@ use mvc_router\services\Logger;
 
 class StartCommand extends Command {
 	/**
-	 * @syntax [project] start:websocket_server -p [host=<value>?localhost] [address=<value>?127.0.0.1] [port=<value>?8080]
+	 * @syntax start:websocket_server -p [host=<value>?localhost] [address=<value>?127.0.0.1] [port=<value>?8080]
 	 *
 	 * @param Logger $logger
 	 */
@@ -30,15 +30,16 @@ class StartCommand extends Command {
 	}
 	
 	/**
-	 * @syntax [directory] start:server -p [port=<value>?8080]
+	 * @syntax start:server -p [port=<value>?8080] [directory=<value>?]
 	 *
 	 * @param Commands $commands
 	 * @throws Exception
 	 */
 	public function server(Commands $commands) {
-		$port = $this->param('port');
-		$directory = __DIR__.'/../../'.__SITE_NAME__;
+		[$port, $dir] = [$this->param('port'), $this->param('directory')];
+		$directory = __DIR__.'/../../';
 		if(!$port) $port = 8080;
+		if($dir) $directory .= $dir;
 		
 		$directory = realpath($directory);
 		$commands->run('php -S localhost:'.$port.' -t '.$directory);
